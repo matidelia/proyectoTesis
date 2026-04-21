@@ -51,8 +51,8 @@ export async function GET(request: Request) {
 
     console.log('[API/SEARCH] Token generado. Ejecutando búsqueda...');
 
-    // 2. Buscar Productos
-    const searchUrl = `https://api.mercadolibre.com/sites/MLA/search?q=${encodeURIComponent(query)}`;
+    // 2. Buscar Productos de Catálogo
+    const searchUrl = `https://api.mercadolibre.com/products/search?status=active&site_id=MLA&q=${encodeURIComponent(query)}`;
     const searchRes = await fetch(searchUrl, {
       headers: {
         'Authorization': `Bearer ${tokenData.access_token}`
