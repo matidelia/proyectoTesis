@@ -4,7 +4,11 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');
 
+  console.log(`\n[API/SEARCH] === Nueva búsqueda iniciada ===`);
+  console.log(`[API/SEARCH] Query recibido: "${query}"`);
+
   if (!query) {
+    console.warn('[API/SEARCH] Error: Query vacío.');
     return NextResponse.json({ error: 'Query parameter "q" is required' }, { status: 400 });
   }
 
@@ -12,11 +16,13 @@ export async function GET(request: Request) {
   const clientSecret = process.env.ML_CLIENT_SECRET;
 
   if (!appId || !clientSecret) {
+    console.error('[API/SEARCH] Error crítico: Faltan credenciales en el entorno.');
     return NextResponse.json({ error: 'Server misconfiguration: missing credentials' }, { status: 500 });
   }
 
   try {
     // 1. Obtener Token de Acceso
+    console.log('[API/SEARCH] Generando token de acceso...');
     const body = new URLSearchParams({
       grant_type: 'client_credentials',
       client_id: appId,
@@ -36,30 +42,44 @@ export async function GET(request: Request) {
     const tokenData = await tokenRes.json();
 
     if (!tokenRes.ok || !tokenData.access_token) {
-      console.error('Error obtaining token:', tokenData);
-      return NextResponse.json({ error: 'Failed to authenticate with Mercado Libre' }, { status: 500 });
+      console.error('[API/SEARCH] Error de autenticación en ML. Detalles:', JSON.stringify(tokenData, null, 2));
+      return NextResponse.json({ 
+        error: 'Failed to authenticate with Mercado Libre',
+        details: tokenData 
+      }, { status: 500 });
     }
 
+    console.log('[API/SEARCH] Token generado. Ejecutando búsqueda...');
+
     // 2. Buscar Productos
-    const searchRes = await fetch(`https://api.mercadolibre.com/sites/MLA/search?q=${encodeURIComponent(query)}`, {
+    const searchUrl = `https://api.mercadolibre.com/sites/MLA/search?q=${encodeURIComponent(query)}`;
+    const searchRes = await fetch(searchUrl, {
       headers: {
         'Authorization': `Bearer ${tokenData.access_token}`
       },
-      // Next.js config to cache or not cache. For now, no-store
       cache: 'no-store'
     });
 
     const searchData = await searchRes.json();
 
     if (!searchRes.ok) {
-      console.error('Error searching products:', searchData);
-      // We still return the data to the frontend so it can see if it's forbidden etc.
-      return NextResponse.json({ error: searchData.message || 'Failed to search products', details: searchData }, { status: searchRes.status });
+      console.error(`[API/SEARCH] La API de ML rechazó la búsqueda (Status ${searchRes.status}).`);
+      console.error(`[API/SEARCH] Respuesta detallada:`, JSON.stringify(searchData, null, 2));
+      return NextResponse.json({ 
+        error: searchData.message || 'Error en la búsqueda de Mercado Libre', 
+        details: searchData 
+      }, { status: searchRes.status });
     }
 
+    console.log(`[API/SEARCH] Búsqueda exitosa. Resultados devueltos: ${searchData.results?.length || 0}`);
+    console.log(`[API/SEARCH] === Fin de la búsqueda ===\n`);
+    
     return NextResponse.json(searchData);
-  } catch (error) {
-    console.error('Unexpected error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch (error: any) {
+    console.error('[API/SEARCH] Excepción inesperada atrapada:', error);
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error.message 
+    }, { status: 500 });
   }
 }
