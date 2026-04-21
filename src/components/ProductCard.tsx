@@ -1,43 +1,49 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 
-interface Product {
+interface CatalogProduct {
   id: string;
-  title: string;
-  price: number;
-  currency_id: string;
-  thumbnail: string;
-  permalink: string;
-  shipping: {
-    free_shipping: boolean;
-  };
+  name: string;
+  pictures?: { url: string }[];
+  permalink?: string;
 }
 
 interface ProductCardProps {
-  product: Product;
+  product: CatalogProduct;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  // Replace HTTP with HTTPS for thumbnails
-  const imageUrl = product.thumbnail.replace('http://', 'https://');
+  // Use the first picture or a placeholder
+  const imageUrl = product.pictures && product.pictures.length > 0 
+    ? product.pictures[0].url.replace('http://', 'https://') 
+    : 'https://http2.mlstatic.com/frontend-assets/ui-navigation/5.19.1/mercadolibre/logo__large_plus.png';
   
-  // Format price
-  const formattedPrice = new Intl.NumberFormat('es-AR').format(product.price);
+  // As this is a generic catalog product, there is no direct permalink to buy it in the API response,
+  // but we can direct them to search for this product ID on the site.
+  const productLink = `https://listado.mercadolibre.com.ar/${product.id}`;
 
   return (
-    <a href={product.permalink} target="_blank" rel="noopener noreferrer" className="product-card">
+    <a href={productLink} target="_blank" rel="noopener noreferrer" className="product-card">
       <div className="product-image-container">
-        <img src={imageUrl} alt={product.title} className="product-image" loading="lazy" />
+        <img src={imageUrl} alt={product.name} className="product-image" loading="lazy" />
       </div>
       <div className="product-info">
-        <h2 className="product-title">{product.title}</h2>
-        <div className="product-price">
-          <span className="product-currency">$</span>
-          <span>{formattedPrice}</span>
+        <h2 className="product-title" style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--text-primary)' }}>
+          {product.name}
+        </h2>
+        <div style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+          <span style={{
+            display: 'inline-block',
+            background: 'var(--accent-primary)',
+            color: '#000',
+            padding: '0.4rem 1rem',
+            borderRadius: '9999px',
+            fontSize: '0.85rem',
+            fontWeight: 600
+          }}>
+            Ver catálogo
+          </span>
         </div>
-        {product.shipping.free_shipping && (
-          <div className="product-shipping">Envío gratis</div>
-        )}
       </div>
     </a>
   );
