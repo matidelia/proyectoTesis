@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -71,7 +72,39 @@ export async function GET(request: Request) {
       }, { status: searchRes.status });
     }
 
-    console.log(`[API/SEARCH] Búsqueda exitosa. Resultados devueltos: ${searchData.results?.length || 0}`);
+    const results = searchData.results || [];
+    console.log(`[API/SEARCH] Búsqueda exitosa. Resultados devueltos: ${results.length}`);
+
+    // 3. Persistencia en Base de Datos (Seguimiento de Tesis)
+    try {
+      console.log('[API/SEARCH] Guardando datos en Supabase...');
+      
+      // Guardar en el historial de búsquedas
+      await prisma.searchHistory.create({
+        data: {
+          query: query,
+          resultsCount: results.length
+        }
+      });
+
+      // Guardar/Actualizar productos encontrados (Upsert)
+      for (const p of results.slice(0, 5)) { // Guardamos los top 5 para estadísticas
+        await prisma.product.upsert({
+          where: { mlId: p.id },
+          update: { lastSeen: new Date() },
+          create: {
+            mlId: p.id,
+            name: p.name,
+            imageUrl: p.pictures?.[0]?.url || null
+          }
+        });
+      }
+      console.log('[API/SEARCH] Persistencia completada.');
+    } catch (dbError) {
+      // No bloqueamos la respuesta si falla la DB, solo logueamos
+      console.error('[API/SEARCH] Error al persistir en DB:', dbError);
+    }
+
     console.log(`[API/SEARCH] === Fin de la búsqueda ===\n`);
     
     return NextResponse.json(searchData);
