@@ -1,118 +1,242 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+async function getValidToken() {
+  try {
+    const token = await (prisma as any).oAuthToken.findUnique({
+      where: { id: 'mercado_libre' }
+    });
+
+    if (!token) return null;
+
+    // Si expira en menos de 5 minutos, refrescar
+    if (new Date(token.expiresAt).getTime() - Date.now() < 300000) {
+      console.log('[API/SEARCH] Token de usuario por expirar. Refrescando...');
+      const res = await fetch('https://api.mercadolibre.com/oauth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          client_id: process.env.ML_APP_ID || '',
+          client_secret: process.env.ML_CLIENT_SECRET || '',
+          refresh_token: token.refreshToken
+        }),
+        cache: 'no-store'
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        await (prisma as any).oAuthToken.update({
+          where: { id: 'mercado_libre' },
+          data: {
+            accessToken: data.access_token,
+            refreshToken: data.refresh_token,
+            expiresAt: new Date(Date.now() + (data.expires_in || 21600) * 1000)
+          }
+        });
+        return data.access_token;
+      } else {
+        console.error('[API/SEARCH] Error al refrescar token:', data);
+        return null;
+      }
+    }
+
+    return token.accessToken;
+  } catch (e) {
+    console.error('[API/SEARCH] Error al consultar DB para tokens:', e);
+    return null;
+  }
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');
 
-  console.log(`\n[API/SEARCH] === Nueva búsqueda iniciada ===`);
+  console.log(`\n[API/SEARCH] === Nueva búsqueda de Inteligencia de Mercado ===`);
   console.log(`[API/SEARCH] Query recibido: "${query}"`);
 
   if (!query) {
-    console.warn('[API/SEARCH] Error: Query vacío.');
     return NextResponse.json({ error: 'Query parameter "q" is required' }, { status: 400 });
   }
 
   const appId = process.env.ML_APP_ID;
   const clientSecret = process.env.ML_CLIENT_SECRET;
 
-  if (!appId || !clientSecret) {
-    console.error('[API/SEARCH] Error crítico: Faltan credenciales en el entorno.');
-    return NextResponse.json({ error: 'Server misconfiguration: missing credentials' }, { status: 500 });
-  }
-
   try {
-    // 1. Obtener Token de Acceso
-    console.log('[API/SEARCH] Generando token de acceso...');
-    const body = new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: appId,
-      client_secret: clientSecret
-    }).toString();
+    // 1. Obtención de Access Token (Prioridad: Usuario > App)
+    let accessToken = await getValidToken();
+    let isUserToken = !!accessToken;
 
-    const tokenRes = await fetch('https://api.mercadolibre.com/oauth/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json'
-      },
-      body: body,
-      cache: 'no-store'
-    });
+    if (!accessToken) {
+      console.log('[API/SEARCH] No hay token de usuario válido. Usando Client Credentials (Modo Catálogo)...');
+      const authRes = await fetch('https://api.mercadolibre.com/oauth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'client_credentials',
+          client_id: appId || '',
+          client_secret: clientSecret || ''
+        }),
+        cache: 'no-store'
+      });
 
-    const tokenData = await tokenRes.json();
-
-    if (!tokenRes.ok || !tokenData.access_token) {
-      console.error('[API/SEARCH] Error de autenticación en ML. Detalles:', JSON.stringify(tokenData, null, 2));
-      return NextResponse.json({ 
-        error: 'Failed to authenticate with Mercado Libre',
-        details: tokenData 
-      }, { status: 500 });
+      const authData = await authRes.json();
+      if (!authRes.ok) throw new Error('No se pudo autenticar con Mercado Libre');
+      accessToken = authData.access_token;
+    } else {
+      console.log('[API/SEARCH] Usando Token de Usuario (Modo Listados Reales)');
     }
 
-    console.log('[API/SEARCH] Token generado. Ejecutando búsqueda...');
-
-    // 2. Buscar Productos de Catálogo
-    const searchUrl = `https://api.mercadolibre.com/products/search?status=active&site_id=MLA&q=${encodeURIComponent(query)}`;
+    // 2. Búsqueda de Catálogo Oficial (Totalmente inmune a bloqueos)
+    const searchUrl = `https://api.mercadolibre.com/products/search?status=active&site_id=MLA&q=${encodeURIComponent(query)}&limit=12`;
+    
+    console.log(`[API/SEARCH] Buscando en catálogo oficial: ${searchUrl}`);
     const searchRes = await fetch(searchUrl, {
-      headers: {
-        'Authorization': `Bearer ${tokenData.access_token}`
+      headers: { 
+        'Authorization': `Bearer ${accessToken}`,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
       },
       cache: 'no-store'
     });
 
     const searchData = await searchRes.json();
-
     if (!searchRes.ok) {
-      console.error(`[API/SEARCH] La API de ML rechazó la búsqueda (Status ${searchRes.status}).`);
-      console.error(`[API/SEARCH] Respuesta detallada:`, JSON.stringify(searchData, null, 2));
-      return NextResponse.json({ 
-        error: searchData.message || 'Error en la búsqueda de Mercado Libre', 
-        details: searchData 
-      }, { status: searchRes.status });
+      throw new Error(`Mercado Libre catálogo respondió con error: ${searchRes.status}`);
     }
 
-    const results = searchData.results || [];
-    console.log(`[API/SEARCH] Búsqueda exitosa. Resultados devueltos: ${results.length}`);
+    const catalogProducts = searchData.results || [];
+    console.log(`[API/SEARCH] Encontrados ${catalogProducts.length} productos en catálogo. Obteniendo publicaciones reales en paralelo...`);
 
-    // 3. Persistencia en Base de Datos (Seguimiento de Tesis)
-    try {
-      console.log('[API/SEARCH] Guardando datos en Supabase...');
-      
-      // Guardar en el historial de búsquedas
-      await prisma.searchHistory.create({
-        data: {
-          query: query,
-          resultsCount: results.length
+    // 3. Resolución en paralelo de publicaciones reales (items) para cada producto
+    const results = await Promise.all(
+      catalogProducts.map(async (p: any) => {
+        // Obtenemos imagen de mayor resolución
+        const imageUrl = p.pictures?.[0]?.url || p.thumbnail;
+        let highResImage = imageUrl;
+        if (imageUrl && imageUrl.includes('-I.jpg')) {
+          highResImage = imageUrl.replace('-I.jpg', '-O.jpg');
         }
+
+        const fallbackPrice = p.buy_box_winner?.price || p.price || 0;
+        const fallbackCurrency = p.buy_box_winner?.currency_id || p.currency_id || 'ARS';
+        const fallbackPermalink = p.permalink || `https://www.mercadolibre.com.ar/p/${p.id}`;
+
+        try {
+          // Buscamos las publicaciones de vendedores activos
+          const itemsUrl = `https://api.mercadolibre.com/products/${p.id}/items?limit=3`;
+          const itemsRes = await fetch(itemsUrl, {
+            headers: { 
+              'Authorization': `Bearer ${accessToken}`,
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+            },
+            cache: 'no-store'
+          });
+
+          if (!itemsRes.ok) {
+            // Si falla la búsqueda de items específicos, retornamos el producto de catálogo
+            return {
+              id: p.id,
+              name: p.name,
+              price: fallbackPrice,
+              currency: fallbackCurrency,
+              imageUrl: highResImage,
+              permalink: fallbackPermalink,
+              isCatalog: true
+            };
+          }
+
+          const itemsData = await itemsRes.json();
+          const listings = itemsData.results || [];
+
+          if (listings.length === 0) {
+            return {
+              id: p.id,
+              name: p.name,
+              price: fallbackPrice,
+              currency: fallbackCurrency,
+              imageUrl: highResImage,
+              permalink: fallbackPermalink,
+              isCatalog: true
+            };
+          }
+
+          // Seleccionamos la publicación más económica
+          const cheapestListing = listings.reduce(
+            (min: any, item: any) => (item.price < min.price ? item : min),
+            listings[0]
+          );
+
+          const mlId = cheapestListing.item_id || cheapestListing.id;
+          const permalink = `https://articulo.mercadolibre.com.ar/MLA-${mlId.replace('MLA', '')}`;
+
+          return {
+            id: mlId,
+            name: p.name,
+            price: cheapestListing.price,
+            currency: cheapestListing.currency_id || 'ARS',
+            imageUrl: highResImage,
+            permalink: permalink,
+            isCatalog: false
+          };
+
+        } catch (itemError) {
+          console.error(`[API/SEARCH] Error resolviendo items para ${p.id}:`, itemError);
+          return {
+            id: p.id,
+            name: p.name,
+            price: fallbackPrice,
+            currency: fallbackCurrency,
+            imageUrl: highResImage,
+            permalink: fallbackPermalink,
+            isCatalog: true
+          };
+        }
+      })
+    );
+
+    // Filtramos posibles nulos (aunque nuestro catch asegura que siempre retorne el fallback)
+    const validResults = results.filter((r: any) => r.price > 0);
+
+    console.log(`[API/SEARCH] Mapeo de publicaciones completado. Retornando ${validResults.length} resultados.`);
+
+    // 4. Persistencia en Base de Datos (Top 5)
+    try {
+      await prisma.searchHistory.create({
+        data: { query, resultsCount: validResults.length }
       });
 
-      // Guardar/Actualizar productos encontrados (Upsert)
-      for (const p of results.slice(0, 5)) { // Guardamos los top 5 para estadísticas
-        await prisma.product.upsert({
+      for (const p of validResults.slice(0, 5)) {
+        const product = await prisma.product.upsert({
           where: { mlId: p.id },
-          update: { lastSeen: new Date() },
+          update: { 
+            lastSeen: new Date(),
+            price: p.price,
+            name: p.name,
+            imageUrl: p.imageUrl
+          },
           create: {
             mlId: p.id,
             name: p.name,
-            imageUrl: p.pictures?.[0]?.url || null
+            imageUrl: p.imageUrl,
+            price: p.price,
+            currency: p.currency
           }
         });
+
+        if (p.price > 0 && (prisma as any).priceHistory) {
+          await (prisma as any).priceHistory.create({
+            data: { productId: product.id, price: p.price }
+          });
+        }
       }
-      console.log('[API/SEARCH] Persistencia completada.');
     } catch (dbError) {
-      // No bloqueamos la respuesta si falla la DB, solo logueamos
-      console.error('[API/SEARCH] Error al persistir en DB:', dbError);
+      console.error('[API/SEARCH] Error de persistencia en DB:', dbError);
     }
 
-    console.log(`[API/SEARCH] === Fin de la búsqueda ===\n`);
-    
-    return NextResponse.json(searchData);
+    return NextResponse.json({ results: validResults });
+
   } catch (error: any) {
-    console.error('[API/SEARCH] Excepción inesperada atrapada:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error',
-      details: error.message 
-    }, { status: 500 });
+    console.error('[API/SEARCH] Error:', error);
+    return NextResponse.json({ error: 'Error interno del servidor', details: error.message }, { status: 500 });
   }
 }
