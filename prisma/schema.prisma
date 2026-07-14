@@ -8,6 +8,14 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model OAuthToken {
+  id           String   @id @default("mercado_libre")
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  updatedAt    DateTime @updatedAt
+}
+
 model SearchHistory {
   id           String   @id @default(cuid())
   query        String
@@ -15,10 +23,92 @@ model SearchHistory {
   resultsCount Int
 }
 
+// Categoría oficial de Mercado Libre (ej: MLA1648 = Computación)
+model Category {
+  id       String    @id @default(cuid())
+  mlId     String    @unique // ID oficial de ML, ej: "MLA1648"
+  name     String
+  products Product[]
+}
+
 model Product {
+  id                String          @id @default(cuid())
+  mlId              String          @unique
+  name              String
+  imageUrl          String?
+  price             Float?
+  currency          String?
+  availableQuantity Int?
+  condition         String?
+  sellerId          BigInt?
+  permalink         String?
+  lastSeen          DateTime        @default(now())
+  categoryId        String?
+  category          Category?       @relation(fields: [categoryId], references: [id])
+  priceHistory      PriceHistory[]
+  trendSnapshots    TrendSnapshot[]
+  trendScores       TrendScore[]
+
+  @@index([categoryId])
+}
+
+model PriceHistory {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  price     Float
+  timestamp DateTime @default(now())
+
+  @@index([productId])
+}
+
+// Registro temporal de apariciones (base de las métricas de tendencia).
+// Cada fila = una aparición del producto en una corrida de minería:
+// con qué keyword apareció y en qué posición del catálogo.
+// La "frecuencia de aparición" y la "permanencia" se derivan contando
+// snapshots por ventana de tiempo.
+model TrendSnapshot {
+  id           String   @id @default(cuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  keyword      String? // keyword de búsqueda con la que apareció
+  rankPosition Int? // posición en los resultados del catálogo (1 = primero)
+  capturedAt   DateTime @default(now())
+
+  @@index([productId])
+  @@index([capturedAt])
+  @@index([productId, capturedAt])
+}
+
+// Score de tendencia por producto (RF02): combinación ponderada de las
+// métricas temporales. `components` guarda el desglose de la fórmula
+// para transparencia académica y trazabilidad.
+model TrendScore {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  score      Float // 0 a 100
+  period     String // ventana analizada, ej: "7d"
+  components Json? // desglose: frecuencia, permanencia, ranking, precio
+  computedAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([computedAt])
+}
+
+// Registro histórico de disponibilidad de endpoints de Mercado Libre
+// Permite analizar cuándo se bloquean/desbloquean las APIs a lo largo del tiempo
+model EndpointHealthLog {
   id          String   @id @default(cuid())
-  mlId        String   @unique
-  name        String
-  imageUrl    String?
-  lastSeen    DateTime @default(now())
+  endpoint    String   // Ej: "/trends/MLA", "/sites/MLA/search", "/highlights/..."
+  label       String   // Nombre descriptivo del endpoint para UI
+  httpStatus  Int      // Código HTTP real (200, 403, 401, 429, etc.)
+  isAvailable Boolean  // true si 200-299, false en cualquier otro caso
+  errorMsg    String?  // Mensaje de error si el endpoint está bloqueado
+  latencyMs   Int?     // Tiempo de respuesta en ms (para detectar throttling)
+  timestamp   DateTime @default(now())
+
+  @@index([endpoint])
+  @@index([timestamp])
+  @@index([endpoint, timestamp])
 }

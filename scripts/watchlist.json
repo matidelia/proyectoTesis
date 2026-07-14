@@ -1,0 +1,146 @@
+{
+  "description": "Lista fija de productos a monitorear diariamente para la tesis",
+  "lastUpdated": "2026-05-21T23:42:29.880Z",
+  "products": [
+    {
+      "label": "Notebook HP",
+      "catalogId": "MLA25188648",
+      "name": "Notebook HP Notebook HP",
+      "query": "notebook hp",
+      "category": "MLA1648"
+    },
+    {
+      "label": "Samsung Galaxy A54",
+      "catalogId": "MLA22826262",
+      "name": "Samsung Galaxy A54 5g",
+      "query": "samsung galaxy a54",
+      "category": "MLA1051"
+    },
+    {
+      "label": "iPhone 15",
+      "catalogId": "MLA27172674",
+      "name": "Apple iPhone 15 (512 GB) - Amarillo",
+      "query": "iphone 15 apple",
+      "category": "MLA1051"
+    },
+    {
+      "label": "Celular Motorola Moto G",
+      "catalogId": "MLA21294254",
+      "name": "Smartwatch Motorola Moto Motorola",
+      "query": "motorola moto g",
+      "category": "MLA1051"
+    },
+    {
+      "label": "Smart TV 50\" Samsung",
+      "catalogId": "MLA21788043",
+      "name": "Tv Samsung Smart Tv 50 Uhd 4k Un50au7090gxpe",
+      "query": "smart tv 50 samsung",
+      "category": "MLA1000"
+    },
+    {
+      "label": "Smart TV 32\" LG",
+      "catalogId": "MLA19475850",
+      "name": "Smart TV de 32\" Asano Smart Tv 32' con pantalla LED HD",
+      "query": "smart tv 32 lg",
+      "category": "MLA1000"
+    },
+    {
+      "label": "Microondas BGH Quick",
+      "catalogId": "MLA19074878",
+      "name": "Microondas BGH PNH048670",
+      "query": "microondas bgh",
+      "category": "MLA1574"
+    },
+    {
+      "label": "Pava Eléctrica Liliana",
+      "catalogId": "MLA35837155",
+      "name": "Pava eléctrica PAVA ELECTRICA Pava Electrica",
+      "query": "pava electrica liliana",
+      "category": "MLA1574"
+    },
+    {
+      "label": "Nintendo Switch OLED",
+      "catalogId": "MLA53207886",
+      "name": "Nintendo Nintendo Switch OLED Nintendo Switch Oled neon OLED Switch OLED",
+      "query": "nintendo switch oled",
+      "category": "MLA1000"
+    },
+    {
+      "label": "Café Dolca Soluble",
+      "catalogId": "MLA20018623",
+      "name": "Frasco Cafe dolca suave 100g Soluble nescafe",
+      "query": "cafe dolca",
+      "category": "MLA1403"
+    },
+    {
+      "label": "Aceite Girasol Natura",
+      "catalogId": "MLA24559457",
+      "name": "Aceite Girasol Natura Spray 120gr",
+      "query": "aceite girasol natura",
+      "category": "MLA1403"
+    },
+    {
+      "label": "Arroz Largo Fino Gallo",
+      "catalogId": "MLA38689586",
+      "name": "Cañuelas Arroz Largo Fino 1kg",
+      "query": "arroz largo fino gallo",
+      "category": "MLA1403"
+    },
+    {
+      "label": "Jabón Líquido Ala",
+      "catalogId": "MLA19737686",
+      "name": "Jabón líquido Ala Jabón Líquido",
+      "query": "jabon liquido ala 3l",
+      "category": "MLA436069"
+    },
+    {
+      "label": "Lavandina Ayudín",
+      "catalogId": "MLA20866944",
+      "name": "Lavandina Ayudin Anti Splash 1lt",
+      "query": "lavandina ayudin",
+      "category": "MLA436069"
+    },
+    {
+      "label": "Detergente Magistral",
+      "catalogId": "MLA19533867",
+      "name": "Detergente Magistral Aloe Bio 750ml",
+      "query": "detergente magistral",
+      "category": "MLA436069"
+    },
+    {
+      "label": "Coca Cola Original 2.25L",
+      "catalogId": "MLA20759382",
+      "name": "Cartera coca cola Coca-Cola Coca Cola",
+      "query": "coca cola original 2.25",
+      "category": "MLA1403"
+    },
+    {
+      "label": "PlayStation 5",
+      "catalogId": "MLA47801395",
+      "name": "Playstation 5 Pro Playstation 5 Pro Sony 2024",
+      "query": "playstation 5 sony",
+      "category": "MLA1000"
+    },
+    {
+      "label": "Cafetera Nespresso",
+      "catalogId": "MLA35742977",
+      "name": "Cafetera Nespresso Nespresso",
+      "query": "cafetera nespresso",
+      "category": "MLA1574"
+    },
+    {
+      "label": "Monitor PC 24\" Samsung",
+      "catalogId": "MLA46516989",
+      "name": "Monitor Samsung con pantalla de 24\"",
+      "query": "monitor samsung 24",
+      "category": "MLA1648"
+    },
+    {
+      "label": "Auriculares Xiaomi Redmi",
+      "catalogId": "MLA45929037",
+      "name": "Auriculares Xiaomi Redmi REDMI BUDS 6",
+      "query": "xiaomi redmi buds",
+      "category": "MLA1000"
+    }
+  ]
+}
