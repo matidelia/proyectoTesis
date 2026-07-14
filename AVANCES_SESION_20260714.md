@@ -91,6 +91,14 @@ Requerimientos cuya redacción actual NO coincide con la implementación real. C
 7. Decisiones abiertas: CSV (RF06) sí/no, alertas (HU02) sí/no, justificación del buscador en vivo.
 8. Limpieza final del docx: nota roja inicial afuera, texto rojo a negro, wireframes propios.
 
+## 🔚 Cierre de sesión (estado final)
+
+- La sesión terminó con el sistema operativo degradado (handle zombi en el docx + filesystem lento). **Primer paso de la próxima sesión: REINICIAR LA PC antes que nada.**
+- Todo el trabajo del día está commiteado en git (working tree limpio). Nada pendiente de guardar.
+- Los diagramas definitivos (estilo simple) están en `diagramas/` — solo falta reinsertarlos en el docx tras el reinicio.
+- Las propuestas de redacción de RNF02/RNF03/RNF05/HU05 (sección anterior) quedaron listas para copiar al documento.
+- La minería automática queda corriendo sola 3x/día: cada día que pasa el dataset y los scores mejoran sin intervención.
+
 ## Estado de archivos clave
 
 | Archivo | Estado |
