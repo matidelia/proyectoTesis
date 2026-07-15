@@ -90,6 +90,14 @@ Requerimientos cuya redacción actual NO coincide con la implementación real. C
 6. Demo: capturas (minería, Supabase, endpoint JSON, dashboard con score).
 7. Decisiones abiertas: CSV (RF06) sí/no, alertas (HU02) sí/no, justificación del buscador en vivo.
 8. Limpieza final del docx: nota roja inicial afuera, texto rojo a negro, wireframes propios.
+9. **Actualizar Render (paso a paso, en este orden)**:
+   - (a) Tras el reinicio: `npm run build` local para verificar que el código nuevo compila.
+   - (b) Solo si el build pasa: `git push` → Render auto-despliega el dashboard nuevo (local está 7 commits ahead de `origin/main`).
+   - Contexto: Render solo hostea la app web; la minería corre en la PC local vía Task Scheduler. El schema nuevo en Supabase es aditivo, así que la app vieja de Render sigue funcionando mientras tanto — sin apuro.
+10. **Evaluar migrar la minería a GitHub Actions (schedule 3x/día, gratis)**:
+   - Elimina la dependencia de la PC prendida (la debilidad que causó la pausa de Supabase en mayo-julio).
+   - Requiere: workflow YAML con cron + pasar DATABASE_URL/DIRECT_URL/ML_APP_ID/ML_CLIENT_SECRET a GitHub Secrets (~1 hora).
+   - Argumento de disponibilidad para la defensa: recolección en la nube vs. "corre en mi notebook".
 
 ## 🔚 Cierre de sesión (estado final)
 
