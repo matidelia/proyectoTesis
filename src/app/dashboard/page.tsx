@@ -4,6 +4,7 @@ import Link from 'next/link';
 import PriceChartClient from '@/components/PriceChartClient';
 import TrendsDashboard from '@/components/TrendsDashboard';
 import EndpointHealthDashboard from '@/components/EndpointHealthDashboard';
+import TrendScoreTable from '@/components/TrendScoreTable';
 
 export const dynamic = 'force-dynamic';
 
@@ -145,6 +146,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: an
             subtitle="Palabras clave más buscadas ahora en Mercado Libre Argentina, por categoría."
           />
           <TrendsDashboard />
+        </section>
+
+        {/* ── SECCIÓN 2b: Ranking por Score de Tendencia (RF02/RF03) ── */}
+        <section style={{ marginTop: '2.5rem' }}>
+          <SectionTitle
+            icon="🏆"
+            title="Productos en Tendencia — Score"
+            subtitle="Ranking por indicador compuesto: frecuencia de aparición, permanencia, posición en catálogo y estabilidad de precio."
+          />
+          <TrendScoreTable />
         </section>
 
         {/* ── SECCIÓN 3: Gráfico de Precios ── */}
