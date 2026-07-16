@@ -36,8 +36,21 @@ const ENDPOINTS_TO_PROBE = [
   {
     key: '/products/{id}/items',
     label: 'Items de Producto de Catálogo',
-    // MLA2783207734 = Notebook Acer (ya verificado en nuestra DB con stock activo)
+    // URL dinámica: usa el producto de catálogo minado más recientemente
+    // (su permalink contiene el id de catálogo y tiene oferta ganadora fresca).
+    // Fallback si no hay productos con permalink en la DB.
     url: 'https://api.mercadolibre.com/products/MLA2783207734/items?limit=1',
+    dynamicUrl: async () => {
+      const p = await prisma.product.findFirst({
+        where: { permalink: { not: null } },
+        orderBy: { lastSeen: 'desc' },
+        select: { permalink: true },
+      });
+      const catalogId = p?.permalink?.split('/p/')[1];
+      return catalogId
+        ? `https://api.mercadolibre.com/products/${catalogId}/items?limit=1`
+        : null;
+    },
     useAuth: true,
   },
   {
@@ -117,12 +130,22 @@ async function probeEndpoints(verbose = true) {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
+    // Resolver URL dinámica si el endpoint la define (fallback a la fija)
+    let probeUrl = ep.url;
+    if (ep.dynamicUrl) {
+      try {
+        probeUrl = (await ep.dynamicUrl()) || ep.url;
+      } catch {
+        probeUrl = ep.url;
+      }
+    }
+
     const start = Date.now();
     let httpStatus = 0;
     let errorMsg = null;
 
     try {
-      const res = await fetch(ep.url, { headers });
+      const res = await fetch(probeUrl, { headers });
       httpStatus = res.status;
       const latencyMs = Date.now() - start;
       const isAvailable = res.status >= 200 && res.status < 300;

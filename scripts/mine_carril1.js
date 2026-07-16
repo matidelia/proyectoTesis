@@ -242,20 +242,21 @@ async function mine() {
   console.log('║   MINERÍA CARRIL 1 - PROTOCOLO HUMANO v2        ║');
   console.log('╚══════════════════════════════════════════════════╝\n');
 
-  // PASO 0: Probe de salud de endpoints (loguea en DB)
-  console.log('🩺 Ejecutando probe de salud de endpoints...');
-  const probeResults = await probeEndpoints(false); // silent=true, solo guarda en DB
-  const available = probeResults.filter(r => r.isAvailable).length;
-  const blocked = probeResults.length - available;
-  console.log(`✓ Probe completado: ${available}/${probeResults.length} disponibles, ${blocked} bloqueados.\n`);
-
-  // PASO 1: Token OAuth2
+  // PASO 0: Token OAuth2 (PRIMERO: refresca si está vencido, así el probe
+  // no registra falsos 401 por token expirado)
   const token = await getToken();
   if (!token) {
     console.error('❌ No se encontró token OAuth2. Ejecuta primero el flujo de login.');
     return;
   }
   console.log('✓ Token OAuth2 activo.');
+
+  // PASO 1: Probe de salud de endpoints (loguea en DB con el token fresco)
+  console.log('🩺 Ejecutando probe de salud de endpoints...');
+  const probeResults = await probeEndpoints(false); // silent=true, solo guarda en DB
+  const available = probeResults.filter(r => r.isAvailable).length;
+  const blocked = probeResults.length - available;
+  console.log(`✓ Probe completado: ${available}/${probeResults.length} disponibles, ${blocked} bloqueados.\n`);
 
   const headers = { ...BROWSER_HEADERS, 'Authorization': `Bearer ${token}` };
 
