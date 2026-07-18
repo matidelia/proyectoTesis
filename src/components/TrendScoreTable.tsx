@@ -11,6 +11,9 @@ interface ScoreItem {
   category: string;
   categoryMlId: string | null;
   score: number;
+  previousScore: number | null;
+  scoreDelta: number | null;
+  growing: boolean;
   period: string;
   computedAt: string;
   variationPct: number | null;
@@ -18,7 +21,7 @@ interface ScoreItem {
 
 interface ScoresData {
   timestamp: string;
-  kpis: { detected: number; avgScore: number; topCategory: string };
+  kpis: { detected: number; avgScore: number; topCategory: string; growingCount: number };
   items: ScoreItem[];
 }
 
@@ -145,6 +148,7 @@ export default function TrendScoreTable() {
           { label: 'Productos con score', value: String(data.kpis.detected), color: '#00a650' },
           { label: 'Score promedio', value: String(data.kpis.avgScore), color: '#ffe600' },
           { label: 'Categoría top', value: data.kpis.topCategory, color: '#60a5fa' },
+          { label: '🔥 En crecimiento', value: String(data.kpis.growingCount), color: '#f97316' },
         ].map(kpi => (
           <div key={kpi.label} style={{
             flex: '1 1 150px', padding: '0.75rem 1rem',
@@ -218,6 +222,14 @@ export default function TrendScoreTable() {
                 <tr key={item.productId} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <td style={{ padding: '0.5rem', color: 'var(--text-secondary)' }}>{idx + 1}</td>
                   <td style={{ padding: '0.5rem', maxWidth: 320 }}>
+                    {item.growing && (
+                      <span
+                        title={`En crecimiento: score +${item.scoreDelta} vs. cálculo anterior (${item.previousScore})`}
+                        style={{ marginRight: '0.35rem', cursor: 'help' }}
+                      >
+                        🔥
+                      </span>
+                    )}
                     {item.permalink ? (
                       <a href={item.permalink} target="_blank" rel="noopener noreferrer"
                          style={{ color: '#fff', textDecoration: 'none' }}>
@@ -274,7 +286,9 @@ export default function TrendScoreTable() {
 
       <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '0.75rem', marginBottom: 0 }}>
         Score de tendencia (0-100) = 35% frecuencia de aparición + 25% permanencia + 20% ranking de catálogo
-        + 20% estabilidad de precio, sobre ventana de {data.items[0]?.period ?? '7d'}. Actualizado: {new Date(data.timestamp).toLocaleString('es-AR')}.
+        + 20% estabilidad de precio, sobre ventana de {data.items[0]?.period ?? '7d'}.
+        &nbsp;🔥 = alerta de crecimiento: el score subió al menos 5 puntos respecto del cálculo anterior (HU02).
+        Actualizado: {new Date(data.timestamp).toLocaleString('es-AR')}.
       </p>
     </div>
   );

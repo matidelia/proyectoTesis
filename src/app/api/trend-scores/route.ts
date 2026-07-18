@@ -20,14 +20,21 @@ export async function GET() {
       },
     });
 
-    // Quedarse con el score más reciente de cada producto
-    const latestByProduct = new Map<string, (typeof scores)[number]>();
+    // Últimos DOS scores de cada producto (el actual y el anterior,
+    // para detectar crecimiento — HU02)
+    const historyByProduct = new Map<string, (typeof scores)[number][]>();
     for (const s of scores) {
-      if (!latestByProduct.has(s.productId)) latestByProduct.set(s.productId, s);
+      const arr = historyByProduct.get(s.productId) ?? [];
+      if (arr.length < 2) {
+        arr.push(s);
+        historyByProduct.set(s.productId, arr);
+      }
     }
 
-    const items = [...latestByProduct.values()]
-      .map((s) => {
+    const GROWTH_THRESHOLD = 5; // puntos de score para considerar "en crecimiento"
+
+    const items = [...historyByProduct.values()]
+      .map(([s, prev]) => {
         // Variación % de precio dentro de la ventana del score (ej: "7d")
         const windowDays = parseInt(s.period) || 7;
         const since = new Date(s.computedAt.getTime() - windowDays * 86400000);
@@ -45,6 +52,15 @@ export async function GET() {
             100;
         }
 
+        // Alerta de crecimiento (HU02): el score subió >= umbral vs. el
+        // cálculo anterior
+        const previousScore = prev ? prev.score : null;
+        const scoreDelta =
+          previousScore === null
+            ? null
+            : Math.round((s.score - previousScore) * 10) / 10;
+        const growing = scoreDelta !== null && scoreDelta >= GROWTH_THRESHOLD;
+
         return {
           productId: s.productId,
           name: s.product.name,
@@ -54,6 +70,9 @@ export async function GET() {
           category: s.product.category?.name ?? 'Sin categoría',
           categoryMlId: s.product.category?.mlId ?? null,
           score: s.score,
+          previousScore,
+          scoreDelta,
+          growing,
           period: s.period,
           computedAt: s.computedAt.toISOString(),
           variationPct:
@@ -77,9 +96,11 @@ export async function GET() {
       Object.entries(countByCategory).sort((a, b) => b[1] - a[1])[0]?.[0] ??
       '—';
 
+    const growingCount = items.filter((i) => i.growing).length;
+
     return NextResponse.json({
       timestamp: new Date().toISOString(),
-      kpis: { detected: items.length, avgScore, topCategory },
+      kpis: { detected: items.length, avgScore, topCategory, growingCount },
       items,
     });
   } catch (error: any) {
