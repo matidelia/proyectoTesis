@@ -1,0 +1,67 @@
+# Minería automática en la nube (GitHub Actions)
+# ==============================================
+# Reemplaza la dependencia de la PC local: corre 3 veces al día aunque
+# la notebook esté apagada. Cadena completa: minería → score → backup.
+#
+# Requiere 4 secrets en GitHub (Settings → Secrets and variables → Actions):
+#   DATABASE_URL     → URL del POOLER de Supabase (aws-1-sa-east-1.pooler...)
+#   DIRECT_URL       → misma URL del pooler
+#   ML_APP_ID        → app de Mercado Libre
+#   ML_CLIENT_SECRET → secret de la app
+#
+# IMPORTANTE: usar la URL del pooler (IPv4). Los runners de GitHub no tienen
+# IPv6, igual que Render — la conexión directa db.*.supabase.co NO funciona.
+
+name: Mineria de tendencias
+
+on:
+  schedule:
+    # Cron en UTC. Argentina = UTC-3:
+    - cron: "0 11 * * *"   # 08:00 ART
+    - cron: "0 19 * * *"   # 16:00 ART
+    - cron: "30 2 * * *"   # 23:30 ART
+  workflow_dispatch: {}     # permite dispararla a mano para probar
+
+concurrency:
+  group: mineria
+  cancel-in-progress: false
+
+jobs:
+  minar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
+      ML_APP_ID: ${{ secrets.ML_APP_ID }}
+      ML_CLIENT_SECRET: ${{ secrets.ML_CLIENT_SECRET }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias (incluye prisma generate)
+        run: npm ci
+
+      - name: Minería Carril 1 (protocolo humano)
+        run: node scripts/mine_carril1.js
+
+      - name: Calcular scores de tendencia (RF02)
+        run: node scripts/compute_trend_scores.js --days=7
+
+      - name: Backup local de la base (RNF04)
+        run: node scripts/backup_db.js
+
+      - name: Publicar backup como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-db-${{ github.run_id }}
+          path: backups/db/*.json
+          retention-days: 30
+          if-no-files-found: warn
