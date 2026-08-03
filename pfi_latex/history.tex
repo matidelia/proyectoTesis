@@ -1,0 +1,47 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+% Para tablas complejas
+\usepackage{multicol,multirow}
+\usepackage{array,longtable}
+% automatic math mode, centered
+\newcolumntype{C}{>{\(}c<{\)}}
+\newcolumntype{R}{>{\(}r<{\)}}
+\newcolumntype{L}{>{\(}l<{\)}}
+
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\allowdisplaybreaks % Para que el align no te pida %
+\usepackage[bb=boondox]{mathalfa}
+
+\begin{document}
+
+\title{(Pseudo) Bit\'acora de la PFI}
+\author{Apellido, Nombre}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+    La idea de este documento es tener un espacio donde documentar algunos resultados valiosos, cambios importantes, decisiones tomadas y el por qu\'e de las mismas.
+    \emph{Nota: al compilar este archivo, al guardar los cambios en VS Code les va a aparecer un error si no tienen bibliografía. Pueden ignorarlo. Si hay un error, VS Code se los va a subrayar en rojo dentro del archivo tex. Esto puede derivar en que no se vea el índice correctamente. Para solucionarlo, ejecutar dos veces consecutivas el comando \texttt{pdflatex history}}.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\input{history/considerations} \newpage
+\input{history/01} \newpage
+\input{history/02}
+
+\end{document}

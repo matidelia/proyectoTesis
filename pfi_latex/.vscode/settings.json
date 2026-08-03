@@ -1,0 +1,28 @@
+{
+    "latex-workshop.latex.tools": [
+      {
+        "name": "pdflatex",
+        "command": "pdflatex",
+        "args": [
+          "-interaction=nonstopmode",
+          "-file-line-error",
+          "-synctex=1",
+          "%DOC%"
+        ]
+      },
+      {
+        "name": "biber",
+        "command": "biber",
+        "args": ["%DOCFILE%"]
+      }
+    ],
+    "latex-workshop.latex.recipes": [
+      {
+        "name": "pdflatex -> biber -> pdflatex",
+        "tools": ["pdflatex", "biber", "pdflatex"]
+      }
+    ],
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.latex.recipe.default": "pdflatex -> biber -> pdflatex",
+    "editor.renderWhitespace": "all"
+}

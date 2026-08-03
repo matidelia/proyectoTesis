@@ -1,0 +1,297 @@
+%oneside para una impresi\'on simple.
+%titlepage define que vamos a tener una portada.
+%openany para que los cap\'{\i}tulos empiecen en cualquier p\'agina y no s\'olo las impares.
+%final es para compilar a modo normal. Cambiar a draft para que se compile en modo borrador. No se pone final dado que viene por defecto.
+\documentclass[a4paper, 12pt, oneside, titlepage, openany]{book}
+
+% Para el seccionado, debe colocarse al principio este package.
+\usepackage{titlesec}
+
+% Encoding + cmap (para obtener un mapeo UTF8 adecuado)
+\usepackage{cmap}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % Para poder copiar y pegar el texto desde un pdf
+\usepackage{lmodern}
+
+\usepackage[backend=biber, style=iso-authoryear, language=spanish]{biblatex}
+\DeclareUnicodeCharacter{202F}{~} % Para reemplazar el caracter 202F por un espacio
+\bibliography{biblio.bib}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+% Esto último es para la cantidad de niveles en el índice
+
+\DeclareFieldFormat{urldate}{\mkbibbrackets{consultado\space#1}}
+
+% Para colores
+\usepackage[usenames,dvipsnames]{xcolor}
+
+% Para flotar figuras y tablas
+\usepackage{framed}
+
+% Para asegurar que las figuras y tablas queden en la secci\'on correspondiente
+\usepackage[section,above,below]{placeins}
+
+% Para microtipograf\'{\i}a
+\usepackage{microtype}
+
+% Permite tama\~no de fuentes arbitrarios
+\usepackage{anyfontsize}
+
+% Itemize
+\usepackage{enumitem}
+\newlist{Properties}{enumerate}{2}
+\setlist[Properties]{label=Propiedad \arabic*.,itemindent=*}
+\renewcommand{\labelitemii}{\textasteriskcentered}
+\renewcommand{\labelitemiii}{-}
+
+\usepackage{lastpage} % Para poder contar las p\'aginas, habilita el \pageref command.
+\usepackage{titleps} % Para la tabla de contenidos
+\usepackage{textcase}
+\usepackage{pdfpages}
+
+% \parbox[b] es para poner texto sobre el bottom
+\newpagestyle{ruled}{
+	\sethead{\includegraphics[width=3.7cm]{./images/UADE_LARGE}}
+			{\parbox[b]{0.43\textwidth}{\raggedright\MakeUppercase{Sistema de Detección de Productos Tendencia en Mercado Libre}}} % El parámetro 0.43 puede modificarse para tener más espacio en la columan del medio, y que así el título de la tesis entre mejor.
+			{
+				\raisebox{1.5ex}{%
+					\parbox[b]{0.26\textwidth}{\raggedleft
+					\begin{tabular}{r}
+						D'Elia, Matías Nicolás
+					\end{tabular}
+					}
+				}
+			}\headrule{}
+	\setfoot[][][P\'agina \thepage\ de~\pageref*{LastPage}]{}{}{P\'agina \thepage\ de~\pageref*{LastPage}}\footrule{}
+	}
+\pagestyle{ruled}
+% Cambiar el color de la linea divisora:
+% \renewcommand\makeheadrule{\color{cyan}\rule[-.3\baselineskip]{\linewidth}{0.4pt}}
+% \renewcommand\makefootrule{\color{cyan}\rule[\baselineskip]{\linewidth}{0.4pt}}
+
+% Para que la primera página de cada capítulo no sea tratada como especial
+\makeatletter
+\let\ps@plain\ps@ruled
+\makeatother
+
+% M\'argenes
+\usepackage{vmargin}
+%\setmarginsrb{leftmargin}{topmargin}{rightmargin}{bottommargin}%
+%         {headheight}{headsep}{footheight}{footskip}           %
+%Lo ideal ser\'{\i}a lo siguiente
+%\setmarginsrb{2.7cm}{4cm}{2.3cm}{2.5cm}{2cm}{0.5cm}{2cm}{0.5cm}
+%Pero estos valores se suman, por lo que en realidad ir\'{\i}a asi:
+\setmarginsrb{2.7cm}{2cm}{2.3cm}{1.5cm}{0cm}{2cm}{0cm}{1cm}
+% M\'argenes, pero otra opci\'on mas acotada
+% \usepackage[top=4cm,bottom=2.5cm,left=2.7cm,right=2.3cm]{geometry}
+
+% Seccionado. El par\'ametro left incrementa el margen, lo setteo en 0.
+%\titlespacing*{<command>}{<left>}{<before-sep>}{<after-sep>}
+% \titlespacing{\section}{0pt}{12pt}{6pt}
+%\titlespacing{\subsection}{0pt}{*0}{*0}
+%\titlespacing{\subsubsection}{0pt}{*0}{*0}
+
+%Tama\~no de letra de cap\'{\i}tulo y secciones
+%\newcommand{\chapfnt}{\fontsize{16}{19}}
+%\newcommand{\secfnt}{\fontsize{14}{17}}
+%\newcommand{\ssecfnt}{\fontsize{12}{14}}
+%\titleformat{\chapter}[display]
+%{\normalfont\chapfnt\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\chapfnt}
+%\titleformat{\section}
+%{\normalfont\secfnt\bfseries}{\thesection}{1em}{}
+%\titleformat{\subsection}
+%{\normalfont\ssecfnt\bfseries}{\thesubsection}{1em}{}
+
+% Se pide numeraci\'on de tablas en n\'umeros romanos
+\renewcommand{\thetable}{\thechapter.\Roman{table}}
+
+%Espaciado antes y despu\'es de una figura respecto del texto
+\setlength{\textfloatsep}{5pt}
+
+% Para notas
+\usepackage{todonotes}
+\setlength{\marginparwidth}{2cm} % El margen es muy estrecho. Esto es solo para solucionar un warning
+\newcommand{\Nico}[1]{\todo[color=green!30,inline]{\textbf{Nico:} #1}}
+\newcommand{\Fermat}[1]{\todo[color=green!30]{\textbf{Fermat:} #1}}
+
+%Espaciado entre referencias en la bibliograf\'{\i}a
+\usepackage{etoolbox}
+\patchcmd{\thebibliography}
+  {\settowidth}
+  {\setlength{\itemsep}{6pt}\settowidth}
+  {}{}
+\apptocmd{\thebibliography}
+  {\small}
+  {}{}
+
+\usepackage{pdfcomment}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{csquotes}
+\addto\captionsspanish{
+	\renewcommand{\contentsname}{\'Indice}
+	\renewcommand{\listfigurename}{Lista de Figuras}
+	\renewcommand{\listtablename}{Lista de Tablas}
+	\renewcommand{\tablename}{TABLA}
+}
+
+% Para que el primer parrafo de un cap\'{\i}tulo tenga identado.
+\usepackage{indentfirst}
+\setlength{\parindent}{36pt} %Tama\~no de la identaci\'on.
+
+% Para tablas complejas
+\usepackage{multicol,multirow}
+\usepackage{array,longtable}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+
+% Times New Roman para texto y matemáticas. Debe ir antes de los paquetes AMS.
+\usepackage{mathptmx}
+
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+
+\allowdisplaybreaks{} % Para que el align permita dividir entre p\'aginas si lo llega a necesitar.
+
+\usepackage{cancel}
+
+\newenvironment{example}[1][Ejemplo]{\begin{trivlist}
+	\item[\hspace{\labelsep} {\itshape{} #1}]}{\end{trivlist}}
+
+\newenvironment{examples}[1][Ejemplos]{\begin{trivlist}
+	\item[\hspace{\labelsep} {\itshape{} #1}]}{\end{trivlist}}
+
+\newenvironment{EstadoDelArte}
+    {\small\begin{center}
+    \bfseries{EstadoDelArte} \end{center}}
+
+\newenvironment{Enfoque metodologico}
+    {\small\begin{center}
+    \bfseries{Enfoque metodologico} \end{center}}
+
+\newenvironment{Cronograma}
+    {\small\begin{center}
+    \bfseries{Cronograma} \end{center}}
+
+\input{config/symbols}
+
+\usepackage[normalem]{ulem}
+
+\usepackage{setspace}
+\onehalfspacing
+
+% En UADE no existe la noción de capítulo en la tesis, por más que en LaTeX sí lo tratemos como tal.
+% Además nos piden que el tamaño de letra de lo que para nosotros es una sección, subsección y demás, sean del mismo tamaño.
+\titleformat{\chapter}
+  {\bfseries\fontsize{14pt}{14pt}\selectfont}
+  {\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{12pt}{6pt}
+
+\titleformat{\section}
+  {\bfseries\fontsize{14pt}{14pt}\selectfont}
+  {\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+
+\titleformat{\subsection}
+  {\bfseries\fontsize{14pt}{14pt}\selectfont}
+  {\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+
+\titleformat{\subsubsection}
+  {\bfseries\fontsize{14pt}{14pt}\selectfont}
+  {\thesubsubsection}{1em}{}
+\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+
+% -> Acá se empieza a modificar el tamaño de los títulos autogenerados, como los de las listas de figuras y tablas
+\usepackage{tocloft}
+\cftsetindents{table}{0em}{4em}
+
+\renewcommand{\cfttoctitlefont}{\bfseries\fontsize{14pt}{16pt}\selectfont}
+\setlength{\cftbeforetoctitleskip}{12pt}
+\setlength{\cftaftertoctitleskip}{6pt}
+
+% Fuente del título (14pt, negrita)
+\renewcommand{\cftloftitlefont}{\bfseries\fontsize{14pt}{16pt}\selectfont}
+\renewcommand{\cftlottitlefont}{\bfseries\fontsize{14pt}{16pt}\selectfont}
+
+% Espaciado antes y después del título
+\setlength{\cftbeforeloftitleskip}{12pt}
+\setlength{\cftafterloftitleskip}{6pt}
+\setlength{\cftbeforelottitleskip}{12pt}
+\setlength{\cftafterlottitleskip}{6pt}
+
+
+% IMPORTANTE: En la entrega final de UADE se debe dejar sin color. Usar el bloque comentado a continuación y comentar el bloque activo.
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=red
+}
+% Para la entrega final:
+%\usepackage[hidelinks]{hyperref}
+%\hypersetup{
+%    colorlinks=false,
+%    pdfborder={0 0 0},
+%    linktoc=none
+%}
+
+\DefineBibliographyStrings{spanish}{
+  online   = {En línea},
+  urlfrom  = {Disponible en:},
+  andothers = {\mkbibemph{et\addabbrvspace al\adddot}}
+}
+
+\begin{document}
+\clearpage
+\thispagestyle{empty}
+\includepdf[
+  pages=1,
+  scale=1.01, %1.17
+  offset=25mm -25mm,
+  pagecommand={\thispagestyle{empty}},
+  noautoscale,
+  trim=0 0 0 0,
+  clip
+]{cover/6d6a18e7-ec20-45ae-99ea-084094abeebe.pdf}
+\clearpage
+
+% Propuesta de Tema formalmente aprobada y firmada (Alumno: D'Elia, Matías —
+% Tutor: Salas, Joaquín). Se incrusta el PDF escaneado completo (7 páginas,
+% con firmas originales) en lugar de retranscribirlo.
+\clearpage
+\thispagestyle{empty}
+\includepdf[pages=-, pagecommand={\thispagestyle{empty}}]{cover/propuesta_tema.pdf}
+\clearpage
+
+	\input{chapters/title}
+	\input{chapters/acknowledgments}
+	\newpage
+	\input{chapters/summary}
+	\newpage
+	\input{chapters/abstract}
+	\newpage
+	\tableofcontents
+	\input{chapters/chapter01} % Marco Teórico
+	\input{chapters/chapter02} % Estado del Arte
+	\input{chapters/chapter03} % Requerimientos
+	\input{chapters/chapter04} % Mockups
+	\input{chapters/chapter05} % Competencias y Estrategia de Mercado
+	\input{chapters/chapter06} % User Research
+	\input{chapters/chapter07} % Demo - Avances de Implementación
+	\input{chapters/conclusion}
+
+	\addcontentsline{toc}{chapter}{Bibliograf\'{\i}a}
+	% Incluye tambien las referencias metodologicas no citadas narrativamente
+	% en el cuerpo del texto (Hernandez-Sampieri, Kitchenham, ML Developers).
+	\nocite{*}
+	\printbibliography{}
+
+	\appendix
+	% annex.tex ya incluye internamente schedule_of_activities, surveys e interviews
+	% mediante el comando \anexo{} (no deben inputearse por separado).
+	\input{chapters/appendix/annex}
+	\newpage
+	\listoffigures
+	\newpage
+	\listoftables
+\end{document}

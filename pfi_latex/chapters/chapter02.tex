@@ -1,0 +1,89 @@
+\chapter{Estado del Arte}\label{chapter02}
+
+\section{Relevamiento de principales aplicaciones en Argentina}
+
+A continuación se presenta un relevamiento de las principales aplicaciones y sitios web orientados a vendedores de Mercado Libre en Argentina, clasificados según su tipo y funcionalidad.
+
+\begin{table}[ht]
+	\centering
+	\caption{Relevamiento de principales aplicaciones en Argentina}
+	\label{tab:relevamiento}
+	\small
+	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{1.8cm} >{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{1.7cm} >{\raggedright\arraybackslash}p{2.1cm} X@{}}
+		\toprule
+		\textbf{Herramienta} & \textbf{Tipo} & \textbf{Funcionalidades principales} & \textbf{Público objetivo} & \textbf{Limitaciones} & \textbf{Diferencia con el proyecto} \\
+		\midrule
+		Real Trends & Todo en uno & Gestión de publicaciones, competencia, precios y respuestas automáticas. & Vendedores medianos y grandes. & Se orienta a operación y optimización de ventas existentes. & El proyecto se enfoca en detección temprana mediante históricos propios. \\
+		UpSeller ERP & ERP / multicanal & Inventario, publicaciones, pedidos, análisis competitivo y sincronización. & Empresas con operación multicanal. & Predomina la gestión operativa e inventario. & El proyecto prioriza análisis temporal de productos emergentes. \\
+		Administrado & Gestión integral & Ventas, stock, atención al cliente, facturación y métricas. & Vendedores que buscan centralizar cuentas. & No está centrado en forecasting ni señales tempranas. & La propuesta busca identificar oportunidades antes de su consolidación. \\
+		Ecomm-App & Analítica y gestión & Inventario, métricas de venta y mapas de actividad. & Vendedores en crecimiento. & Trabaja con métricas más retrospectivas. & El proyecto construye históricos para análisis evolutivo. \\
+		MercadoBot & Automatización & Respuestas automáticas, mensajería y alertas de stock. & Vendedores que priorizan atención al cliente. & No analiza tendencias de mercado. & La propuesta se orienta a inteligencia comercial predictiva. \\
+		Herramientas nativas de Mercado Libre & Panel interno & Métricas básicas, publicaciones y desempeño del vendedor. & Todos los vendedores. & Información limitada y principalmente descriptiva. & El proyecto agrega almacenamiento histórico y análisis temporal propio. \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+La brecha identificada se encuentra en que las soluciones relevadas se orientan principalmente a gestión, automatización, stock, atención al cliente o análisis de resultados ya ocurridos. En cambio, el presente proyecto busca cubrir un espacio más específico: la detección temprana de productos emergentes mediante histórico propio, análisis temporal y modelos supervisados.
+
+Esta brecha justifica el desarrollo de una plataforma propia capaz de detectar tempranamente productos emergentes mediante la recolección automatizada de datos vía API oficial de Mercado Libre, la construcción de un dataset histórico estructurado y el análisis temporal con modelos supervisados de aprendizaje automático.
+
+\subsection{Tabla comparativa de alternativas}
+
+Se compara la propuesta con herramientas y plataformas existentes que abordan problemas similares de detección de tendencias o seguimiento de precios.
+
+\begin{table}[ht]
+	\centering
+	\caption{Tabla comparativa de alternativas}
+	\label{tab:comparativa}
+	\small
+	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{2.7cm} >{\raggedright\arraybackslash}p{2.7cm} X@{}}
+		\toprule
+		\textbf{Herramienta} & \textbf{Enfoque} & \textbf{Tecnología/ Fuente} & \textbf{Limitación} & \textbf{Diferencial del proyecto} \\
+		\midrule
+		Google Trends & Tendencias de búsqueda general & Datos de búsqueda de Google & No vincula con precio ni disponibilidad real de productos & Usa señales directas del marketplace (precio, publicaciones, categoría) \\
+		Keepa / CamelCamelCamel & Histórico de precios (Amazon) & Scraping de Amazon & Sólo Amazon, no aplica a Mercado Libre ni analiza tendencia emergente & Enfocado en Mercado Libre Argentina con score de tendencia propio \\
+		Trendyol/ML Insights internos & Analítica interna de marketplace & Datos propios de la plataforma & No accesible para vendedores externos & Accesible a cualquier vendedor mediante API oficial pública \\
+		Sistema propuesto & Detección temprana de productos en tendencia & API oficial ML + PostgreSQL + modelos analíticos & Depende de límites de la API oficial & Combina histórico propio, score de tendencia y alertas tempranas \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\section{Antecedentes académicos y trabajos relacionados}
+
+Como parte del relevamiento bibliográfico, se analizaron distintos trabajos académicos relacionados con análisis predictivo, tendencias digitales y detección temprana de comportamiento de consumo en entornos de comercio electrónico. La incorporación de estos antecedentes resulta importante porque permiten fundamentar teóricamente la lógica utilizada dentro del proyecto y validar que el uso de señales tempranas, históricos temporales y modelos analíticos representa una línea de investigación actualmente utilizada dentro del área de inteligencia comercial y análisis de datos.
+
+Uno de los trabajos más relevantes analizados fue \emph{``Using Online Search Data to Forecast New Product Sales''} de \textcite{KulkarniKannanMoe2012}. Este paper plantea que los patrones de búsqueda online pueden utilizarse como indicadores tempranos capaces de anticipar el comportamiento futuro de determinados productos antes de que la tendencia se encuentre completamente consolidada. Lo más destacable del trabajo es que demuestra cómo ciertas señales digitales generadas por los usuarios pueden transformarse en variables predictivas útiles para detectar interés creciente dentro del mercado.
+
+Este enfoque guarda una relación directa con el objetivo principal del presente proyecto, ya que la plataforma propuesta busca precisamente identificar comportamientos emergentes mediante señales obtenidas desde Mercado Libre, como tendencias, frecuencia de aparición, evolución temporal y variaciones dentro del marketplace. Aunque el estudio se desarrolla sobre otro tipo de entorno digital, la lógica metodológica resulta totalmente aplicable al problema planteado, especialmente en lo relacionado con la utilización de datos tempranos como indicadores de posibles oportunidades comerciales futuras.
+
+Por otro lado, también se analizó el paper \emph{``A Machine Learning-Based Framework for Forecasting Sales of New Products with Short Life Cycles Using Deep Neural Networks''} de \textcite{ElalemMaierSeifert2023}. Este trabajo resultó relevante debido a que aborda un problema muy similar al del proyecto, cómo analizar y predecir el comportamiento de productos nuevos cuando todavía existe poca información histórica disponible.
+
+Uno de los aspectos más interesantes del paper es que no se limita únicamente al uso de redes neuronales profundas, sino que además compara distintos enfoques estadísticos y modelos de aprendizaje automático para evaluar cuál se adapta mejor a escenarios con históricos limitados. Los autores demuestran que, en determinados contextos, modelos tradicionales pueden incluso obtener mejores resultados que arquitecturas más complejas, lo cual aporta una visión metodológica más realista y sólida desde el punto de vista académico.
+
+Este trabajo resulta especialmente útil para el proyecto porque respalda la idea de comenzar inicialmente con métricas descriptivas y análisis temporal antes de avanzar hacia modelos supervisados más complejos. Además, aporta fundamentos concretos sobre cómo trabajar con productos emergentes o tendencias nuevas que todavía no poseen grandes volúmenes de información histórica acumulada, situación que representa uno de los principales desafíos dentro de plataformas de detección temprana de tendencias.
+
+\subsection*{Schaer, Kourentzes y Fildes (2019)}
+
+El trabajo de \textcite{SchaerKourentzesFildes2019}, vinculado con demand forecasting e información generada por usuarios en línea, resulta relevante porque analiza cómo incorporar señales digitales externas dentro de modelos de predicción de demanda. Este antecedente permite reforzar la idea de que los datos generados en entornos digitales pueden aportar valor predictivo cuando se los organiza y analiza temporalmente.
+
+La relación con el proyecto se encuentra en qué Mercado Libre funciona como una fuente de señales comerciales dinámicas. A través de variables como publicaciones, precios, categorías y frecuencia de aparición, es posible construir una base de información que no dependa únicamente de rankings instantáneos, sino de la evolución del comportamiento de mercado.
+
+El aporte metodológico de este antecedente es que permite trasladar el foco desde la venta ya ocurrida hacia señales previas de interés comercial. Para este proyecto, esa lógica se adapta al uso de variables observables en Mercado Libre, reemplazando el análisis de datos generales de búsqueda por registros temporales derivados de consultas oficiales, publicaciones, precios y categorías del marketplace.
+
+\subsection*{Lim, Arık, Loeff y Pfister (2021)}
+
+\textcite{LimArikLoeffPfister2021} presentan los Temporal Fusion Transformers como una arquitectura orientada a predicción de series temporales multi-horizonte e interpretable. Aunque el proyecto no contempla implementar esta arquitectura en su primera versión, el antecedente resulta útil porque muestra la importancia de combinar múltiples variables temporales para mejorar el análisis predictivo.
+
+Este trabajo se toma como respaldo para futuras extensiones del sistema, especialmente si el prototipo evoluciona hacia modelos de forecasting más complejos. En la etapa actual, su aporte principal es conceptual: confirma que la predicción temporal requiere históricos consistentes y variables bien definidas.
+
+Este antecedente no implica que el proyecto deba implementar Temporal Fusion Transformers en su primera versión, ya que requiere mayor volumen histórico y mayor complejidad técnica. Sin embargo, sí refuerza la decisión de diseñar desde el inicio una base temporal ordenada, con variables consistentes y preparadas para futuras extensiones predictivas.
+
+\subsection*{Salamai, Ageeli y El-kenawy (2022)}
+
+El trabajo de \textcite{SalamaiAgeeliElkenawy2022} aborda el uso de modelos basados en LSTM para analizar comportamientos temporales en comercio electrónico. Este tipo de arquitectura permite capturar dependencias de largo plazo y resulta relevante para comprender cómo pueden modelarse patrones de comportamiento cuando existe suficiente información histórica.
+
+En relación con el presente proyecto, este antecedente permite justificar la construcción de un dataset histórico propio como condición previa para cualquier modelo predictivo más avanzado. Sin una base temporal consistente, la aplicación de modelos supervisados o de aprendizaje profundo tendría un valor limitado.
+
+El vínculo con la propuesta se encuentra en que los modelos de aprendizaje profundo solo son aplicables cuando existe una secuencia histórica suficiente. Por eso, este antecedente no se utiliza como solución inmediata, sino como justificación académica de la necesidad de capturar datos de forma periódica y persistente antes de avanzar hacia modelos más complejos.
+
+En conjunto, estos trabajos académicos permiten reforzar conceptualmente el proyecto, ya que validan la importancia de utilizar señales digitales tempranas, históricos temporales y modelos analíticos como herramientas para anticipar comportamientos futuros dentro de ecosistemas de comercio electrónico. Asimismo, sirven como respaldo metodológico para la construcción de una plataforma orientada al análisis inteligente de productos emergentes utilizando información proveniente exclusivamente de la API oficial de Mercado Libre.
