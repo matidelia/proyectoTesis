@@ -1,0 +1,34 @@
+\chapter{Requerimientos}\label{chapter03}
+
+A continuación se detallan los requerimientos funcionales y no funcionales del sistema, junto con las historias de usuario que guían el desarrollo del producto.
+
+\section{Historias de Usuario}
+
+\begin{itemize}
+	\item HU01 -- Como vendedor, quiero visualizar un ranking de productos en tendencia por categoría para decidir qué publicar.
+	\item HU02 -- Como vendedor, quiero recibir una alerta cuando un producto de mi categoría empiece a crecer en tendencia.
+	\item HU03 -- Como comprador, quiero ver el histórico de precio de un producto antes de comprarlo.
+	\item HU04 -- Como usuario, quiero filtrar productos por categoría, rango de fecha y precio.
+	\item HU05 -- Como administrador, quiero configurar la frecuencia de captura de datos desde la API de Mercado Libre (implementada mediante tareas programadas del sistema operativo: tres corridas diarias parametrizables).
+\end{itemize}
+
+\section{Requerimientos Funcionales}
+
+\begin{enumerate}
+	\item RF01 -- El sistema debe capturar periódicamente datos de productos desde la API oficial de Mercado Libre.
+	\item RF02 -- El sistema debe calcular un score de tendencia por producto en base a variables temporales.
+	\item RF03 -- El sistema debe permitir filtrar y ordenar productos por categoría, score y variación de precio.
+	\item RF04 -- El sistema debe exponer los resultados mediante una API REST (Next.js API Routes).
+	\item RF05 -- El dashboard debe mostrar gráficos de evolución temporal por producto y categoría.
+	\item RF06 -- El sistema debe permitir exportar el listado de productos en tendencia (CSV).
+\end{enumerate}
+
+\section{Requerimientos No Funcionales}
+
+\begin{enumerate}
+	\item RNF01 -- La captura de datos no debe exceder los límites de rate-limit de la API oficial de Mercado Libre.
+	\item RNF02 -- El dashboard debe responder consultas en menos de 3 segundos sobre el dataset histórico. El modelo de datos incluye índices en PostgreSQL (productId, timestamp, categoryId) diseñados para sostener ese tiempo de respuesta a medida que el histórico escala.
+	\item RNF03 -- El backend debe poder desplegarse en plataformas cloud con escalado gestionado. Actualmente se despliega en Render con build reproducible (generación de Prisma Client en postinstall).
+	\item RNF04 -- Los datos históricos deben persistirse con respaldo (backup) periódico.
+	\item RNF05 -- Las credenciales y tokens de acceso (OAuth2 de Mercado Libre) deben gestionarse exclusivamente del lado servidor, sin exponerse nunca al cliente, con renovación automática de tokens.
+\end{enumerate}

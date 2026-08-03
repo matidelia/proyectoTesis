@@ -1,0 +1,42 @@
+\section*{Consideraciones generales}
+
+La siguiente es una lista de consideraciones muy generales dadas a lo largo de toda la tesis.
+\begin{itemize}
+    \item Cuando una sección tiene una sola subsección, agregar un asterísco al comando de subsecciones para que no aparezca en el índice.
+    \item Decidimos agregar en LaTeX Workshop (plugin de VS Code), el flag \texttt{latex-workshop.linting.chktex.enabled} que me indica recomendaciones sobre el LaTeX del proyecto.
+\end{itemize}
+
+Comentarios sobre LaTeX:
+\begin{itemize}
+    \item Las tablas usan [t] porque usualmente van en el top, para f\'{\i}sicamente encontrar m\'as r\'apido las tablas al pasar de p\'agina.
+    \item Puede que las comillas dobles produzcan warnings en LaTeX. Usamos las comillas inglesas en su lugar. De todas formas, por el idioma espa\~nol, primero van las comillas angulares, despu\'es las inglesas y despu\'es las simples (an\'alogo a llaves, corchetes y par\'entesis de matem\'aticas, solo que se priorizar\'{\i}an los par\'entesis en este caso).
+    \item En LaTeX las comillas se pueden reemplazar en ocasiones con \(\prime\). Decid\'{\i} hacer todo con \(\prime\). https://www.physicsread.com/latex-prime-symbol/.
+    \item En la tesis, el setminus se me ve\'{\i}a como un smallsetminus y lo reemplac\'e por un backslash. tex.stackexchange.com/questions/511328/ difference-between-commands-setminus-and-backslash (sin el espacio).
+    \item En la bibliograf\'{\i}a, se recomienda escribir el DOI como la URL completa. El campo URL se vuelve innecesario. Sin embargo, no es lo utilizado académicamente de manera profesional, por lo que el DOI se dejará en su forma más simple.
+    \item Se tratarán de actualizar lo m\'as posible aquellas referencias que sean de ArXiV.
+    \item Los autores en la bibliograf\'{\i}a son escritos como \emph{Apellido, Nombre} en lugar de \emph{Nombre Apellido} para evitar errores cuando un nombre es compuesto.
+    \item El orden de los autores es el orden en el que aparecen en las referencias bib encontradas en los art\'{\i}culos. Quiz\'as en algunos casos aparezcan en orden alfab\'etico para evitar rivalidad.
+    \item Del archivo \texttt{bib} se quitaron \emph{keywords}, \emph{abstract} y \emph{timestamp}, as\'{\i} como algunos hash y links de donde se obtuvieron para el archivo \texttt{bib}.
+    \item Algunos art\'{\i}culos, no todos, ten\'{\i}an su versi\'on \emph{InProceedings}, pero se prioriz\'o la versi\'on de art\'{\i}culo. Idem para el formato \emph{Book}.
+    \item En las referencias bib, las llaves tienen la utilidad de indicar en los nombres de los autores que lo indicado se trate como una unidad. Con el formato \emph{Apellido, Nombre}, no es necesario y se quitó.
+    \item Los caracteres acentuados que son v\'alidos en UTF-8 se escriben directamente en lugar de escapear ya que los compiladores modernos lo permiten, y hace menos verbosa la escritura.
+    \item Las dobles llaves en algunos t\'{\i}tulos de la bibliograf\'{\i}a sirven para preservar el formato exacto, incluidas las min\'usculas y may\'usculas.
+    \item Para indicar un rango de p\'aginas en el archivo \texttt{bib}, se podr\'{\i}a dejar espacios antes y despu\'es del gui\'on, usar un gui\'on especial o usar dos guiones. Uso dos guiones por ser el est\'andar.
+\end{itemize}
+
+Definiciones:
+\begin{itemize}
+    \item Acá van las Definiciones
+\end{itemize}
+
+Dudas:
+\begin{itemize}
+    \item Dudas que quieran tener a mano.
+\end{itemize}
+
+Formato solicitado por UADE:
+\begin{itemize}
+    \item Formato A4.
+    \item Times New Roman no existe en LaTeX, se consigue estirando otro tipo de fuente, simul\'andolo. Se opta por no cambiar el estilo, ya que UADE lo permite de todas formas.
+    \item Tama\~no normal del texto en 12pt.
+\end{itemize}

@@ -1,0 +1,21 @@
+\renewcommand{\appendixname}{Anexo}
+\renewcommand{\thechapter}{\Alph{chapter}}
+
+% Comando para iniciar la sección de anexos en el índice
+\newcommand{\initappendix}{%
+  \addcontentsline{toc}{chapter}{Anexo}%
+}
+
+% Comando para cada anexo individual
+\newcommand{\anexo}[1]{%
+  \refstepcounter{chapter}%
+  \chapter*{Anexo \thechapter: #1}%
+  \addcontentsline{toc}{section}{Anexo \thechapter: #1}%
+  \markboth{Anexo \thechapter: #1}{}%
+}
+
+\initappendix
+
+\input{chapters/appendix/schedule_of_activities.tex} % En las entregas que no son la entrega final, se debe tener al menos un anexo con el cronograma (Gantt)
+\input{chapters/appendix/surveys.tex} % En el caso de tener en cuestas tiene que haber una transcripción de los resultados
+\input{chapters/appendix/interviews.tex} % En el caso de tener entrevistas, se deben poner sus transcripciones
