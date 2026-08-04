@@ -56,9 +56,25 @@ Lo corregí con un `\setcounter{page}{2}` justo después de la portada (`main.te
 
 Por pedido tuyo, saqué el color de todos los enlaces (índice, citas, referencias cruzadas) — ahora se ven en negro, sin caja ni resaltado, pero siguen siendo clickeables igual que antes.
 
-## 11. Estructura final verificada
+## 12. Se sacan las capturas de Supabase y del endpoint JSON
+
+Saqué las Figuras 7.4 (tabla TrendScore en Supabase) y 7.5 (respuesta JSON cruda del endpoint `/api/trend-scores`) del capítulo de Demo. El capítulo queda con las 3 capturas más ilustrativas (dashboard completo, panel de disponibilidad de endpoints, ranking por score).
+
+## 13. Página de Conclusión — aclaración
+
+La sección "8 Conclusión" (con "Resumen de aportes" y "Trabajo futuro") **no es algo que yo haya inventado**: es una sección obligatoria de la estructura del template oficial de UADE para el PFI (todo trabajo final necesita una conclusión). Lo que sí es cierto es que el contenido todavía no está redactado — sigue con el placeholder "Completar." porque no corresponde escribir conclusiones de un trabajo que está al 50%. No inventé ni completé ningún contenido ahí.
+
+## 14. Bibliografía movida al final del documento
+
+Ahora va después de Anexos, Lista de Figuras y Lista de Tablas — es la última página del documento (58 de 58).
+
+## 15. Entrevistas — sigue pendiente, no las completé
+
+Ya habíamos hablado de esto antes: no puedo redactar yo las respuestas de las 3 entrevistas (2 vendedores + 1 comprador) haciéndolas pasar por reales, porque sería fabricar datos de investigación — eso constituye fraude académico, incluso si después se usa para "analizar" lo inventado. La guía completa de las 3 entrevistas ya está en el Anexo C, lista para usarse. Si las hacés (aunque sea de forma rápida, 20-30 min cada una) y me pasás las respuestas reales, con gusto redacto el análisis temático completo. La alternativa honesta, que ya está reflejada en el documento, es dejarlo pendiente tal cual está ahora.
+
+## 16. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
-- Página 1: portada. Páginas 2–3: Índice (con "Propuesta de Tema" como primera entrada, apunta a la página 4). Páginas 4–10: Propuesta de Tema (7 páginas). De ahí en más: capítulos 1 a 7 → Conclusión → Bibliografía → Anexos → Lista de Figuras → Lista de Tablas.
-- Total: 60 páginas. Numeración impresa y física sincronizadas en todo el documento. Enlaces en negro. Compilación limpia (`pdflatex` → `biber` → `pdflatex` ×2), sin errores, sin overfull hbox de contenido.
+- Página 1: portada. Páginas 2–3: Índice (con "Propuesta de Tema" como primera entrada, apunta a la página 4). Páginas 4–10: Propuesta de Tema (7 páginas). De ahí en más: capítulos 1 a 7 (Demo con 3 capturas) → Conclusión → Anexos → Lista de Figuras → Lista de Tablas → Bibliografía (última página).
+- Total: 58 páginas. Numeración impresa y física sincronizadas en todo el documento. Enlaces en negro. Compilación limpia (`pdflatex` → `biber` → `pdflatex` ×2), sin errores, sin overfull hbox de contenido.
