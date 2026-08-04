@@ -46,9 +46,19 @@ Las citas con `\textcite{}`/`\cite{}` en el cuerpo (por ejemplo, en Estado del A
 
 Moví el Índice para que vaya justo después de la portada (antes iba después de la Propuesta). Como la Propuesta de Tema es un PDF incrustado (no un capítulo LaTeX), no generaba entrada automática en el índice — le agregué una entrada manual ("Propuesta de Tema", apuntando a su primera página) para que quede listada igual que el resto de las secciones que arrancan justo después del índice.
 
-## 8. Estructura final verificada
+## 9. Bug de fondo encontrado y corregido: la numeración de página estaba desfasada en TODO el documento
+
+Cuando pediste que "Propuesta de Tema" en el índice lleve a la hoja 4, until entonces decía "3". Investigando encontré que no era un problema puntual de esa entrada: el entorno de la portada (`titlepage`) resetea internamente el contador de página a 0, lo que hacía que **todo número impreso en el documento** (índice, pies de página "Página X de Y") quedara corrido en -1 respecto de la posición física real dentro del PDF. Por eso también el pie de página decía "de 59" cuando el documento en realidad tiene 60 páginas.
+
+Lo corregí con un `\setcounter{page}{2}` justo después de la portada (`main.tex`), para que el número que se imprime en cada página coincida siempre con la página física que muestra cualquier lector de PDF. Ya no hace falta pensar "el índice dice X pero hay que sumarle 1" — ahora el número coincide 1 a 1. Verificado: "Marco Teórico" dice página 11 en el índice y la página física 11 tiene el capítulo, con pie de página "Página 11 de 60".
+
+## 10. Enlaces del documento en negro
+
+Por pedido tuyo, saqué el color de todos los enlaces (índice, citas, referencias cruzadas) — ahora se ven en negro, sin caja ni resaltado, pero siguen siendo clickeables igual que antes.
+
+## 11. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
-- Página 1: portada. Páginas 2–2: Índice (con "Propuesta de Tema" como primera entrada). Páginas 3–9: Propuesta de Tema (7 páginas). De ahí en más: capítulos 1 a 7 → Conclusión → Bibliografía → Anexos → Lista de Figuras → Lista de Tablas.
-- Total: 60 páginas. Compilación limpia (`pdflatex` → `biber` → `pdflatex` ×2), sin errores, sin overfull hbox de contenido.
+- Página 1: portada. Páginas 2–3: Índice (con "Propuesta de Tema" como primera entrada, apunta a la página 4). Páginas 4–10: Propuesta de Tema (7 páginas). De ahí en más: capítulos 1 a 7 → Conclusión → Bibliografía → Anexos → Lista de Figuras → Lista de Tablas.
+- Total: 60 páginas. Numeración impresa y física sincronizadas en todo el documento. Enlaces en negro. Compilación limpia (`pdflatex` → `biber` → `pdflatex` ×2), sin errores, sin overfull hbox de contenido.
