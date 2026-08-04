@@ -246,19 +246,24 @@
 % Portada interna: primera pagina del documento.
 	\input{chapters/title}
 
+% Indice inmediatamente despues de la portada.
+% Agradecimientos, Resumen y Abstract quedan pendientes para la entrega
+% final (no corresponden completos a este avance del 50%). Ver
+% COMENTARIOS_REVISION.md.
+\clearpage
+	\tableofcontents
+
 % Propuesta de Tema formalmente aprobada (Alumno: D'Elia, Matías — Tutor:
 % Salas, Joaquín). Se incrusta el PDF completo (7 páginas) inmediatamente
-% después de la portada.
+% después del indice, y se agrega como entrada del indice ya que es la
+% seccion que arranca justo despues de este.
 \clearpage
 \thispagestyle{empty}
+\addcontentsline{toc}{chapter}{Propuesta de Tema}
 {\hoffset=0pt\voffset=0pt
 \includepdf[pages=-, pagecommand={\thispagestyle{empty}}]{cover/propuesta_tema.pdf}}
 \clearpage
 
-% Agradecimientos, Resumen y Abstract quedan pendientes para la entrega
-% final (no corresponden completos a este avance del 50%). Ver
-% COMENTARIOS_REVISION.md.
-	\tableofcontents
 	\input{chapters/chapter01} % Marco Teórico
 	\input{chapters/chapter02} % Estado del Arte
 	\input{chapters/chapter03} % Requerimientos
