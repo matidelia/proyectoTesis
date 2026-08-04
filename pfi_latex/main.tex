@@ -221,19 +221,13 @@
 \setlength{\cftafterlottitleskip}{6pt}
 
 
-% IMPORTANTE: En la entrega final de UADE se debe dejar sin color. Usar el bloque comentado a continuación y comentar el bloque activo.
+% Enlaces (citas, indice, referencias cruzadas) en negro, sin resaltado
+% de color, pero siguen siendo clickeables.
 \usepackage{hyperref}
 \hypersetup{
-    colorlinks,
-    citecolor=red
+    colorlinks=false,
+    pdfborder={0 0 0}
 }
-% Para la entrega final:
-%\usepackage[hidelinks]{hyperref}
-%\hypersetup{
-%    colorlinks=false,
-%    pdfborder={0 0 0},
-%    linktoc=none
-%}
 
 \DefineBibliographyStrings{spanish}{
   online   = {En línea},
@@ -245,6 +239,13 @@
 
 % Portada interna: primera pagina del documento.
 	\input{chapters/title}
+
+% El entorno titlepage resetea el contador de pagina a 0 internamente,
+% lo que desincroniza la numeracion impresa (indice, pies de pagina)
+% respecto de la posicion fisica real dentro del PDF. Se corrige ac\'a
+% para que el numero de pagina impreso coincida siempre con la pagina
+% fisica que muestra cualquier lector de PDF.
+\setcounter{page}{2}
 
 % Indice inmediatamente despues de la portada.
 % Agradecimientos, Resumen y Abstract quedan pendientes para la entrega
@@ -259,6 +260,7 @@
 % seccion que arranca justo despues de este.
 \clearpage
 \thispagestyle{empty}
+\phantomsection
 \addcontentsline{toc}{chapter}{Propuesta de Tema}
 {\hoffset=0pt\voffset=0pt
 \includepdf[pages=-, pagecommand={\thispagestyle{empty}}]{cover/propuesta_tema.pdf}}
