@@ -76,7 +76,11 @@ Ya habíamos hablado de esto antes: no puedo redactar yo las respuestas de las 3
 
 Confirmaste que la sección "8 Conclusión" era estructura pedida por el template (no algo inventado), pero como el contenido todavía no está redactado, la sacamos del documento por ahora. `chapters/conclusion.tex` sigue existiendo en el proyecto para completarla en la entrega final. El índice ya no muestra la entrada "8 Conclusión" — el capítulo 7 (Demo) pasa directo a los Anexos.
 
-## 17. Estructura final verificada
+## 17. Cronograma de Actividades — rehecho con semántica de calendario
+
+Tenías razón en que se veía raro: las columnas 25/50/75/100% estaban armadas como "cuánto de esa tarea puntual está terminada", por eso casi todas las filas llegaban hasta el 100% (esas tareas ya están hechas) y muy pocas quedaban en el medio. Lo cambié para que las columnas representen los cuartos del **cronograma** del PFI completo: como estamos en el hito del 50%, ninguna fila tiene sombreado en 75% ni 100% (todavía no llegamos a esas etapas del calendario). Reconstruí qué actividades corresponden al primer cuarto vs al segundo en base al historial real de commits del repo (no inventé nada): lo que ya estaba armado en el commit inicial (definición del problema, arquitectura base, modelo de datos inicial, conexión a la API) quedó en el primer cuarto; lo que se sumó después (motor de score/RF02, métricas temporales, dashboard de tendencias, minería en la nube) quedó en el segundo cuarto. "Análisis de resultados" y "Redacción final" quedaron sin sombrear porque corresponden a la segunda mitad del proyecto y todavía no arrancaron.
+
+## 18. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
