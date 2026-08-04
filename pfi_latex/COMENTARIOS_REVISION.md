@@ -42,9 +42,13 @@ Pediste sacar las hojas 9, 10 y 11 (eran Agradecimientos, Resumen y Abstract, to
 
 Las citas con `\textcite{}`/`\cite{}` en el cuerpo (por ejemplo, en Estado del Arte) son enlaces internos reales: hacen click directo a la entrada correspondiente en la Bibliografía, gracias a la integración nativa de `biblatex` + `hyperref` que ya trae el template. Lo verifiqué abriendo el link embebido de la cita de Kulkarni et al. y confirmando que apunta a su entrada en la bibliografía. Ahora mismo se ven en rojo porque `hyperref` está en modo `colorlinks` (draft) — el propio `main.tex` ya tiene comentado el bloque para sacar el color en la entrega final (`\hypersetup{colorlinks=false, hidelinks}`), pero el link en sí sigue funcionando aunque el texto quede en negro.
 
-## 7. Estructura final verificada
+## 7. Pedido posterior: Índice inmediatamente después de la portada
+
+Moví el Índice para que vaya justo después de la portada (antes iba después de la Propuesta). Como la Propuesta de Tema es un PDF incrustado (no un capítulo LaTeX), no generaba entrada automática en el índice — le agregué una entrada manual ("Propuesta de Tema", apuntando a su primera página) para que quede listada igual que el resto de las secciones que arrancan justo después del índice.
+
+## 8. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
-- Página 9 en adelante: Índice → capítulos 1 a 7 → Conclusión → Bibliografía → Anexos → Lista de Figuras → Lista de Tablas.
+- Página 1: portada. Páginas 2–2: Índice (con "Propuesta de Tema" como primera entrada). Páginas 3–9: Propuesta de Tema (7 páginas). De ahí en más: capítulos 1 a 7 → Conclusión → Bibliografía → Anexos → Lista de Figuras → Lista de Tablas.
 - Total: 60 páginas. Compilación limpia (`pdflatex` → `biber` → `pdflatex` ×2), sin errores, sin overfull hbox de contenido.
