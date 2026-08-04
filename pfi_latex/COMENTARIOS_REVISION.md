@@ -34,9 +34,17 @@ Estas ya estaban así antes de mis cambios y no las completé porque no correspo
 
 Si corresponde completarlos para el 50%, avisame y los redactamos.
 
-## 5. Estructura final verificada
+## 5. Pedido posterior: sacar las páginas de Agradecimientos/Resumen/Abstract
+
+Pediste sacar las hojas 9, 10 y 11 (eran Agradecimientos, Resumen y Abstract, todas con solo "Completar." como contenido). Las saqué de `main.tex` — ahora después de la Propuesta (págs. 2–8) va directo el Índice. Los archivos `chapters/acknowledgments.tex`, `summary.tex` y `abstract.tex` siguen existiendo en el proyecto por si se completan para la entrega final, pero no se incluyen en este documento. El total bajó de 63 a 60 páginas.
+
+## 6. Citas en el texto — sí son clickeables
+
+Las citas con `\textcite{}`/`\cite{}` en el cuerpo (por ejemplo, en Estado del Arte) son enlaces internos reales: hacen click directo a la entrada correspondiente en la Bibliografía, gracias a la integración nativa de `biblatex` + `hyperref` que ya trae el template. Lo verifiqué abriendo el link embebido de la cita de Kulkarni et al. y confirmando que apunta a su entrada en la bibliografía. Ahora mismo se ven en rojo porque `hyperref` está en modo `colorlinks` (draft) — el propio `main.tex` ya tiene comentado el bloque para sacar el color en la entrega final (`\hypersetup{colorlinks=false, hidelinks}`), pero el link en sí sigue funcionando aunque el texto quede en negro.
+
+## 7. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
-- Página 9 en adelante: Agradecimientos → Resumen → Abstract → Índice → capítulos 1 a 7 → Conclusión → Bibliografía → Anexos → Lista de Figuras → Lista de Tablas.
-- Total: 63 páginas. Compilación limpia (`pdflatex` → `biber` → `pdflatex` ×2), sin errores, sin overfull hbox de contenido.
+- Página 9 en adelante: Índice → capítulos 1 a 7 → Conclusión → Bibliografía → Anexos → Lista de Figuras → Lista de Tablas.
+- Total: 60 páginas. Compilación limpia (`pdflatex` → `biber` → `pdflatex` ×2), sin errores, sin overfull hbox de contenido.
