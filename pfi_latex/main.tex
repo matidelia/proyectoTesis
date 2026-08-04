@@ -275,12 +275,6 @@
 	\input{chapters/chapter07} % Demo - Avances de Implementación
 	\input{chapters/conclusion}
 
-	\addcontentsline{toc}{chapter}{Bibliograf\'{\i}a}
-	% Incluye tambien las referencias metodologicas no citadas narrativamente
-	% en el cuerpo del texto (Hernandez-Sampieri, Kitchenham, ML Developers).
-	\nocite{*}
-	\printbibliography{}
-
 	\appendix
 	% annex.tex ya incluye internamente schedule_of_activities, surveys e interviews
 	% mediante el comando \anexo{} (no deben inputearse por separado).
@@ -289,4 +283,12 @@
 	\listoffigures
 	\newpage
 	\listoftables
+
+	% Bibliografia al final de todo el documento.
+	\newpage
+	\addcontentsline{toc}{chapter}{Bibliograf\'{\i}a}
+	% Incluye tambien las referencias metodologicas no citadas narrativamente
+	% en el cuerpo del texto (Hernandez-Sampieri, Kitchenham, ML Developers).
+	\nocite{*}
+	\printbibliography{}
 \end{document}
