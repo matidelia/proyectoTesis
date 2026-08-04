@@ -242,28 +242,19 @@
 }
 
 \begin{document}
-\clearpage
-\thispagestyle{empty}
-\includepdf[
-  pages=1,
-  scale=1.01, %1.17
-  offset=25mm -25mm,
-  pagecommand={\thispagestyle{empty}},
-  noautoscale,
-  trim=0 0 0 0,
-  clip
-]{cover/6d6a18e7-ec20-45ae-99ea-084094abeebe.pdf}
-\clearpage
 
-% Propuesta de Tema formalmente aprobada y firmada (Alumno: D'Elia, Matías —
-% Tutor: Salas, Joaquín). Se incrusta el PDF escaneado completo (7 páginas,
-% con firmas originales) en lugar de retranscribirlo.
-\clearpage
-\thispagestyle{empty}
-\includepdf[pages=-, pagecommand={\thispagestyle{empty}}]{cover/propuesta_tema.pdf}
-\clearpage
-
+% Portada interna: primera pagina del documento.
 	\input{chapters/title}
+
+% Propuesta de Tema formalmente aprobada (Alumno: D'Elia, Matías — Tutor:
+% Salas, Joaquín). Se incrusta el PDF completo (7 páginas) inmediatamente
+% después de la portada.
+\clearpage
+\thispagestyle{empty}
+{\hoffset=0pt\voffset=0pt
+\includepdf[pages=-, pagecommand={\thispagestyle{empty}}]{cover/propuesta_tema.pdf}}
+\clearpage
+
 	\input{chapters/acknowledgments}
 	\newpage
 	\input{chapters/summary}
