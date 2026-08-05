@@ -100,7 +100,20 @@ Revisé la carpeta `UADE_PFI_Template-develop` que tenés en Descargas (es la mi
 - El template sugiere una estructura alternativa de capítulos (Introducción → Antecedentes → Descripción → Metodología → Conclusión), distinta a la que ya tenemos armada (7 capítulos por tema). Es una sugerencia opcional, no obligatoria ("aquí se propone una organización típica"), así que no reestructuré nada — si querés migrar a esa organización más adelante, decime.
 - De paso, encontré en el `main.tex` del template la solución oficial al mismo bug de recorte de margen que ya había encontrado y arreglado para la Propuesta de Tema: el template incluye su propia carátula oficial con `offset=25mm -25mm` y `clip` para compensar exactamente el mismo corrimiento por los márgenes del documento. Confirma que el fix que ya apliqué (neutralizar `\hoffset`/`\voffset` alrededor del `\includepdf`) atacaba el problema correcto.
 
-## 21. Estructura final verificada
+## 21. Chequeo final antes de entregar
+
+Pasada completa de control de calidad sobre el documento compilado:
+
+- **Compilación**: `pdflatex` → `biber` → `pdflatex` ×2 desde cero (borrando todos los auxiliares), 0 errores, 0 warnings de biber, 0 "Overfull \hbox/\vbox" de contenido.
+- **Referencias**: 0 citas sin resolver, 0 referencias cruzadas rotas (`\ref`/`\label`), 0 "undefined" en el log.
+- **Placeholders**: el único texto "Completar." que queda en el proyecto está en los 4 archivos que main.tex ya excluye a propósito (Resumen, Abstract, Agradecimientos, Conclusión) — no aparece en el PDF compilado. Sin restos del contenido de ejemplo original del template (física cuántica, Curry/Haskell, etc.).
+- **Imágenes**: las 13 figuras referenciadas en el documento existen todas en disco, ninguna rota.
+- **Bibliografía**: 8 referencias reales, sin campos `note` pendientes.
+- **Revisión visual**: releí página por página los puntos críticos (portada, índice, propuesta completa, requerimientos, mockups, FODA, capturas de demo, entrevistas, cronograma, bibliografía) — todo bien centrado, sin cortes ni saltos de página feos.
+
+Estado: 61 páginas, listo para revisión tuya. Lo único que falta antes de entregar es tu lectura final y decidir si querés completar Resumen/Abstract/Agradecimientos/Conclusión para este hito o dejarlos para la entrega final como está ahora.
+
+## 22. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
