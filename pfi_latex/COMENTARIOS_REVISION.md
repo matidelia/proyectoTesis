@@ -86,7 +86,11 @@ Incorporé las tres transcripciones que me pasaste (Martín, vendedor, 34 años 
 
 **Aviso**: ya existía un "User Persona 1: Martín" (29 años, sintético, armado a partir de patrones de la encuesta) en la Sección 6.8. Ahora el vendedor entrevistado real también se llama Martín (34 años) — son personas distintas, pero el nombre repetido puede generar confusión en la lectura. No renombré a ninguno de los dos por mi cuenta; si querés, cambio el nombre del user persona sintético para evitar la coincidencia.
 
-## 19. Estructura final verificada
+## 19. Respuestas de las entrevistas entre comillas
+
+Por pedido tuyo, cada respuesta de las 3 entrevistas (Anexo C) ahora va entre comillas dobles para distinguirla claramente de la pregunta. Las comillas que ya existían dentro de algunas respuestas (por ejemplo `` `Buscados' '' o `` `viene subiendo hace dos semanas' '') las pasé a comillas simples, para que no se repita el mismo signo dos veces seguidas y se lea claro cuál es la cita completa y cuál es una palabra citada dentro de la cita.
+
+## 20. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
