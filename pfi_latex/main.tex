@@ -109,10 +109,13 @@
 \setlength{\textfloatsep}{5pt}
 
 % Para notas
-\usepackage{todonotes}
-\setlength{\marginparwidth}{2cm} % El margen es muy estrecho. Esto es solo para solucionar un warning
-\newcommand{\Nico}[1]{\todo[color=green!30,inline]{\textbf{Nico:} #1}}
-\newcommand{\Fermat}[1]{\todo[color=green!30]{\textbf{Fermat:} #1}}
+% Comentado antes de entregar (checklist del template): si el documento
+% compila sin estos comandos definidos, confirma que no quedan
+% comentarios de revision pendientes en ningun capitulo.
+% \usepackage{todonotes}
+% \setlength{\marginparwidth}{2cm} % El margen es muy estrecho. Esto es solo para solucionar un warning
+% \newcommand{\Nico}[1]{\todo[color=green!30,inline]{\textbf{Nico:} #1}}
+% \newcommand{\Fermat}[1]{\todo[color=green!30]{\textbf{Fermat:} #1}}
 
 %Espaciado entre referencias en la bibliograf\'{\i}a
 \usepackage{etoolbox}
@@ -124,7 +127,7 @@
   {\small}
   {}{}
 
-\usepackage{pdfcomment}
+% \usepackage{pdfcomment} % comentado antes de entregar (checklist del template)
 \usepackage[spanish,es-nodecimaldot]{babel}
 \usepackage{csquotes}
 \addto\captionsspanish{
