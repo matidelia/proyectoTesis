@@ -90,7 +90,17 @@ Incorporé las tres transcripciones que me pasaste (Martín, vendedor, 34 años 
 
 Por pedido tuyo, cada respuesta de las 3 entrevistas (Anexo C) ahora va entre comillas dobles para distinguirla claramente de la pregunta. Las comillas que ya existían dentro de algunas respuestas (por ejemplo `` `Buscados' '' o `` `viene subiendo hace dos semanas' '') las pasé a comillas simples, para que no se repita el mismo signo dos veces seguidas y se lea claro cuál es la cita completa y cuál es una palabra citada dentro de la cita.
 
-## 20. Estructura final verificada
+## 20. Comparación contra el template oficial + checklist "antes de las entregas"
+
+Revisé la carpeta `UADE_PFI_Template-develop` que tenés en Descargas (es la misma que ya usamos como base en mayo, sin cambios — la comparé archivo por archivo). Encontré dos cosas útiles en su `README.md` que no habíamos aplicado:
+
+- **Verificación oficial de "no quedan comentarios pendientes"**: el README dice textualmente que hay que comentar el paquete `pdfcomment` y comandos como `\Nico` antes de entregar, y que "si compila sin ellos, no hay comentarios pendientes". Lo hice: comenté `\usepackage{pdfcomment}`, `\usepackage{todonotes}` y las definiciones de `\Nico`/`\Fermat` en `main.tex`. Compiló limpio — confirma, con el propio método que recomienda la facultad, que no queda ningún comentario de revisión en ningún capítulo (más allá de los 2 que ya había sacado a mano antes).
+- **Confirma decisiones ya tomadas**: el README dice explícitamente "no hacer el resumen ni el abstract hasta la entrega final" — coincide con lo que ya habíamos decidido por separado.
+- **Para la entrega FINAL (no esta, la del 50%)**, el README pide además: no incluir la portada (comentar el código que la genera), no incluir el anexo de cronograma, e incluir resumen y abstract. Lo dejo anotado acá para no perderlo de vista más adelante — no lo apliqué ahora porque son reglas específicas de la entrega final, no de este hito.
+- El template sugiere una estructura alternativa de capítulos (Introducción → Antecedentes → Descripción → Metodología → Conclusión), distinta a la que ya tenemos armada (7 capítulos por tema). Es una sugerencia opcional, no obligatoria ("aquí se propone una organización típica"), así que no reestructuré nada — si querés migrar a esa organización más adelante, decime.
+- De paso, encontré en el `main.tex` del template la solución oficial al mismo bug de recorte de margen que ya había encontrado y arreglado para la Propuesta de Tema: el template incluye su propia carátula oficial con `offset=25mm -25mm` y `clip` para compensar exactamente el mismo corrimiento por los márgenes del documento. Confirma que el fix que ya apliqué (neutralizar `\hoffset`/`\voffset` alrededor del `\includepdf`) atacaba el problema correcto.
+
+## 21. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
