@@ -113,7 +113,13 @@ Pasada completa de control de calidad sobre el documento compilado:
 
 Estado: 61 páginas, listo para revisión tuya. Lo único que falta antes de entregar es tu lectura final y decidir si querés completar Resumen/Abstract/Agradecimientos/Conclusión para este hito o dejarlos para la entrega final como está ahora.
 
-## 22. Estructura final verificada
+## 22. Checkboxes rotos en la página "Tipo de Proyecto" de la Propuesta
+
+Avisaste que en la página 4 (Tipo de Proyecto) los cuadraditos de selección se veían como el símbolo "€" en vez de un casillero vacío, y que el de "Desarrollo" se veía como "€X" en vez de tildado. Investigué la causa: el PDF que me pasaste tiene esos casilleros armados con el carácter € en una fuente de símbolos (`NotoSansSymbols`) que no exportó bien desde Word — el glifo que debía verse como un cuadrado vacío quedó reemplazado por el símbolo Euro. La marca de "Desarrollo" era, además, una imagen sueltita de una X pegada al lado, no adentro del casillero.
+
+Lo arreglé directamente en el PDF (edición a nivel de página, sin tocar el texto de ningún otro campo): reemplacé los 6 símbolos rotos por casilleros dibujados (cuadrados vectoriales, no dependen de ninguna fuente, así que no se pueden volver a romper), y a "Desarrollo" le dibujé una tilde adentro del casillero, alineada con el resto de la columna. El resto de las 7 páginas de la propuesta no tenía este problema — lo revisé página por página.
+
+## 23. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
