@@ -110,17 +110,17 @@ Durante la implementación del prototipo, el stack preliminar fue ajustado: el b
 
 La arquitectura del sistema se encuentra organizada en distintos componentes que trabajan de manera integrada para permitir la captura, procesamiento, almacenamiento y visualización de información relacionada con tendencias comerciales.
 
-El frontend cumple la función de representar la información de manera visual e intuitiva, permitiendo interpretar tendencias, métricas temporales y variaciones de comportamiento de los productos. La visualización de datos resulta fundamental para facilitar la toma de decisiones y transformar grandes volúmenes de información en indicadores comprensibles para el usuario.
+El frontend cumple la función de representar la información de manera visual e intuitiva, permitiendo interpretar tendencias, métricas temporales y variaciones de comportamiento de los productos. La visualización de datos resulta fundamental para facilitar la toma de decisiones y transformar grandes volúmenes de información en indicadores comprensibles para el usuario (ver Figura~\ref{fig:diagrama-componentes}, \emph{Dashboard (React)} dentro del Carril 2).
 
-Por otro lado, el backend actúa como el componente encargado de administrar el procesamiento general de la plataforma. Su función principal consiste en organizar la información obtenida, coordinar los distintos procesos internos y garantizar el correcto funcionamiento de la lógica del sistema.
+Por otro lado, el backend actúa como el componente encargado de administrar el procesamiento general de la plataforma. Su función principal consiste en organizar la información obtenida, coordinar los distintos procesos internos y garantizar el correcto funcionamiento de la lógica del sistema (ver Figura~\ref{fig:diagrama-componentes}, \emph{API REST (API Routes)} dentro del Carril 2).
 
-El motor de minería de datos representa uno de los elementos centrales del proyecto, ya que permite automatizar la obtención y análisis de información proveniente del marketplace. Su importancia radica en la capacidad de detectar patrones, registrar cambios temporales y construir históricos que luego pueden utilizarse para identificar comportamientos emergentes.
+El motor de minería de datos representa uno de los elementos centrales del proyecto, ya que permite automatizar la obtención y análisis de información proveniente del marketplace. Su importancia radica en la capacidad de detectar patrones, registrar cambios temporales y construir históricos que luego pueden utilizarse para identificar comportamientos emergentes (ver Figura~\ref{fig:diagrama-componentes}, subsistema \emph{Captura automatizada -- Carril 1}).
 
-La persistencia de datos cumple un rol clave dentro de la plataforma debido a que posibilita almacenar información histórica de manera organizada y continua. Mantener registros temporales permite realizar comparaciones, analizar evolución de tendencias y generar bases de información útiles para futuros modelos analíticos.
+La persistencia de datos cumple un rol clave dentro de la plataforma debido a que posibilita almacenar información histórica de manera organizada y continua. Mantener registros temporales permite realizar comparaciones, analizar evolución de tendencias y generar bases de información útiles para futuros modelos analíticos (ver Figura~\ref{fig:diagrama-componentes}, componente \emph{Base Histórica}; el detalle de las tablas se muestra en la Figura~\ref{fig:diagrama-er}).
 
-Finalmente, el monitoreo contribuye a garantizar estabilidad y disponibilidad dentro del sistema, permitiendo controlar el comportamiento de los servicios utilizados y detectar posibles interrupciones o variaciones que puedan afectar la recolección de información.
+Finalmente, el monitoreo contribuye a garantizar estabilidad y disponibilidad dentro del sistema, permitiendo controlar el comportamiento de los servicios utilizados y detectar posibles interrupciones o variaciones que puedan afectar la recolección de información (ver Figura~\ref{fig:diagrama-componentes}, \emph{probe\_endpoints.js} dentro del Carril 1).
 
-La arquitectura opera además en dos carriles complementarios. El primero es el carril de captura en segundo plano: los procesos programados que construyen el histórico de manera sistemática y controlada, tres veces por día. El segundo es un carril de consulta en tiempo real: desde el dashboard, el usuario puede buscar productos puntuales consultando la API oficial en vivo, sin esperar a la próxima corrida de captura. Esta separación protege la recolección sistemática (cuyo ritmo está calibrado para respetar los límites de la API) de la carga variable de las consultas interactivas, y permite contrastar el histórico propio con el estado instantáneo del marketplace.
+La arquitectura opera además en dos carriles complementarios. El primero es el carril de captura en segundo plano: los procesos programados que construyen el histórico de manera sistemática y controlada, tres veces por día. El segundo es un carril de consulta en tiempo real: desde el dashboard, el usuario puede buscar productos puntuales consultando la API oficial en vivo, sin esperar a la próxima corrida de captura. Esta separación protege la recolección sistemática (cuyo ritmo está calibrado para respetar los límites de la API) de la carga variable de las consultas interactivas, y permite contrastar el histórico propio con el estado instantáneo del marketplace (ambos carriles se distinguen en la Figura~\ref{fig:diagrama-componentes}).
 
 \subsection{Diagrama de componentes propuesto}
 
@@ -131,11 +131,11 @@ La arquitectura opera además en dos carriles complementarios. El primero es el 
 	\label{fig:diagrama-componentes}
 \end{figure}
 
-El flujo de datos comienza con consultas periódicas a la API oficial de Mercado Libre. Luego, la información recolectada se almacena en una base histórica. A partir de ese histórico, el motor analítico calcula métricas temporales que permiten identificar productos con crecimiento sostenido o cambios relevantes. Finalmente, el backend expone esos resultados para que el dashboard los presente de manera visual.
+El flujo de datos comienza con consultas periódicas a la API oficial de Mercado Libre. Luego, la información recolectada se almacena en una base histórica. A partir de ese histórico, el motor analítico calcula métricas temporales que permiten identificar productos con crecimiento sostenido o cambios relevantes. Finalmente, el backend expone esos resultados para que el dashboard los presente de manera visual (flujo completo en la Figura~\ref{fig:diagrama-componentes}).
 
 \subsection{Diagrama de Clases (UML)}
 
-El siguiente diagrama de clases representa las principales entidades del sistema y sus relaciones.
+El diagrama de clases representa las principales entidades del sistema y sus relaciones (ver Figura~\ref{fig:diagrama-uml}).
 
 \begin{figure}[ht]
 	\centering
@@ -146,7 +146,7 @@ El siguiente diagrama de clases representa las principales entidades del sistema
 
 \subsection{Modelo de Datos -- Diagrama Entidad-Relación}
 
-El modelo de datos se implementa sobre PostgreSQL. El siguiente diagrama ER muestra las tablas principales y sus relaciones (1:N).
+El modelo de datos se implementa sobre PostgreSQL. El diagrama Entidad-Relación muestra las tablas principales y sus relaciones (1:N) (ver Figura~\ref{fig:diagrama-er}).
 
 \begin{figure}[ht]
 	\centering

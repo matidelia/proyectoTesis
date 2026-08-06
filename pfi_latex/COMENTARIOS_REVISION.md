@@ -119,7 +119,13 @@ Avisaste que en la página 4 (Tipo de Proyecto) los cuadraditos de selección se
 
 Lo arreglé directamente en el PDF (edición a nivel de página, sin tocar el texto de ningún otro campo): reemplacé los 6 símbolos rotos por casilleros dibujados (cuadrados vectoriales, no dependen de ninguna fuente, así que no se pueden volver a romper), y a "Desarrollo" le dibujé una tilde adentro del casillero, alineada con el resto de la columna. El resto de las 7 páginas de la propuesta no tenía este problema — lo revisé página por página.
 
-## 23. Estructura final verificada
+## 23. Referencias explícitas a los 3 diagramas (componentes, clases, ER)
+
+Tenías razón: en "Arquitectura General" se describían los componentes (frontend, backend, motor de minería, persistencia, monitoreo) mucho antes de mostrar el diagrama que los ilustra, y después venían los 3 diagramas (componentes, clases UML, entidad-relación) uno atrás del otro sin quedar claro cuál correspondía a qué texto.
+
+Agregué una referencia explícita del tipo "(ver Figura 1.1, ...)" al final de cada párrafo relevante, apuntando además al elemento puntual dentro del diagrama (por ejemplo, el párrafo del backend ahora dice "ver Figura 1.1, *API REST (API Routes)* dentro del Carril 2"). Usé `\ref{}` de LaTeX, así que los números de figura se ajustan solos si en algún momento se reordena el documento. Revisé que cada referencia apunte al nombre real que tiene esa parte en la imagen del diagrama (no inventé ninguna etiqueta nueva).
+
+## 24. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
