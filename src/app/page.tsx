@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import ProductCard from '@/components/ProductCard';
+import TrendScoreTable from '@/components/TrendScoreTable';
 
 export default function Home() {
   const [query, setQuery] = useState('');
@@ -189,6 +190,21 @@ export default function Home() {
         {!loading && !errorDetails && results.length === 0 && query && (
           <div style={{ textAlign: 'center', marginTop: '4rem', color: 'var(--text-secondary)' }}>
             No se encontraron resultados para "{query}"
+          </div>
+        )}
+
+        {/* Panorama de tendencias: se muestra mientras no hay una búsqueda
+            activa, para que el usuario pueda decidir qué le conviene
+            publicar/comprar aunque todavía no sepa qué buscar. */}
+        {!loading && !errorDetails && results.length === 0 && !query && (
+          <div style={{ marginTop: '3rem' }}>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+              Panorama de tendencias
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+              Qué está creciendo ahora mismo en Mercado Libre, según el histórico propio del sistema. Filtrá por categoría o buscá un producto puntual arriba.
+            </p>
+            <TrendScoreTable />
           </div>
         )}
       </main>
