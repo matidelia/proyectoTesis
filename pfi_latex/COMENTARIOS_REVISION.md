@@ -125,7 +125,13 @@ Tenías razón: en "Arquitectura General" se describían los componentes (fronte
 
 Agregué una referencia explícita del tipo "(ver Figura 1.1, ...)" al final de cada párrafo relevante, apuntando además al elemento puntual dentro del diagrama (por ejemplo, el párrafo del backend ahora dice "ver Figura 1.1, *API REST (API Routes)* dentro del Carril 2"). Usé `\ref{}` de LaTeX, así que los números de figura se ajustan solos si en algún momento se reordena el documento. Revisé que cada referencia apunte al nombre real que tiene esa parte en la imagen del diagrama (no inventé ninguna etiqueta nueva).
 
-## 24. Estructura final verificada
+## 24. Reordené: título del diagrama y el diagrama inmediatamente debajo
+
+Pediste que cada diagrama tuviera su título y, justo abajo, la imagen — sin texto largo intercalado antes. Reordené las 3 subsecciones (Diagrama de componentes, Diagrama de Clases UML, Diagrama Entidad-Relación) para que la figura vaya inmediatamente después de su título, y moví las descripciones (frontend, backend, motor de minería, persistencia, monitoreo) a después de la imagen del diagrama de componentes, ya que ahí es donde tienen sentido como explicación de lo que se acaba de mostrar.
+
+Al reordenar apareció un problema técnico que también corregí: LaTeX por defecto puede "flotar" una figura lejos del lugar donde se la coloca en el texto si no entra en el espacio disponible de esa página. Con el reordenamiento, las figuras de Clases UML y Entidad-Relación se estaban yendo 1-2 páginas más adelante de su título, quedando igual de desconectadas que antes. Lo arreglé fijando las 3 figuras con la opción `[H]` (paquete `float`), que las obliga a quedarse exactamente donde están puestas en el texto, sin importar el espacio disponible. Verifiqué visualmente que ahora título y diagrama siempre caen en la misma página.
+
+## 25. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
