@@ -32,7 +32,7 @@ Para eso, se plantea una arquitectura basada en APIs REST oficiales, permitiendo
 
 Por otro lado, la incorporación de técnicas de minería de datos permite extraer información relevante a partir de grandes volúmenes de datos, mientras que el uso de modelos supervisados posibilita analizar comportamientos emergentes y diferenciar tendencias reales de variaciones temporales aisladas.
 
-Finalmente, la implementación de dashboards analíticos y mecanismos de monitoreo contribuye a mejorar la visualización de métricas, el seguimiento de tendencias y la disponibilidad operativa de los servicios utilizados.
+La implementación de dashboards analíticos y mecanismos de monitoreo contribuye a mejorar la visualización de métricas, el seguimiento de tendencias y la disponibilidad operativa de los servicios utilizados.
 
 \section{Alcance}
 
@@ -119,7 +119,7 @@ La arquitectura del sistema se encuentra organizada en distintos componentes que
 	\label{fig:diagrama-componentes}
 \end{figure}
 
-El flujo de datos comienza con consultas periódicas a la API oficial de Mercado Libre. Luego, la información recolectada se almacena en una base histórica. A partir de ese histórico, el motor analítico calcula métricas temporales que permiten identificar productos con crecimiento sostenido o cambios relevantes. Finalmente, el backend expone esos resultados para que el dashboard los presente de manera visual.
+El flujo de datos comienza con consultas periódicas a la API oficial de Mercado Libre. Luego, la información recolectada se almacena en una base histórica. A partir de ese histórico, el motor analítico calcula métricas temporales que permiten identificar productos con crecimiento sostenido o cambios relevantes. El backend expone esos resultados para que el dashboard los presente de manera visual.
 
 El frontend (\emph{Dashboard (React)}, dentro del Carril 2 de la figura) cumple la función de representar la información de manera visual e intuitiva, permitiendo interpretar tendencias, métricas temporales y variaciones de comportamiento de los productos. La visualización de datos resulta fundamental para facilitar la toma de decisiones y transformar grandes volúmenes de información en indicadores comprensibles para el usuario.
 
@@ -181,7 +181,7 @@ Las métricas descriptivas constituyen la primera aproximación para interpretar
 
 A su vez, estas métricas funcionan como base para futuros modelos supervisados de Machine Learning, ya que las variables históricas permiten entrenar algoritmos capaces de diferenciar tendencias reales de aumentos temporales de popularidad. De esta manera, el análisis temporal no solo aporta información descriptiva, sino también capacidades predictivas orientadas a mejorar la toma de decisiones comerciales.
 
-Finalmente, el uso de métricas históricas contribuye a reducir la dependencia de rankings instantáneos o tendencias superficiales, permitiendo construir una visión más consistente y contextualizada del comportamiento del mercado digital.
+El uso de métricas históricas contribuye a reducir la dependencia de rankings instantáneos o tendencias superficiales, permitiendo construir una visión más consistente y contextualizada del comportamiento del mercado digital.
 
 La detección temprana no se define por la aparición aislada de un producto en un ranking, sino por la repetición de señales durante un período determinado. Por ese motivo, el proyecto prioriza métricas que permitan observar continuidad, intensidad y variación temporal.
 

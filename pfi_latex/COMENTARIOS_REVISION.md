@@ -131,7 +131,21 @@ Pediste que cada diagrama tuviera su título y, justo abajo, la imagen — sin t
 
 Al reordenar apareció un problema técnico que también corregí: LaTeX por defecto puede "flotar" una figura lejos del lugar donde se la coloca en el texto si no entra en el espacio disponible de esa página. Con el reordenamiento, las figuras de Clases UML y Entidad-Relación se estaban yendo 1-2 páginas más adelante de su título, quedando igual de desconectadas que antes. Lo arreglé fijando las 3 figuras con la opción `[H]` (paquete `float`), que las obliga a quedarse exactamente donde están puestas en el texto, sin importar el espacio disponible. Verifiqué visualmente que ahora título y diagrama siempre caen en la misma página.
 
-## 25. Estructura final verificada
+## 25. Se sacan todos los "Finalmente" del documento
+
+Busqué en todo el documento (los 7 capítulos y los anexos) y encontré 3 apariciones, todas en `chapter01.tex`. Las saqué y ajusté el arranque de cada oración. Ubicaciones para que revises el párrafo completo:
+
+- **Página 12**, sección 1.2 (Decisiones técnicas), último párrafo: "Finalmente, la implementación de dashboards analíticos..." → ahora arranca "La implementación de dashboards analíticos...".
+- **Página 16**, sección 1.7.1 (Diagrama de componentes), párrafo debajo de la figura: "...Finalmente, el backend expone esos resultados..." → ahora "...El backend expone esos resultados...".
+- **Página 21**, sección 1.8 (Métricas y Análisis Temporal): "Finalmente, el uso de métricas históricas..." → ahora "El uso de métricas históricas...".
+
+No encontré ningún otro "Finalmente" en el resto de los capítulos (2 a 7) ni en los anexos.
+
+## 26. Diagrama de la Cruz de Porter agregado (Sección 5.2)
+
+Generé un diagrama nuevo con el mismo estilo visual que los otros 3 (cajas celestes, bordes finos, tipografía Arial): las 5 fuerzas en cruz, con la fuerza "Rivalidad entre competidores" en el centro y las otras 4 alrededor apuntando hacia ella con flechas, cada una con su nivel (ALTO/MEDIA) y una frase corta tomada literalmente de los bullets que ya estaban en el texto — no inventé ninguna evaluación nueva, solo la representé visualmente. Va como Figura 5.1, justo debajo de la lista de las 5 fuerzas en la Sección 5.2.
+
+## 27. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
