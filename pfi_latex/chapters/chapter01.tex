@@ -2,7 +2,7 @@
 
 El crecimiento del comercio electrónico durante los últimos años produjo una transformación significativa en la manera en que consumidores, vendedores y empresas interactúan dentro de plataformas digitales. Los marketplaces modernos concentran millones de productos, búsquedas y transacciones diarias, generando grandes volúmenes de información capaces de reflejar tendencias de consumo, variaciones de demanda y cambios en el comportamiento del mercado.
 
-En este contexto, la información generada por la actividad de los usuarios dentro de entornos digitales no solo permite describir comportamientos ya ocurridos, sino que también puede funcionar como una señal temprana para anticipar cambios de demanda. En trabajos como el de \textcite{KulkarniKannanMoe2012}, los datos de búsqueda en línea son utilizados para anticipar ventas de productos nuevos, lo que refuerza la utilidad de observar señales digitales antes de que una tendencia se encuentre completamente consolidada.
+La información generada por la actividad de los usuarios dentro de entornos digitales no solo permite describir comportamientos ya ocurridos, sino que también puede funcionar como una señal temprana para anticipar cambios de demanda. En trabajos como el de \textcite{KulkarniKannanMoe2012}, los datos de búsqueda en línea son utilizados para anticipar ventas de productos nuevos, lo que refuerza la utilidad de observar señales digitales antes de que una tendencia se encuentre completamente consolidada.
 
 Dentro de este contexto, Mercado Libre representa uno de los ecosistemas comerciales más importantes de América Latina. Su infraestructura reúne vendedores, compradores y productos pertenecientes a múltiples categorías, convirtiéndose en una fuente extremadamente valiosa de información relacionada con consumo digital y comportamiento comercial.
 
@@ -18,7 +18,7 @@ En el proyecto, el término ``tendencia'' no se utiliza como sinónimo de rankin
 
 El enfoque planteado se sostiene sobre tres ejes principales: la recolección automatizada de información accesible desde fuentes oficiales, la construcción progresiva de un histórico propio y el análisis temporal de variables que puedan funcionar como indicios de crecimiento. Esta decisión permite diferenciar el proyecto de una herramienta meramente descriptiva, ya que el valor principal no se encuentra solo en mostrar datos actuales, sino en observar su evolución y detectar comportamientos emergentes.
 
-\section{Concepto central}
+\section{Concepto central}\label{sec:concepto-central}
 
 Desarrollar una plataforma inteligente capaz de detectar tempranamente productos emergentes en Mercado Libre mediante la recolección automatizada de datos provenientes de su API oficial, la construcción de un dataset histórico propio y el análisis temporal utilizando métricas descriptivas y modelos supervisados de aprendizaje automático.
 
@@ -28,19 +28,31 @@ A los fines del proyecto, un producto emergente será aquel que, durante una ven
 
 Las decisiones técnicas adoptadas dentro del proyecto responden principalmente a la necesidad de garantizar escalabilidad, automatización, persistencia histórica y capacidad analítica.
 
+La Propuesta de Tema aprobada originalmente (incluida al inicio de este documento) planteaba un desarrollo basado en Python, con librerías de análisis de datos y machine learning (pandas, numpy, scikit-learn) y de visualización (matplotlib, seaborn), sobre una base de datos MySQL o una alternativa NoSQL a definir. Durante el diseño técnico posterior a la aprobación de la propuesta, esas decisiones se revisaron: se optó por unificar el desarrollo en JavaScript/TypeScript sobre Next.js, exponiendo el sistema como una aplicación web con backend propio (API REST) en lugar de mantener un script de análisis separado del dashboard, y por usar PostgreSQL como motor relacional gestionado. El stack resultante de esa revisión es el que se detalla en la Sección~\ref{sec:tecnologias-utilizadas} y en la tabla de la Sección~\ref{sec:stack-preliminar}, y se ajustó una vez más durante la implementación, según se explica en la Sección~\ref{sec:evolucion-tecnica}. Python se mantiene en el plan, pero acotado al motor analítico de Machine Learning de la etapa siguiente (ver Sección~\ref{sec:evolucion-tecnica} y la aclaración de alcance por hito en la Sección~\ref{sec:alcance}).
+
 Para eso, se plantea una arquitectura basada en APIs REST oficiales, permitiendo acceder a información estructurada y confiable proveniente del marketplace. Asimismo, la construcción de datasets históricos resulta fundamental para realizar análisis temporales y detectar patrones de crecimiento sostenido.
 
 Por otro lado, la incorporación de técnicas de minería de datos permite extraer información relevante a partir de grandes volúmenes de datos, mientras que el uso de modelos supervisados posibilita analizar comportamientos emergentes y diferenciar tendencias reales de variaciones temporales aisladas.
 
 La implementación de dashboards analíticos y mecanismos de monitoreo contribuye a mejorar la visualización de métricas, el seguimiento de tendencias y la disponibilidad operativa de los servicios utilizados.
 
-\section{Alcance}
+\section{Alcance}\label{sec:alcance}
 
 El proyecto se enfoca exclusivamente en Mercado Libre Argentina utilizando únicamente información obtenida mediante endpoints oficiales autorizados. La plataforma contempla procesos de captura automatizada, construcción de históricos temporales, monitoreo de endpoints y visualización analítica.
 
 El alcance no incluye scraping, acceso a datos privados de usuarios ni predicción directa de ventas internas de Mercado Libre. La plataforma trabajará únicamente con datos disponibles mediante API oficial y con el histórico construido por el propio sistema.
 
-\section{Tecnologías utilizadas}
+\subsection*{Alcance por hito}
+
+El objetivo general del proyecto (Sección~\ref{sec:concepto-central}) incluye tanto métricas descriptivas como modelos supervisados de aprendizaje automático. Dado que esta entrega corresponde al hito del 50\,\%, ambos componentes no se encuentran en el mismo estado de avance, y se detalla a continuación qué corresponde a cada etapa:
+
+\begin{itemize}
+	\item \textbf{Ya implementado (hito 50\,\%)}: captura automatizada de datos (RF01), score de tendencia basado en métricas descriptivas ponderadas -- frecuencia, permanencia, ranking y estabilidad de precio (RF02), dashboard con ranking y filtros (RF03), API REST (RF04), gráficos de evolución temporal (RF05) y exportación CSV (RF06). El sistema se encuentra desplegado en producción y capturando datos de forma autónoma.
+	\item \textbf{Planificado para el 75\,\%}: incorporación de Python (Pandas + Scikit-Learn) como motor de Machine Learning supervisado, entrenado sobre el histórico ya acumulado, para clasificar productos según su probabilidad de sostener el crecimiento (ver Sección~\ref{sec:evolucion-tecnica}).
+	\item \textbf{Planificado para el 100\,\%}: validación y ajuste del modelo supervisado con más volumen histórico, análisis de resultados y limitaciones, y redacción del informe final.
+\end{itemize}
+
+\section{Tecnologías utilizadas}\label{sec:tecnologias-utilizadas}
 
 \subsection{APIs REST}
 
@@ -80,7 +92,7 @@ La utilización de variables temporales y métricas descriptivas permite constru
 
 En una primera etapa, el proyecto prioriza métricas descriptivas y reglas de análisis temporal. Posteriormente, esas variables podrán utilizarse como entrada de modelos supervisados, por ejemplo para clasificar productos según su probabilidad de presentar crecimiento sostenido. Esta decisión es consistente con trabajos como el de \textcite{ElalemMaierSeifert2023}, donde se analiza la predicción de productos nuevos con ciclos de vida cortos y disponibilidad limitada de datos históricos.
 
-\section{Stack tecnológico preliminar}
+\section{Stack tecnológico preliminar}\label{sec:stack-preliminar}
 
 El stack tecnológico se define de manera preliminar para bajar la arquitectura a decisiones más concretas, sin cerrar completamente futuras modificaciones de implementación.
 
@@ -102,7 +114,7 @@ El stack tecnológico se define de manera preliminar para bajar la arquitectura 
 	\end{tabularx}
 \end{table}
 
-\section{Evolución de las decisiones técnicas}
+\section{Evolución de las decisiones técnicas}\label{sec:evolucion-tecnica}
 
 Durante la implementación del prototipo, el stack preliminar fue ajustado: el backend y la captura de datos se desarrollaron finalmente sobre Next.js (API Routes) y Node.js, unificando frontend y backend en un único lenguaje (TypeScript) y un único despliegue, lo que reduce la complejidad operativa del proyecto. La capa de persistencia (PostgreSQL, gestionada mediante el ORM Prisma) y la arquitectura general de componentes (captura \(\rightarrow\) base histórica \(\rightarrow\) motor analítico \(\rightarrow\) API \(\rightarrow\) dashboard) se mantienen sin cambios: se modificó la herramienta de implementación, no el diseño. Python (Pandas + Scikit-Learn) queda reservado para el motor analítico y de Machine Learning de la etapa siguiente, que se integrará leyendo directamente la base histórica PostgreSQL.
 
@@ -157,7 +169,7 @@ El modelo de datos se implementa sobre PostgreSQL. El diagrama anterior muestra 
 
 \section{Modelos y Arquitecturas Aplicables}
 
-El desarrollo de plataformas inteligentes orientadas al análisis de tendencias requiere la utilización de arquitecturas capaces de procesar información de manera distribuida, escalable y organizada. En este contexto, los modelos basados en arquitecturas cliente-servidor y servicios desacoplados permiten separar responsabilidades entre captura de datos, procesamiento, persistencia y visualización de información.
+El desarrollo de plataformas inteligentes orientadas al análisis de tendencias requiere la utilización de arquitecturas capaces de procesar información de manera distribuida, escalable y organizada. Los modelos basados en arquitecturas cliente-servidor y servicios desacoplados permiten separar responsabilidades entre captura de datos, procesamiento, persistencia y visualización de información.
 
 La arquitectura cliente-servidor constituye uno de los modelos más utilizados dentro de aplicaciones modernas debido a su capacidad para dividir el sistema en componentes especializados. El frontend se encarga de la interacción con el usuario y visualización de resultados, mientras que el backend administra la lógica de negocio, procesamiento de información y comunicación con servicios externos.
 
@@ -167,7 +179,7 @@ Además, el uso de APIs REST como mecanismo de integración favorece la interope
 
 Por otra parte, la utilización de arquitecturas basadas en procesamiento de datos temporales resulta especialmente relevante en sistemas de análisis predictivo. La construcción progresiva de datasets históricos permite transformar eventos aislados en información acumulativa capaz de reflejar patrones de crecimiento, cambios de comportamiento y tendencias emergentes.
 
-En proyectos orientados a inteligencia comercial, estas arquitecturas permiten incorporar posteriormente modelos de aprendizaje automático, motores analíticos y dashboards interactivos sin necesidad de rediseñar completamente la estructura principal del sistema. De esta manera, la arquitectura no solo cumple una función técnica, sino que también condiciona la capacidad futura de expansión y evolución de la plataforma.
+En proyectos orientados a inteligencia comercial, estas arquitecturas permiten incorporar posteriormente modelos de aprendizaje automático, motores analíticos y dashboards interactivos sin necesidad de rediseñar completamente la estructura principal del sistema. Por eso, la arquitectura no solo cumple una función técnica, sino que también condiciona la capacidad futura de expansión y evolución de la plataforma.
 
 \section{Métricas y Análisis Temporal}
 
@@ -179,7 +191,7 @@ En este proyecto, el análisis temporal se basa principalmente en la construcci�
 
 Las métricas descriptivas constituyen la primera aproximación para interpretar estos datos. Indicadores como frecuencia de aparición, crecimiento porcentual, permanencia dentro de tendencias y evolución de precios permiten generar una representación cuantitativa del comportamiento de cada producto dentro del marketplace.
 
-A su vez, estas métricas funcionan como base para futuros modelos supervisados de Machine Learning, ya que las variables históricas permiten entrenar algoritmos capaces de diferenciar tendencias reales de aumentos temporales de popularidad. De esta manera, el análisis temporal no solo aporta información descriptiva, sino también capacidades predictivas orientadas a mejorar la toma de decisiones comerciales.
+A su vez, estas métricas funcionan como base para futuros modelos supervisados de Machine Learning, ya que las variables históricas permiten entrenar algoritmos capaces de diferenciar tendencias reales de aumentos temporales de popularidad. En consecuencia, el análisis temporal no solo aporta información descriptiva, sino también capacidades predictivas orientadas a mejorar la toma de decisiones comerciales.
 
 El uso de métricas históricas contribuye a reducir la dependencia de rankings instantáneos o tendencias superficiales, permitiendo construir una visión más consistente y contextualizada del comportamiento del mercado digital.
 
