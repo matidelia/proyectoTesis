@@ -158,7 +158,11 @@ Revisé y corregí los 7 puntos que pediste:
 6. **Frases repetidas y genéricas**: saqué o reescribí las 6 apariciones de "En este contexto" (×2), "De esta manera" (×2), "resulta relevante" (×2) y "permite reforzar" (×1) en los capítulos 1 y 2, variando la redacción.
 7. **Entrevistas en discurso indirecto**: reescribí las 30 respuestas de las 3 entrevistas — ya no son citas textuales entre comillas, sino reportadas en tercera persona ("Contó que...", "Explicó que...", "Señaló que..."), conservando todos los datos y ejemplos concretos que dieron, solo cambiando la forma de presentarlos.
 
-## 28. Estructura final verificada
+## 28. Ajuste del perfil de Lucas (Entrevista 2)
+
+Cambié el rubro de Lucas de "bazar y hogar" (que era el de Martín) a "tecnología", como pediste. De paso encontré y corregí otra referencia que quedaba pegada de cuando ambas entrevistas eran la misma persona: en la pregunta 9, Lucas mencionaba "el error de las luces" — que es específicamente la historia de Martín en la Entrevista 1 (las luces galaxy light). Lo generalicé a "un error de timing en una tendencia" para no atribuirle a Lucas una anécdota que no es suya.
+
+## 29. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
