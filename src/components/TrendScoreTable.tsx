@@ -46,6 +46,7 @@ export default function TrendScoreTable() {
   const [error, setError] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'score' | 'variation'>('score');
+  const [nameFilter, setNameFilter] = useState<string>('');
 
   useEffect(() => {
     fetch('/api/trend-scores')
@@ -71,13 +72,17 @@ export default function TrendScoreTable() {
     let items = categoryFilter === 'all'
       ? data.items
       : data.items.filter(i => i.category === categoryFilter);
+    if (nameFilter.trim()) {
+      const q = nameFilter.trim().toLowerCase();
+      items = items.filter(i => i.name.toLowerCase().includes(q));
+    }
     if (sortBy === 'variation') {
       items = [...items].sort(
         (a, b) => Math.abs(b.variationPct ?? 0) - Math.abs(a.variationPct ?? 0)
       );
     }
     return items;
-  }, [data, categoryFilter, sortBy]);
+  }, [data, categoryFilter, sortBy, nameFilter]);
 
   // Export CSV (RF06): genera el archivo en el cliente y lo descarga
   const exportCsv = () => {
@@ -161,8 +166,20 @@ export default function TrendScoreTable() {
         ))}
       </div>
 
-      {/* Controles: filtro por categoría, orden y export (RF03 + RF06) */}
+      {/* Controles: busqueda por nombre, filtro por categoria, orden y export (RF03 + RF06) */}
       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '1rem' }}>
+        <input
+          type="text"
+          placeholder="Buscar entre los productos monitoreados..."
+          value={nameFilter}
+          onChange={e => setNameFilter(e.target.value)}
+          style={{
+            background: 'rgba(255,255,255,0.06)', color: '#fff',
+            border: '1px solid var(--glass-border)', borderRadius: '8px',
+            padding: '0.4rem 0.75rem', fontSize: '0.85rem', minWidth: 220,
+          }}
+        />
+
         <select
           value={categoryFilter}
           onChange={e => setCategoryFilter(e.target.value)}
@@ -202,7 +219,18 @@ export default function TrendScoreTable() {
         </button>
       </div>
 
+      {filtered.length === 0 && (
+        <div style={{
+          padding: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)',
+          background: 'rgba(255,255,255,0.03)', borderRadius: '10px',
+        }}>
+          Ningún producto monitoreado coincide con "{nameFilter}"
+          {categoryFilter !== 'all' ? ` en ${categoryFilter}` : ''}.
+        </div>
+      )}
+
       {/* Tabla de productos (wireframe: Nombre | Categoría | Score | Variación %) */}
+      {filtered.length > 0 && (
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
           <thead>
@@ -283,6 +311,7 @@ export default function TrendScoreTable() {
           </tbody>
         </table>
       </div>
+      )}
 
       <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '0.75rem', marginBottom: 0 }}>
         Score de tendencia (0-100) = 35% frecuencia de aparición + 25% permanencia + 20% ranking de catálogo
