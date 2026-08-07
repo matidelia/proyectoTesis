@@ -104,8 +104,25 @@ export async function GET(request: Request) {
       throw new Error(`Mercado Libre catálogo respondió con error: ${searchRes.status}`);
     }
 
-    const catalogProducts = searchData.results || [];
-    console.log(`[API/SEARCH] Encontrados ${catalogProducts.length} productos en catálogo. Obteniendo publicaciones reales en paralelo...`);
+    const rawCatalogProducts = searchData.results || [];
+
+    // El Catálogo Oficial de ML es chico y a veces devuelve productos sin
+    // relación real con la búsqueda (ej: "computadora" trayendo espuma o un
+    // mouse pad). Filtramos por relevancia: el nombre del producto debe
+    // contener al menos una palabra significativa (3+ letras) de la
+    // búsqueda. No es un buscador semántico, pero evita el ruido más obvio.
+    const normalize = (s: string) =>
+      s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+    const queryWords = normalize(query).split(/\s+/).filter(w => w.length >= 3);
+    const catalogProducts = queryWords.length
+      ? rawCatalogProducts.filter((p: any) => {
+          const name = normalize(p.name || '');
+          return queryWords.some(w => name.includes(w));
+        })
+      : rawCatalogProducts;
+
+    console.log(`[API/SEARCH] ${rawCatalogProducts.length} productos en catálogo, ${catalogProducts.length} relevantes tras filtrar. Obteniendo publicaciones reales en paralelo...`);
 
     // 3. Resolución en paralelo de publicaciones reales (items) para cada producto
     const results = await Promise.all(
