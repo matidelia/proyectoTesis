@@ -145,7 +145,20 @@ No encontré ningún otro "Finalmente" en el resto de los capítulos (2 a 7) ni 
 
 Generé un diagrama nuevo con el mismo estilo visual que los otros 3 (cajas celestes, bordes finos, tipografía Arial): las 5 fuerzas en cruz, con la fuerza "Rivalidad entre competidores" en el centro y las otras 4 alrededor apuntando hacia ella con flechas, cada una con su nivel (ALTO/MEDIA) y una frase corta tomada literalmente de los bullets que ya estaban en el texto — no inventé ninguna evaluación nueva, solo la representé visualmente. Va como Figura 5.1, justo debajo de la lista de las 5 fuerzas en la Sección 5.2.
 
-## 27. Estructura final verificada
+## 27. Correcciones de contenido (chequeo detallado)
+
+Revisé y corregí los 7 puntos que pediste:
+
+1. **Página 33**: "Introducción breve" → "Introducción" (Sección 6, User Research).
+2. **Entrevista 2**: el entrevistado ya no figura como "Martín (mismo entrevistado de la Entrevista 1)" — ahora dice "Lucas, vendedor de Mercado Libre". También ajusté el punto del análisis temático que decía "en ambas entrevistas al vendedor" (que asumía que era la misma persona) a "en las dos entrevistas a vendedores, hechas a personas distintas" — de hecho esto **fortalece** el hallazgo, porque ahora son dos vendedores independientes coincidiendo en lo mismo, no una sola persona repitiéndose.
+   **Aviso**: la respuesta a la pregunta 1 de la Entrevista 2 (Lucas) describe el mismo rubro y antigüedad que Martín ("bazar y hogar, hace 4 años") — no toqué el contenido de esa respuesta porque es el dato que me diste, pero como ahora son personas distintas, quizás quieras confirmar que ese dato de Lucas es correcto y no un arrastre de la edición anterior.
+3. **Contradicción de stack (Propuesta vs. cuerpo)**: confirmé el problema — la Propuesta (págs. 4-10) pide Python + pandas/numpy/scikit-learn + matplotlib/seaborn + MySQL o NoSQL, mientras que el cuerpo usa Next.js/TypeScript/PostgreSQL/Supabase/Prisma. Agregué un párrafo nuevo al principio de la Sección 1.2 (Decisiones técnicas) que reconoce explícitamente ese cambio: qué pedía la propuesta original, qué se decidió después y por qué, con referencias cruzadas a las secciones donde se detalla cada stack. Ya no se lee como una contradicción sin explicar.
+4. **Gestión de datasets en futuro**: reescribí la Sección 6.10 en presente/pretérito ("el dataset se construye...", "el histórico se empezó a construir desde que el sistema quedó desplegado...") en vez de futuro ("será construido...", "comenzará a construirse..."), coherente con que el sistema ya está en producción.
+5. **Objetivo promete ML supervisado, la demo no lo muestra**: agregué una subsección nueva "Alcance por hito" en la Sección 1.3, con una lista explícita de qué está implementado en el 50% (RF01-RF06, todos con el score descriptivo), qué está planificado para el 75% (el modelo supervisado de ML con Python/Scikit-Learn) y qué para el 100% (validación del modelo, análisis final, redacción).
+6. **Frases repetidas y genéricas**: saqué o reescribí las 6 apariciones de "En este contexto" (×2), "De esta manera" (×2), "resulta relevante" (×2) y "permite reforzar" (×1) en los capítulos 1 y 2, variando la redacción.
+7. **Entrevistas en discurso indirecto**: reescribí las 30 respuestas de las 3 entrevistas — ya no son citas textuales entre comillas, sino reportadas en tercera persona ("Contó que...", "Explicó que...", "Señaló que..."), conservando todos los datos y ejemplos concretos que dieron, solo cambiando la forma de presentarlos.
+
+## 28. Estructura final verificada
 
 - Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
 - Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
