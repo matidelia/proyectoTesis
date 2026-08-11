@@ -32,3 +32,33 @@ A continuación se detallan los requerimientos funcionales y no funcionales del 
 	\item RNF04 -- Los datos históricos deben persistirse con respaldo (backup) periódico.
 	\item RNF05 -- Las credenciales y tokens de acceso (OAuth2 de Mercado Libre) deben gestionarse exclusivamente del lado servidor, sin exponerse nunca al cliente, con renovación automática de tokens.
 \end{enumerate}
+
+\section{Matriz de trazabilidad}\label{sec:trazabilidad}
+
+La siguiente matriz vincula cada requerimiento con su estado real de implementación al cierre de este hito y con la evidencia concreta que lo respalda, medida sobre el sistema en producción (ver evidencia cuantitativa detallada en la Sección~\ref{sec:evidencia-cuantitativa}).
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{8.3cm} >{\raggedright\arraybackslash}p{2.1cm}@{}}
+	\caption{Matriz de trazabilidad de requerimientos} \label{tab:trazabilidad} \\
+	\toprule
+	\textbf{Req.} & \textbf{Estado} & \textbf{Evidencia} & \textbf{Sección} \\
+	\midrule
+	\endfirsthead
+	\toprule
+	\textbf{Req.} & \textbf{Estado} & \textbf{Evidencia} & \textbf{Sección} \\
+	\midrule
+	\endhead
+	RF01 & Implementado & 162 productos y 2234 apariciones capturados en 26 días de operación continua (14/7 al 10/8/2026), en $\sim$73 sesiones de minería estimadas. & Sec.~\ref{sec:evidencia-cuantitativa}, Fig.~\ref{fig:diagrama-componentes} \\
+	RF02 & Implementado & 3911 scores calculados y persistidos con desglose completo. Fórmula, pesos y ejemplo real documentados. & Sec.~\ref{sec:score-formal} \\
+	RF03 & Implementado & Filtro por categoría y orden por score/variación de precio, activos en el dashboard. & Fig.~\ref{fig:demo-score} \\
+	RF04 & Implementado & 5 endpoints REST en producción (\texttt{/api/trend-scores}, \texttt{/api/health}, \texttt{/api/status}, \texttt{/api/search}, \texttt{/api/trends}). & Sec.~\ref{sec:evidencia-cuantitativa} \\
+	RF05 & Implementado & Gráfico de evolución de precio por producto y panel de tendencias desglosado por categoría, ambos en el dashboard. & Fig.~\ref{fig:demo-dashboard} \\
+	RF06 & Implementado & Exportación a CSV del ranking filtrado, disponible en el dashboard. & Fig.~\ref{fig:demo-score} \\
+	RNF01 & Implementado & Sin bloqueos por rate-limit en 26 días de operación; los únicos 2 endpoints bloqueados lo están por política de Mercado Libre, no por exceso de solicitudes. & Sec.~\ref{sec:evidencia-cuantitativa} \\
+	RNF02 & \textbf{Parcial} & Medido en producción: \texttt{/api/health} y \texttt{/api/status} responden en $<$2\,s; \texttt{/api/trend-scores} promedia 6--7,6\,s con el volumen actual (3911 scores), por encima del objetivo de 3\,s. Limitación identificada para optimizar en la próxima etapa (paginar / traer solo el último score por producto). & Sec.~\ref{sec:evidencia-cuantitativa} \\
+	RNF03 & Implementado & Desplegado en Render, con build reproducible (generación de Prisma Client en \texttt{postinstall}). & -- \\
+	RNF04 & Implementado & Respaldo automático (\texttt{backup\_db.js}) ejecutado al final de cada corrida de minería. & -- \\
+	RNF05 & Implementado & Tokens OAuth2 persistidos server-side (tabla \texttt{OAuthToken}), con renovación automática cuando faltan menos de 5 minutos para expirar. & -- \\
+	\bottomrule
+\end{longtable}
+
+Las historias de usuario se consideran implementadas de forma directa cuando su(s) RF asociado(s) están implementados: HU01 (RF01--RF03), HU02 (implementada mediante el umbral de crecimiento del score, ver Sección~\ref{sec:score-formal}), HU03 (RF05) y HU05 (RF01). HU04 queda \textbf{parcialmente} implementada: el filtro por categoría ya funciona (RF03), pero el filtro por rango de fecha y por precio todavía no está construido en la interfaz -- queda planificado para la siguiente etapa, junto con el motor de Machine Learning (ver Sección~\ref{sec:alcance}).

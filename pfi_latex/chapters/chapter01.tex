@@ -20,7 +20,7 @@ El enfoque planteado se sostiene sobre tres ejes principales: la recolección au
 
 \section{Concepto central}\label{sec:concepto-central}
 
-Desarrollar una plataforma inteligente capaz de detectar tempranamente productos emergentes en Mercado Libre mediante la recolección automatizada de datos provenientes de su API oficial, la construcción de un dataset histórico propio y el análisis temporal utilizando métricas descriptivas y modelos supervisados de aprendizaje automático.
+Desarrollar una plataforma inteligente capaz de detectar tempranamente productos emergentes en Mercado Libre mediante la recolección automatizada de datos provenientes de su API oficial, la construcción de un dataset histórico propio y el análisis temporal utilizando métricas descriptivas y modelos supervisados de aprendizaje automático. Este es el objetivo general del proyecto completo; qué parte de él ya está implementada en este hito del 50\,\% y qué parte queda planificada para las etapas siguientes se detalla explícitamente en la Sección~\ref{sec:alcance} (Alcance por hito).
 
 A los fines del proyecto, un producto emergente será aquel que, durante una ventana temporal definida, presente crecimiento sostenido en frecuencia de aparición, permanencia y/o publicaciones asociadas, con variaciones de precio o categoría que permitan diferenciarlo de aumentos aislados. Esta definición convierte la idea general de tendencia en un conjunto de indicadores medibles a partir del histórico propio.
 
@@ -28,7 +28,7 @@ A los fines del proyecto, un producto emergente será aquel que, durante una ven
 
 Las decisiones técnicas adoptadas dentro del proyecto responden principalmente a la necesidad de garantizar escalabilidad, automatización, persistencia histórica y capacidad analítica.
 
-La Propuesta de Tema aprobada originalmente (incluida al inicio de este documento) planteaba un desarrollo basado en Python, con librerías de análisis de datos y machine learning (pandas, numpy, scikit-learn) y de visualización (matplotlib, seaborn), sobre una base de datos MySQL o una alternativa NoSQL a definir. Durante el diseño técnico posterior a la aprobación de la propuesta, esas decisiones se revisaron: se optó por unificar el desarrollo en JavaScript/TypeScript sobre Next.js, exponiendo el sistema como una aplicación web con backend propio (API REST) en lugar de mantener un script de análisis separado del dashboard, y por usar PostgreSQL como motor relacional gestionado. El stack resultante de esa revisión es el que se detalla en la Sección~\ref{sec:tecnologias-utilizadas} y en la tabla de la Sección~\ref{sec:stack-preliminar}, y se ajustó una vez más durante la implementación, según se explica en la Sección~\ref{sec:evolucion-tecnica}. Python se mantiene en el plan, pero acotado al motor analítico de Machine Learning de la etapa siguiente (ver Sección~\ref{sec:evolucion-tecnica} y la aclaración de alcance por hito en la Sección~\ref{sec:alcance}).
+La Propuesta de Tema aprobada originalmente (incluida como Anexo~\ref{anexo:propuesta} de este documento) planteaba un desarrollo basado en Python, con librerías de análisis de datos y machine learning (pandas, numpy, scikit-learn) y de visualización (matplotlib, seaborn), sobre una base de datos MySQL o una alternativa NoSQL a definir. Durante el diseño técnico posterior a la aprobación de la propuesta, esas decisiones se revisaron: se optó por unificar el desarrollo en JavaScript/TypeScript sobre Next.js, exponiendo el sistema como una aplicación web con backend propio (API REST) en lugar de mantener un script de análisis separado del dashboard, y por usar PostgreSQL como motor relacional gestionado. El stack resultante de esa revisión es el que se detalla en la Sección~\ref{sec:tecnologias-utilizadas} y en la tabla de la Sección~\ref{sec:stack-preliminar}, y se ajustó una vez más durante la implementación, según se explica en la Sección~\ref{sec:evolucion-tecnica}. Python se mantiene en el plan, pero acotado al motor analítico de Machine Learning de la etapa siguiente (ver Sección~\ref{sec:evolucion-tecnica} y la aclaración de alcance por hito en la Sección~\ref{sec:alcance}).
 
 Para eso, se plantea una arquitectura basada en APIs REST oficiales, permitiendo acceder a información estructurada y confiable proveniente del marketplace. Asimismo, la construcción de datasets históricos resulta fundamental para realizar análisis temporales y detectar patrones de crecimiento sostenido.
 
@@ -91,6 +91,19 @@ En proyectos orientados al análisis de tendencias, estos modelos pueden utiliza
 La utilización de variables temporales y métricas descriptivas permite construir modelos con capacidad de aprendizaje progresivo, aportando mayor precisión en la identificación de oportunidades comerciales.
 
 En una primera etapa, el proyecto prioriza métricas descriptivas y reglas de análisis temporal. Posteriormente, esas variables podrán utilizarse como entrada de modelos supervisados, por ejemplo para clasificar productos según su probabilidad de presentar crecimiento sostenido. Esta decisión es consistente con trabajos como el de \textcite{ElalemMaierSeifert2023}, donde se analiza la predicción de productos nuevos con ciclos de vida cortos y disponibilidad limitada de datos históricos.
+
+\subsubsection*{Diseño metodológico previsto para el modelo supervisado}
+
+Aunque el modelo todavía no se entrena en este hito (Sección~\ref{sec:alcance}), su diseño metodológico se define desde ahora para que la construcción del histórico actual ya sea compatible con esa etapa futura:
+
+\begin{itemize}
+	\item \textbf{Variable objetivo}: clasificación binaria por producto y ventana, derivada de los propios datos históricos: 1 si el score del producto en la ventana siguiente sube al menos 5 puntos respecto de la ventana actual (el mismo umbral ya usado hoy para la alerta de HU02), 0 en caso contrario.
+	\item \textbf{Estrategia de etiquetado}: automática y retrospectiva, sin intervención manual. Cada par de \texttt{TrendScore} consecutivos de un mismo producto genera un ejemplo etiquetado, comparando el score de una ventana contra el de la ventana siguiente. Esto es posible porque el sistema ya persiste el historial completo de scores, no solo el último.
+	\item \textbf{Variables de entrada (\emph{features})}: los cuatro componentes ya calculados (frecuencia, permanencia, ranking, estabilidad), su variación respecto de la ventana anterior, la categoría del producto y la variación porcentual de precio.
+	\item \textbf{Separación entrenamiento/validación}: al tratarse de una serie temporal, se usará una separación por corte de fecha (\emph{time-based split}) en lugar de una separación aleatoria, entrenando con datos hasta una fecha de corte y validando con datos posteriores, para evitar fuga de información desde el futuro hacia el pasado.
+	\item \textbf{Métricas de evaluación}: dado que se espera una clase minoritaria (pocos productos efectivamente despegan), se priorizarán \emph{precision}, \emph{recall}, F1-score y AUC-ROC por sobre el \emph{accuracy} simple, con foco particular en el \emph{recall} de la clase positiva -- perder una tendencia real (falso negativo) es más costoso para el vendedor que una alerta de más (falso positivo).
+	\item \textbf{Volumen histórico mínimo}: al cierre de este hito el sistema acumula 26 días de histórico (Sección~\ref{sec:evidencia-cuantitativa}). Antes de entrenar el modelo se espera contar con varios ciclos completos de aparición-crecimiento-declive por categoría, lo que en la práctica requiere varios meses adicionales de captura continua; hasta entonces, el sistema sigue operando con el score descriptivo ya implementado.
+\end{itemize}
 
 \section{Stack tecnológico preliminar}\label{sec:stack-preliminar}
 
@@ -216,3 +229,42 @@ La detección temprana no se define por la aparición aislada de un producto en 
 		\bottomrule
 	\end{tabularx}
 \end{table}
+
+\subsection{Definición formal del score de tendencia (RF02)}\label{sec:score-formal}
+
+El indicador compuesto de la Tabla~\ref{tab:metricas} es, en la implementación actual, el score de tendencia: un valor entre 0 y 100 calculado para cada producto sobre una ventana de análisis de 7 días, que combina cuatro componentes normalizados entre 0 y 1:
+
+\begin{equation}
+	\text{score} = 100 \times (0{,}35 \cdot f + 0{,}25 \cdot p + 0{,}20 \cdot r + 0{,}20 \cdot e)
+	\label{eq:score}
+\end{equation}
+
+donde:
+
+\begin{itemize}
+	\item \textbf{Frecuencia ($f$, peso 35\,\%)}: apariciones del producto dentro de la ventana, normalizadas contra el máximo de apariciones de cualquier producto en el mismo dataset ($f = \text{apariciones}_{\text{producto}} / \text{apariciones}_{\text{máx}}$). Es relativa al resto del dataset, no un conteo absoluto.
+	\item \textbf{Permanencia ($p$, peso 25\,\%)}: proporción de días distintos, dentro de la ventana, en los que el producto tuvo al menos una aparición ($p = \text{días con presencia} / 7$, acotado a 1). Diferencia una presencia sostenida de una aparición aislada.
+	\item \textbf{Ranking ($r$, peso 20\,\%)}: posición promedio del producto dentro del catálogo de su categoría (1 a 8, ya que la minería captura 8 productos por categoría), invertida y normalizada: $r = \max(0,\, (9 - \text{posición promedio}) / 8)$. Una posición promedio 1 (la mejor) da $r=1$; una posición 8 da $r=0$.
+	\item \textbf{Estabilidad de precio ($e$, peso 20\,\%)}: $e = \max(0,\, 1 - \min(1, |\Delta\%\text{precio}|))$, comparando el primer y el último precio registrado dentro de la ventana. Un precio estable da $e$ cercano a 1; una variación brusca (oferta relámpago, error de carga) lo acerca a 0. Si el producto solo tiene un registro de precio en la ventana, se usa un valor neutro $e = 0{,}5$ por falta de información suficiente.
+\end{itemize}
+
+Un producto se marca como ``en crecimiento'' (HU02, alerta) cuando su score sube 5 puntos o más respecto del cálculo anterior sobre el mismo producto.
+
+\subsubsection*{Ejemplo trabajado con datos reales del sistema}
+
+A modo de ejemplo, el sistema calculó lo siguiente para un aro de luz LED profesional (categoría Celulares) el día 10 de agosto de 2026, con 21 apariciones registradas en la ventana de 7 días:
+
+\begin{itemize}
+	\item $f = 0{,}500$ (apariciones normalizadas contra el máximo del dataset)
+	\item $p = 1{,}000$ (presente los 7 días de la ventana)
+	\item $r = 0{,}482$ (posición promedio $\approx 5{,}1$ de 8 en su categoría)
+	\item $e = 1{,}000$ (precio sin variación en la ventana)
+\end{itemize}
+
+\[
+	\text{score} = 100 \times (0{,}35 \cdot 0{,}500 + 0{,}25 \cdot 1{,}000 + 0{,}20 \cdot 0{,}482 + 0{,}20 \cdot 1{,}000) = 72{,}1
+\]
+
+Como contraste, otro producto de la misma categoría con una sola aparición en toda la ventana obtuvo $f=0{,}024$, $p=0{,}143$, $r=0{,}125$ y $e=0{,}5$ (neutro, por tener un solo registro de precio), resultando en un score de apenas $16{,}9$ -- reflejando correctamente que se trata de una aparición aislada y no de una tendencia sostenida.
+
+El sistema persiste el desglose completo de los cuatro componentes junto con cada score calculado (no solo el número final), precisamente para que el resultado pueda auditarse y no funcione como una caja negra. Esto responde de manera directa al hallazgo de la Entrevista 2 (Sección~\ref{chapter06}), donde el entrevistado señaló que un score sin desglose no le genera confianza.

@@ -162,9 +162,25 @@ Revisé y corregí los 7 puntos que pediste:
 
 Cambié el rubro de Lucas de "bazar y hogar" (que era el de Martín) a "tecnología", como pediste. De paso encontré y corregí otra referencia que quedaba pegada de cuando ambas entrevistas eran la misma persona: en la pregunta 9, Lucas mencionaba "el error de las luces" — que es específicamente la historia de Martín en la Entrevista 1 (las luces galaxy light). Lo generalicé a "un error de timing en una tendencia" para no atribuirle a Lucas una anécdota que no es suya.
 
-## 29. Estructura final verificada
+## 30. Correcciones a partir de la devolución del tutor (3ra entrega 50%)
 
-- Página 1: portada interna (título, autor, tutor, UADE) — antes era la carátula amarilla genérica, ahora es la primera página como pediste.
-- Páginas 2–8: Propuesta de Tema completa (7 páginas), centrada, sin firmas.
-- Página 1: portada. Páginas 2–3: Índice (con "Propuesta de Tema" como primera entrada, apunta a la página 4). Páginas 4–10: Propuesta de Tema (7 páginas). De ahí en más: capítulos 1 a 7 (Demo con 3 capturas, User Research con las 3 entrevistas analizadas) → Anexos (incluye las 3 transcripciones completas) → Lista de Figuras → Lista de Tablas → Bibliografía (última página). Conclusión queda pendiente para la entrega final.
-- Total: 61 páginas. Numeración impresa y física sincronizadas en todo el documento. Enlaces en negro. Compilación limpia (`pdflatex` → `biber` → `pdflatex` ×2), sin errores, sin overfull hbox de contenido.
+El tutor mandó un análisis con observaciones puntuales. Las fui resolviendo una por una:
+
+1. **Propuesta de Tema movida a Anexo A**: el tutor marcó que tener la propuesta con campos administrativos vacíos (fechas sin completar, firmas en blanco) mezclada en el cuerpo principal debilitaba la presentación académica. Se movió del bloque justo después del índice a un nuevo **Anexo A: Propuesta de Tema**, con una nota que aclara que es respaldo documental/administrativo y que el desarrollo real está en el Capítulo 1. El cuerpo principal ahora arranca directo en Marco Teórico después del índice. Los Anexos de Cronograma, Encuesta y Entrevistas pasan de B/C/A... a **B, C y D** automáticamente (usan lettering automático, no hubo que tocar ninguna referencia).
+2. **Encabezados de User Persona 1 y 2 pegados**: era el mismo bug de "float" que ya había aparecido con los diagramas — las tablas se corrían de lugar en el PDF y los dos títulos quedaban consecutivos sin tabla en el medio. Se fijaron ambas tablas con `[H]`, igual que se hizo antes con los diagramas.
+3. **Matriz de trazabilidad (nueva, Sección 3.4)**: tabla RF/RNF → Estado → Evidencia → Sección, para los 6 RF y los 5 RNF. Encontré y documenté honestamente que **RNF02 (respuesta <3s) está en estado "Parcial"**: medí en vivo que `/api/trend-scores` tarda 6,3–7,6s con el volumen actual (trae los 3911 scores históricos completos en cada consulta en vez de solo el último por producto) — lo dejé marcado como limitación real a optimizar, no lo escondí.
+4. **Evidencia cuantitativa real (nueva, Sección 7.1)**: tabla con números medidos directamente sobre la base de producción el 10/08/2026: 162 productos, 6 categorías, 2234 apariciones, 2324 registros de precio, 3911 scores, 729 registros de salud de endpoints, ~73 sesiones de minería estimadas en 26 días de histórico continuo, y los tiempos de respuesta medidos de los 4 endpoints principales.
+5. **Score de tendencia formalizado (nueva subsección 1.9.2)**: fórmula completa con la normalización exacta de cada uno de los 4 componentes, y un ejemplo trabajado paso a paso con un producto real de la base (score 72,1) más un contraste con score bajo (16,9) — verifiqué ambos cálculos a mano contra los datos reales antes de escribirlos.
+6. **Diseño metodológico del ML supervisado (nueva subsección en 1.4.4)**: variable objetivo, estrategia de etiquetado automático (derivado del propio histórico, sin etiquetado manual), separación entrenamiento/validación por corte temporal (no aleatoria, por ser series de tiempo), métricas de evaluación (precision/recall/F1/AUC-ROC en vez de accuracy simple) y el volumen histórico mínimo esperado antes de entrenar.
+7. **Separación implementado/planificado reforzada**: el objetivo general (Concepto central, 1.1) ahora aclara explícitamente que el desglose de qué está hecho y qué no está en la Sección 1.3 (Alcance por hito), en vez de dejar la promesa de ML mezclada sin esa referencia.
+8. **FODA/Porter/Triple P subordinados**: se agregó una frase al inicio del Capítulo 5 aclarando que es un capítulo complementario al núcleo técnico-investigativo (con referencia a dónde está ese núcleo), no una sección central del PFI.
+9. **Reconciliación de stack actualizada**: el párrafo que ya había agregado (que compara el stack de la Propuesta original vs. el actual) ahora referencia el Anexo A por número en vez de decir "incluida al inicio de este documento", ya que cambió de posición.
+
+No llegué a armar una tabla separada de "temas/códigos emergentes" de las entrevistas (última recomendación del tutor) — el análisis temático de 6 puntos que ya está en la Sección 6.7 cumple ese rol, pero si querés que lo arme como tabla aparte, decime y lo sumo.
+
+## 31. Estructura final verificada
+
+- Anexos con lettering automático: **A** Propuesta de Tema, **B** Cronograma, **C** Encuesta, **D** Entrevistas.
+- Cuerpo principal arranca directo en Marco Teórico después del índice (sin la propuesta interpuesta).
+- Nuevo: Sección 1.9.2 (score formal + ejemplo real), nueva subsección de diseño metodológico de ML (1.4.4), Sección 3.4 (matriz de trazabilidad), Sección 7.1 (evidencia cuantitativa).
+- Total: 68 páginas. Compilación limpia (`pdflatex` ×3 + `biber`), sin errores, sin referencias rotas, sin overfull hbox.

@@ -23,3 +23,34 @@ A continuación se presentan capturas del sistema en funcionamiento (julio de 20
 	\label{fig:demo-score}
 \end{figure}
 
+\section{Evidencia cuantitativa del sistema en producción}\label{sec:evidencia-cuantitativa}
+
+Más allá de la afirmación de que el sistema está desplegado y capturando datos, esta sección documenta con números concretos, medidos directamente sobre la base de datos y los endpoints en producción el 10 de agosto de 2026, cómo se comporta el prototipo actual.
+
+\begin{table}[H]
+	\centering
+	\caption{Métricas del sistema en producción}
+	\label{tab:evidencia}
+	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{5.2cm} X@{}}
+		\toprule
+		\textbf{Indicador} & \textbf{Valor medido} \\
+		\midrule
+		Rango temporal del histórico & 14/07/2026 -- 10/08/2026 (26 días de operación continua) \\
+		Productos monitoreados & 162 \\
+		Categorías monitoreadas & 6 (Computación, Celulares, Electrónica, Ropa y Accesorios, Alimentos y Bebidas, Limpieza del Hogar) \\
+		Apariciones registradas (\texttt{TrendSnapshot}) & 2234 \\
+		Registros de precio (\texttt{PriceHistory}) & 2324 \\
+		Scores de tendencia calculados (\texttt{TrendScore}) & 3911 \\
+		Registros de monitoreo de endpoints (\texttt{EndpointHealthLog}) & 729 \\
+		Sesiones de minería estimadas & $\sim$73 (agrupando snapshots por cortes de inactividad $>$40 min), $\sim$30,6 apariciones registradas por sesión en promedio \\
+		Frecuencia de captura configurada & 3 corridas diarias (cron programado, ver Sección~\ref{sec:evolucion-tecnica}) \\
+		Tiempo de respuesta -- \texttt{/api/health}, \texttt{/api/status} & 0,5 -- 2,1\,s (medido, 3 muestras c/u) \\
+		Tiempo de respuesta -- \texttt{/dashboard} & 2,2 -- 6,1\,s (medido, 3 muestras) \\
+		Tiempo de respuesta -- \texttt{/api/trend-scores} & 6,3 -- 7,6\,s (medido, 5 muestras) -- ver limitación en RNF02, Sección~\ref{sec:trazabilidad} \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+Un ejemplo real de exportación CSV (RF06) generado desde el dashboard el mismo día incluye columnas \texttt{producto, categoria, precio, moneda, variacion\_pct, score, periodo, calculado, link}, con una fila por cada producto del ranking filtrado en pantalla al momento de la exportación (ver Figura~\ref{fig:demo-score}).
+
+El principal hallazgo de esta medición es que \texttt{/api/trend-scores} -- el endpoint que alimenta el ranking principal -- no cumple hoy el objetivo de RNF02 (respuesta en menos de 3 segundos): la consulta actual trae los 3911 scores históricos con sus relaciones completas en cada solicitud, en lugar de traer solamente el último score vigente por producto. Es una limitación real y ya identificada, no oculta, que queda como tarea concreta de optimización para la siguiente etapa.
