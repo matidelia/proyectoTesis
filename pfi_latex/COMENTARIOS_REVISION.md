@@ -189,7 +189,14 @@ Cuando entré a seguir con la devolución del tutor, encontré que ya había un 
 
 **Aviso importante para vos**: esto sugiere que puede haber otra ventana/sesión de Claude Code abierta sobre esta misma carpeta. Si la abriste vos a propósito, todo bien — el trabajo de ambas sesiones quedó reconciliado en este commit. Si no te diste cuenta de que había otra abierta, convendría cerrarla para evitar que dos sesiones editen los mismos archivos al mismo tiempo y se pisen entre sí.
 
-## 33. Estructura final verificada (post-devolución del tutor)
+## 33. Páginas en blanco al final del Capítulo 7 / inicio del Anexo A
+
+Preguntaste por dos páginas que se ven casi vacías:
+
+- **Página 46** (fin del Capítulo 7): solo tiene la palabra "etapa." arriba, resto en blanco. Esto es el final natural de la última oración del capítulo, justo antes de que el Anexo A fuerce una página nueva (como hace cualquier capítulo o anexo en el documento). Es comportamiento estándar de libros/informes formales, no un error — no lo toqué porque forzar el texto para "rellenar" esa página se vería peor, no mejor.
+- **Página 47** (inicio del Anexo A): el título y el párrafo de introducción quedaban arriba de todo, con un hueco enorme abajo antes del pie de página, porque la propuesta incrustada (7 páginas de un PDF externo completo) no puede compartir hoja con texto y arranca recién en la página 48. Esto sí lo mejoré: centré verticalmente el párrafo de introducción en el espacio disponible, para que se vea como una portada de anexo hecha a propósito en vez de una página vacía por error. El salto a la página 48 para la propuesta en sí sigue existiendo (es inevitable al incrustar un PDF externo), pero ahora se ve intencional.
+
+## 34. Estructura final verificada (post-devolución del tutor)
 
 - Anexos con lettering automático: **A** Propuesta de Tema, **B** Cronograma, **C** Encuesta, **D** Entrevistas.
 - Cuerpo principal arranca directo en Marco Teórico después del índice (sin la propuesta interpuesta).
