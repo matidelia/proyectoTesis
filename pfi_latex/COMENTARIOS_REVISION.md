@@ -196,7 +196,16 @@ Preguntaste por dos páginas que se ven casi vacías:
 - **Página 46** (fin del Capítulo 7): solo tiene la palabra "etapa." arriba, resto en blanco. Esto es el final natural de la última oración del capítulo, justo antes de que el Anexo A fuerce una página nueva (como hace cualquier capítulo o anexo en el documento). Es comportamiento estándar de libros/informes formales, no un error — no lo toqué porque forzar el texto para "rellenar" esa página se vería peor, no mejor.
 - **Página 47** (inicio del Anexo A): el título y el párrafo de introducción quedaban arriba de todo, con un hueco enorme abajo antes del pie de página, porque la propuesta incrustada (7 páginas de un PDF externo completo) no puede compartir hoja con texto y arranca recién en la página 48. Esto sí lo mejoré: centré verticalmente el párrafo de introducción en el espacio disponible, para que se vea como una portada de anexo hecha a propósito en vez de una página vacía por error. El salto a la página 48 para la propuesta en sí sigue existiendo (es inevitable al incrustar un PDF externo), pero ahora se ve intencional.
 
-## 34. Estructura final verificada (post-devolución del tutor)
+## 34. Segunda pasada sobre las páginas casi vacías
+
+El primer intento (centrar el párrafo) no te convenció, así que hice dos cambios más de fondo:
+
+- **Página con "etapa." sola**: achiqué un poco la tabla de evidencia cuantitativa (le agregué `\small`) para recuperar espacio vertical. Con eso, la última oración del Capítulo 7 entra completa en su página — ya no queda una palabra sola en la página siguiente.
+- **Portada del Anexo A**: acorté el párrafo de introducción a una sola oración corta y lo dejé pegado arriba (como cualquier título de sección), en vez de centrado en el medio de la página. Ocupa mucho menos espacio en blanco.
+
+El documento pasó de 68 a **67 páginas** por el espacio recuperado. Sigue existiendo un salto de página antes de la propuesta incrustada en sí (es inevitable, un PDF externo de 7 páginas no puede empezar a mitad de una hoja), pero ahora la página del Anexo A se ve como una portada corta normal, no como un hueco.
+
+## 35. Estructura final verificada (post-devolución del tutor)
 
 - Anexos con lettering automático: **A** Propuesta de Tema, **B** Cronograma, **C** Encuesta, **D** Entrevistas.
 - Cuerpo principal arranca directo en Marco Teórico después del índice (sin la propuesta interpuesta).
