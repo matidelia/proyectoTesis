@@ -32,6 +32,15 @@ body {
   overflow-x: hidden;
 }
 
+/* Sin esto, el navegador dibuja el popup nativo de <select> con fondo
+   claro del sistema operativo mientras el texto hereda el color claro
+   del tema oscuro de la app: las opciones quedan invisibles salvo la
+   resaltada al pasar el mouse. color-scheme le avisa al navegador que
+   use su propio tema oscuro nativo para selects/option. */
+select {
+  color-scheme: dark;
+}
+
 /* Typography */
 h1 {
   font-size: 3rem;

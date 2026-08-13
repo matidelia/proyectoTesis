@@ -2,9 +2,13 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 
-interface ProductOption {
-  id: string;
+interface ScoreItem {
+  productId: string;
   name: string;
+  category: string;
+  price: number | null;
+  currency: string;
+  score: number;
 }
 
 interface HistoryPoint {
@@ -30,12 +34,42 @@ const COMPONENT_LABELS: Record<string, string> = {
 
 const COMPONENT_ORDER = ['frecuencia', 'permanencia', 'ranking', 'estabilidad'];
 
-export default function TrendScoreChart({ products }: { products: ProductOption[] }) {
-  const [selectedId, setSelectedId] = useState<string>(products[0]?.id || '');
+export default function TrendScoreChart() {
+  const [items, setItems] = useState<ScoreItem[]>([]);
+  const [itemsLoading, setItemsLoading] = useState(true);
+  const [itemsError, setItemsError] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string>('');
   const [data, setData] = useState<HistoryResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  // Usa el mismo endpoint y el mismo orden (por score) que la tabla de
+  // ranking, para que el selector del gráfico coincida con lo que el
+  // usuario ya vio ahí — y para distinguir productos con nombres muy
+  // parecidos (distintos vendedores) mostrando precio y score en la opción.
+  useEffect(() => {
+    fetch('/api/trend-scores')
+      .then(r => r.json())
+      .then(d => {
+        if (d.error) throw new Error(d.details || d.error);
+        const list: ScoreItem[] = d.items.map((i: any) => ({
+          productId: i.productId,
+          name: i.name,
+          category: i.category,
+          price: i.price,
+          currency: i.currency,
+          score: i.score,
+        }));
+        setItems(list);
+        setSelectedId(list[0]?.productId || '');
+        setItemsLoading(false);
+      })
+      .catch(e => {
+        setItemsError(e.message);
+        setItemsLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
     if (!selectedId) return;
@@ -97,7 +131,23 @@ export default function TrendScoreChart({ products }: { products: ProductOption[
       .map(key => ({ key, value: comp[key] as number }));
   }, [data]);
 
-  if (products.length === 0) {
+  if (itemsLoading) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+        Cargando productos…
+      </div>
+    );
+  }
+
+  if (itemsError) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center', color: '#ef4444' }}>
+        ⚠️ No se pudo cargar la lista de productos: {itemsError}
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
     return (
       <div style={{
         padding: '2rem', textAlign: 'center', background: 'rgba(255,255,255,0.02)',
@@ -117,7 +167,7 @@ export default function TrendScoreChart({ products }: { products: ProductOption[
             📈 Evolución del Score de Tendencia
           </h2>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-            Elegí un producto para ver cómo fue cambiando su puntaje con el tiempo.
+            Elegí un producto para ver cómo fue cambiando su puntaje con el tiempo. Ordenados por score, igual que el ranking de arriba.
           </p>
         </div>
         <select
@@ -126,14 +176,18 @@ export default function TrendScoreChart({ products }: { products: ProductOption[
           style={{
             background: 'rgba(255,255,255,0.05)', color: '#fff',
             border: '1px solid rgba(255,255,255,0.1)', padding: '0.6rem 1.2rem',
-            borderRadius: '8px', outline: 'none', cursor: 'pointer', fontSize: '0.9rem', maxWidth: 300,
+            borderRadius: '8px', outline: 'none', cursor: 'pointer', fontSize: '0.9rem', maxWidth: 340,
           }}
         >
-          {products.map(p => (
-            <option key={p.id} value={p.id} style={{ background: '#121214', color: '#fff' }}>
-              {p.name.length > 45 ? p.name.slice(0, 45) + '…' : p.name}
-            </option>
-          ))}
+          {items.map(p => {
+            const shortName = p.name.length > 32 ? p.name.slice(0, 32) + '…' : p.name;
+            const priceLabel = p.price != null ? `$${p.price.toLocaleString('es-AR')}` : 'sin precio';
+            return (
+              <option key={p.productId} value={p.productId}>
+                {shortName} — {priceLabel} — score {p.score}
+              </option>
+            );
+          })}
         </select>
       </div>
 

@@ -10,12 +10,6 @@ export const dynamic = 'force-dynamic';
 // score en el tiempo. No incluye datos técnicos/operativos (estado de APIs,
 // historial de minería, catálogo crudo) — esos quedan en /admin.
 export default async function DashboardPage() {
-  const chartableProducts = await prisma.product.findMany({
-    where: { trendScores: { some: {} } },
-    select: { id: true, name: true },
-    orderBy: { name: 'asc' },
-  });
-
   const totalMonitored = await prisma.product.count({
     where: { trendScores: { some: {} } },
   });
@@ -92,7 +86,7 @@ export default async function DashboardPage() {
             subtitle="Cómo fue cambiando el score de un producto a lo largo del tiempo — así se confirma si una tendencia se sostiene o fue solo un pico pasajero."
           />
           <div style={{ background: 'var(--glass-bg)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '2rem' }}>
-            <TrendScoreChart products={chartableProducts} />
+            <TrendScoreChart />
           </div>
         </section>
 
