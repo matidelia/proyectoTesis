@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import ThemedSelect from './ThemedSelect';
 
 interface ScoreItem {
   productId: string;
@@ -180,31 +181,25 @@ export default function TrendScoreTable() {
           }}
         />
 
-        <select
+        <ThemedSelect
           value={categoryFilter}
-          onChange={e => setCategoryFilter(e.target.value)}
-          style={{
-            background: 'rgba(255,255,255,0.06)', color: '#fff',
-            border: '1px solid var(--glass-border)', borderRadius: '8px',
-            padding: '0.4rem 0.75rem', fontSize: '0.85rem',
-          }}
-        >
-          <option value="all">Todas las categorías</option>
-          {categories.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+          onChange={setCategoryFilter}
+          minWidth={180}
+          options={[
+            { value: 'all', label: 'Todas las categorías' },
+            ...categories.map(c => ({ value: c, label: c })),
+          ]}
+        />
 
-        <select
+        <ThemedSelect
           value={sortBy}
-          onChange={e => setSortBy(e.target.value as 'score' | 'variation')}
-          style={{
-            background: 'rgba(255,255,255,0.06)', color: '#fff',
-            border: '1px solid var(--glass-border)', borderRadius: '8px',
-            padding: '0.4rem 0.75rem', fontSize: '0.85rem',
-          }}
-        >
-          <option value="score">Ordenar por score</option>
-          <option value="variation">Ordenar por variación de precio</option>
-        </select>
+          onChange={v => setSortBy(v as 'score' | 'variation')}
+          minWidth={220}
+          options={[
+            { value: 'score', label: 'Ordenar por score' },
+            { value: 'variation', label: 'Ordenar por variación de precio' },
+          ]}
+        />
 
         <button
           onClick={exportCsv}

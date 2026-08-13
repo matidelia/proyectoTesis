@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import ThemedSelect from './ThemedSelect';
 
 interface ScoreItem {
   productId: string;
@@ -170,25 +171,17 @@ export default function TrendScoreChart() {
             Elegí un producto para ver cómo fue cambiando su puntaje con el tiempo. Ordenados por score, igual que el ranking de arriba.
           </p>
         </div>
-        <select
+        <ThemedSelect
           value={selectedId}
-          onChange={(e) => setSelectedId(e.target.value)}
-          style={{
-            background: 'rgba(255,255,255,0.05)', color: '#fff',
-            border: '1px solid rgba(255,255,255,0.1)', padding: '0.6rem 1.2rem',
-            borderRadius: '8px', outline: 'none', cursor: 'pointer', fontSize: '0.9rem', maxWidth: 340,
-          }}
-        >
-          {items.map(p => {
+          onChange={setSelectedId}
+          minWidth={280}
+          maxWidth={340}
+          options={items.map(p => {
             const shortName = p.name.length > 32 ? p.name.slice(0, 32) + '…' : p.name;
             const priceLabel = p.price != null ? `$${p.price.toLocaleString('es-AR')}` : 'sin precio';
-            return (
-              <option key={p.productId} value={p.productId}>
-                {shortName} — {priceLabel} — score {p.score}
-              </option>
-            );
+            return { value: p.productId, label: `${shortName} — ${priceLabel} — score ${p.score}` };
           })}
-        </select>
+        />
       </div>
 
       {loading && (
