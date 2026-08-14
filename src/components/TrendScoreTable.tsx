@@ -309,9 +309,6 @@ export default function TrendScoreTable() {
       )}
 
       <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '0.75rem', marginBottom: 0 }}>
-        Score de tendencia (0-100) = 35% frecuencia de aparición + 25% permanencia + 20% ranking de catálogo
-        + 20% estabilidad de precio, sobre ventana de {data.items[0]?.period ?? '7d'}.
-        &nbsp;🔥 = alerta de crecimiento: el score subió al menos 5 puntos respecto del cálculo anterior (HU02).
         Actualizado: {new Date(data.timestamp).toLocaleString('es-AR')}.
       </p>
     </div>
