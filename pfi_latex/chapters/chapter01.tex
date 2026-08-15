@@ -1,5 +1,7 @@
 \chapter{Marco Teórico}\label{chapter01}
 
+\section{Introducción}\label{sec:introduccion}
+
 El crecimiento del comercio electrónico durante los últimos años produjo una transformación significativa en la manera en que consumidores, vendedores y empresas interactúan dentro de plataformas digitales. Los marketplaces modernos concentran millones de productos, búsquedas y transacciones diarias, generando grandes volúmenes de información capaces de reflejar tendencias de consumo, variaciones de demanda y cambios en el comportamiento del mercado.
 
 La información generada por la actividad de los usuarios dentro de entornos digitales no solo permite describir comportamientos ya ocurridos, sino que también puede funcionar como una señal temprana para anticipar cambios de demanda. En trabajos como el de \textcite{KulkarniKannanMoe2012}, los datos de búsqueda en línea son utilizados para anticipar ventas de productos nuevos, lo que refuerza la utilidad de observar señales digitales antes de que una tendencia se encuentre completamente consolidada.
@@ -18,9 +20,21 @@ En el proyecto, el término ``tendencia'' no se utiliza como sinónimo de rankin
 
 El enfoque planteado se sostiene sobre tres ejes principales: la recolección automatizada de información accesible desde fuentes oficiales, la construcción progresiva de un histórico propio y el análisis temporal de variables que puedan funcionar como indicios de crecimiento. Esta decisión permite diferenciar el proyecto de una herramienta meramente descriptiva, ya que el valor principal no se encuentra solo en mostrar datos actuales, sino en observar su evolución y detectar comportamientos emergentes.
 
-\section{Concepto central}\label{sec:concepto-central}
+\subsection{Objetivo General}\label{sec:objetivo-general}
 
 Desarrollar una plataforma inteligente capaz de detectar tempranamente productos emergentes en Mercado Libre mediante la recolección automatizada de datos provenientes de su API oficial, la construcción de un dataset histórico propio y el análisis temporal utilizando métricas descriptivas y modelos supervisados de aprendizaje automático. Este es el objetivo general del proyecto completo; qué parte de él ya está implementada en este hito del 50\,\% y qué parte queda planificada para las etapas siguientes se detalla explícitamente en la Sección~\ref{sec:alcance} (Alcance por hito).
+
+\subsection{Objetivos Específicos}\label{sec:objetivos-especificos}
+
+\begin{enumerate}
+	\item Capturar de forma automatizada y periódica datos de productos publicados en Mercado Libre a través de su API oficial (RF01).
+	\item Construir un dataset histórico propio y calcular, a partir de él, un score de tendencia por producto en base a variables temporales (RF02).
+	\item Diseñar un dashboard que permita filtrar y ordenar los productos monitoreados, y visualizar la evolución temporal de precios y categorías (RF03, RF05).
+	\item Exponer los resultados mediante una API REST propia y permitir su exportación para uso externo (RF04, RF06).
+	\item Sentar las bases metodológicas -- variable objetivo, etiquetado y esquema de validación -- para incorporar en una etapa posterior un modelo de aprendizaje automático supervisado que complemente el score descriptivo (Sección~\ref{sec:alcance}).
+\end{enumerate}
+
+\section{Concepto central}\label{sec:concepto-central}
 
 A los fines del proyecto, un producto emergente será aquel que, durante una ventana temporal definida, presente crecimiento sostenido en frecuencia de aparición, permanencia y/o publicaciones asociadas, con variaciones de precio o categoría que permitan diferenciarlo de aumentos aislados. Esta definición convierte la idea general de tendencia en un conjunto de indicadores medibles a partir del histórico propio.
 
@@ -44,7 +58,7 @@ El alcance no incluye scraping, acceso a datos privados de usuarios ni predicci�
 
 \subsection*{Alcance por hito}
 
-El objetivo general del proyecto (Sección~\ref{sec:concepto-central}) incluye tanto métricas descriptivas como modelos supervisados de aprendizaje automático. Dado que esta entrega corresponde al hito del 50\,\%, ambos componentes no se encuentran en el mismo estado de avance, y se detalla a continuación qué corresponde a cada etapa:
+El objetivo general del proyecto (Sección~\ref{sec:objetivo-general}) incluye tanto métricas descriptivas como modelos supervisados de aprendizaje automático. Dado que esta entrega corresponde al hito del 50\,\%, ambos componentes no se encuentran en el mismo estado de avance, y se detalla a continuación qué corresponde a cada etapa:
 
 \begin{itemize}
 	\item \textbf{Ya implementado (hito 50\,\%)}: captura automatizada de datos (RF01), score de tendencia basado en métricas descriptivas ponderadas -- frecuencia, permanencia, ranking y estabilidad de precio (RF02), dashboard con ranking y filtros (RF03), API REST (RF04), gráficos de evolución temporal (RF05) y exportación CSV (RF06). El sistema se encuentra desplegado en producción y capturando datos de forma autónoma.

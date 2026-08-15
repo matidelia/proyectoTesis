@@ -211,3 +211,12 @@ El documento pasó de 68 a **67 páginas** por el espacio recuperado. Sigue exis
 - Cuerpo principal arranca directo en Marco Teórico después del índice (sin la propuesta interpuesta).
 - Nuevo: Sección 1.9.2 (score formal + ejemplo real), nueva subsección de diseño metodológico de ML (1.4.4), Sección 3.4 (matriz de trazabilidad), Sección 7.1 (evidencia cuantitativa).
 - Total: 68 páginas. Compilación limpia (`pdflatex` ×3 + `biber`), sin errores, sin referencias rotas, sin overfull hbox.
+
+## 36. Correcciones de la devolución del 25% aplicadas a la entrega del 50%
+
+Pasaste la tabla de corrección que te hizo la cátedra sobre la entrega del **25%** (esa entrega ya no se presenta sola; queda incorporada al 50% completo). Revisé cada ítem contra el documento actual del 50%:
+
+- **Ya resuelto, sin acción**: "Realización de entrevistas" (Cumple Parcial en el 25%, por no haber entrevistas y encuesta de solo 35 respuestas) — en el 50% ya hay 3 entrevistas reales completas (Anexo D) y la encuesta creció a 120 respuestas. El resto de los ítems marcados "Cumple" en la tabla (carátula, formato, redacción, fuentes, originalidad, datasets, estado del arte) siguen firmes.
+- **Corregido — único ítem marcado "No Cumple"**: el cronograma (Anexo B) tenía columnas 25\%/50\%/75\%/100\% sin fechas ni meses. Agregué fechas reales a los cuartos ya transcurridos, verificadas contra el historial real de commits y bitácoras de sesión (25\%: Abr–May 2026; 50\%: Jun–Ago 2026). Para 75\% y 100\% consulté si había fechas oficiales de la cátedra — todavía no están definidas, así que quedan marcadas como "a definir" en vez de inventar un mes, siguiendo el mismo criterio de no inventar datos que usamos en el resto del documento.
+- **Mejora adicional relacionada**: el comentario de "Estructura general del trabajo" señalaba que el documento no tenía una sección explícita de Introducción/Objetivos separada. Agregué `Sección 1.1 Introducción` al inicio del Capítulo 1, con las subsecciones `1.1.1 Objetivo General` (reubicando el objetivo general que ya estaba redactado dentro de "Concepto central") y `1.1.2 Objetivos Específicos` (5 puntos derivados 1 a 1 de los RF01–06 ya definidos en el Capítulo 3, sin agregar contenido nuevo). Corregí también una referencia cruzada que apuntaba a la sección vieja.
+- El documento quedó en **68 páginas** tras el contenido nuevo de la Introducción. Recompilé (`pdflatex` ×3 + `biber`), sin errores, sin overfull hbox nuevo, sin referencias rotas.
