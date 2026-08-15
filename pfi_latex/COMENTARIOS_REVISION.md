@@ -230,3 +230,11 @@ Pasaste 3 capturas con problemas de espaciado. Revisé cada una contra el códig
 - **Ítem 4.2 (espacio entre el título y el cuadro del wireframe)**: los dos wireframes (Figuras 4.1 y 4.2) usaban `[ht]` en vez de `[H]` como posicionamiento — el mismo bug de float drift que ya habíamos corregido en los otros diagramas del documento, pero que había quedado sin aplicar acá. Con `[H]`, cada figura queda anclada justo debajo de su título, sin el hueco intermedio.
 
 Recompilé (`pdflatex` ×2), sin errores nuevos, 68 páginas, 0 anotaciones, 0 menciones de IA.
+
+## 38. Portada — "Cdad." expandido a "Ciudad"
+
+Cambié la abreviatura "Cdad. Autónoma de Buenos Aires" por "Ciudad Autónoma de Buenos Aires" completa, en la dirección del tutor en la portada (`chapters/title.tex`).
+
+Aparte, la captura que mandaste mostraba el texto de la portada cortado del lado izquierdo ("TEMA DE DETECCIÓN...", "DE) Universidad...") — renderé la portada directo desde el PDF compilado y el texto está completo y centrado; el recorte era solo de la captura/visor, no del documento.
+
+Recompilé (`pdflatex` ×2), sin errores, 68 páginas, 0 anotaciones.
