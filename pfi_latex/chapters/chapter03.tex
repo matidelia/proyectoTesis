@@ -51,7 +51,7 @@ La siguiente matriz vincula cada requerimiento con su estado real de implementac
 	RF02 & Implementado & 3911 scores calculados y persistidos con desglose completo. Fórmula, pesos y ejemplo real documentados. & Sec.~\ref{sec:score-formal} \\
 	RF03 & Implementado & Filtro por categoría y orden por score/variación de precio, activos en el dashboard. & Fig.~\ref{fig:demo-score} \\
 	RF04 & Implementado & 5 endpoints REST en producción (\texttt{/api/trend-scores}, \texttt{/api/health}, \texttt{/api/status}, \texttt{/api/search}, \texttt{/api/trends}). & Sec.~\ref{sec:evidencia-cuantitativa} \\
-	RF05 & Implementado & Gráfico de evolución de precio por producto y panel de tendencias desglosado por categoría, ambos en el dashboard. & Fig.~\ref{fig:demo-dashboard} \\
+	RF05 & Implementado & Gráfico de evolución del score de tendencia por producto y panel de tendencias desglosado por categoría, ambos en el dashboard. & Fig.~\ref{fig:demo-evolucion} \\
 	RF06 & Implementado & Exportación a CSV del ranking filtrado, disponible en el dashboard. & Fig.~\ref{fig:demo-score} \\
 	RNF01 & Implementado & Sin bloqueos por rate-limit en 26 días de operación; los únicos 2 endpoints bloqueados lo están por política de Mercado Libre, no por exceso de solicitudes. & Sec.~\ref{sec:evidencia-cuantitativa} \\
 	RNF02 & \textbf{Parcial} & Medido en producción: \texttt{/api/health} y \texttt{/api/status} responden en $<$2\,s; \texttt{/api/trend-scores} promedia 6--7,6\,s con el volumen actual (3911 scores), por encima del objetivo de 3\,s. Limitación identificada para optimizar en la próxima etapa (paginar / traer solo el último score por producto). & Sec.~\ref{sec:evidencia-cuantitativa} \\

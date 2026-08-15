@@ -1,11 +1,11 @@
 \chapter{Demo -- Avances de Implementación}\label{chapter07}
 
-A continuación se presentan capturas del sistema en funcionamiento (julio de 2026), correspondientes al avance de implementación del 50\%: el pipeline de captura y su monitoreo, la base de datos histórica, la API REST y el dashboard con el ranking por score de tendencia. El sistema se encuentra publicado y accesible en producción, con captura de datos automatizada ejecutándose de manera autónoma varias veces por día.
+A continuación se presentan capturas del sistema en funcionamiento (agosto de 2026), correspondientes al avance de implementación del 50\%: el pipeline de captura y su monitoreo, la base de datos histórica, la API REST y el dashboard con el ranking por score de tendencia. El sistema se encuentra publicado y accesible en producción, con captura de datos automatizada ejecutándose de manera autónoma varias veces por día. La interfaz web se divide en dos vistas: un panel para clientes (\texttt{/dashboard}), con el ranking de productos y la evolución del score en el tiempo, y un panel técnico interno (\texttt{/admin}) con el monitoreo de endpoints y los registros de minería, que se documenta a continuación como evidencia de RNF01.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.55\textwidth]{./images/demo/demo_dashboard.png}
-	\caption{Dashboard completo del sistema en funcionamiento (julio 2026).}
+	\includegraphics[width=0.75\textwidth]{./images/demo/demo_dashboard.png}
+	\caption{Panel técnico interno del sistema en funcionamiento (agosto 2026).}
 	\label{fig:demo-dashboard}
 \end{figure}
 
@@ -18,9 +18,16 @@ A continuación se presentan capturas del sistema en funcionamiento (julio de 20
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\textwidth]{./images/demo/demo_dashboard_score.png}
-	\caption{Ranking de productos por score de tendencia (RF02), con filtros por categoría y exportación CSV (RF03/RF06).}
+	\includegraphics[width=0.85\textwidth]{./images/demo/demo_dashboard_score.png}
+	\caption{Panel de clientes: ranking de productos por score de tendencia (RF02), con filtros por categoría y exportación CSV (RF03/RF06).}
 	\label{fig:demo-score}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.85\textwidth]{./images/demo/demo_dashboard_evolucion.png}
+	\caption{Panel de clientes: evolución del score de tendencia de un producto en el tiempo, con el desglose de sus componentes (RF02, RF05).}
+	\label{fig:demo-evolucion}
 \end{figure}
 
 \section{Evidencia cuantitativa del sistema en producción}\label{sec:evidencia-cuantitativa}
@@ -46,7 +53,8 @@ Más allá de la afirmación de que el sistema está desplegado y capturando dat
 		Sesiones de minería estimadas & $\sim$73 (agrupando snapshots por cortes de inactividad $>$40 min), $\sim$30,6 apariciones registradas por sesión en promedio \\
 		Frecuencia de captura configurada & 3 corridas diarias (cron programado, ver Sección~\ref{sec:evolucion-tecnica}) \\
 		Tiempo de respuesta -- \texttt{/api/health}, \texttt{/api/status} & 0,5 -- 2,1\,s (medido, 3 muestras c/u) \\
-		Tiempo de respuesta -- \texttt{/dashboard} & 2,2 -- 6,1\,s (medido, 3 muestras) \\
+		Tiempo de respuesta -- \texttt{/dashboard} (panel de clientes) & 0,5 -- 1,1\,s en caliente (medido, 5 muestras el 15/08/2026, tras separar el panel de clientes del panel técnico) \\
+		Tiempo de respuesta -- \texttt{/admin} (panel técnico) & 1,9 -- 4,0\,s (medido, 3 muestras el 15/08/2026) \\
 		Tiempo de respuesta -- \texttt{/api/trend-scores} & 6,3 -- 7,6\,s (medido, 5 muestras) -- ver limitación en RNF02, Sección~\ref{sec:trazabilidad} \\
 		\bottomrule
 	\end{tabularx}

@@ -238,3 +238,19 @@ Cambié la abreviatura "Cdad. Autónoma de Buenos Aires" por "Ciudad Autónoma d
 Aparte, la captura que mandaste mostraba el texto de la portada cortado del lado izquierdo ("TEMA DE DETECCIÓN...", "DE) Universidad...") — renderé la portada directo desde el PDF compilado y el texto está completo y centrado; el recorte era solo de la captura/visor, no del documento.
 
 Recompilé (`pdflatex` ×2), sin errores, 68 páginas, 0 anotaciones.
+
+## 39. Capturas de la demo actualizadas (estaban desactualizadas)
+
+Buena observación: las capturas databan del 3 de agosto, de **antes** de separar `/dashboard` (clientes) de `/admin` (panel técnico) el mismo día de hoy. La captura vieja de "Dashboard completo" mostraba una página que ya no existe con esa URL — mezclaba Estado de APIs, tendencias en tiempo real, ranking y catálogo crudo todo junto, que es justamente el contenido que ahora vive en `/admin`.
+
+Recapturé las 3 imágenes en vivo contra la producción actual (15/08/2026):
+- **Figura 7.1** (antes "Dashboard completo"): ahora es el panel técnico `/admin`, con datos frescos (185 productos, 591 búsquedas, 2733 snapshots).
+- **Figura 7.2** (Estado de APIs): misma sección, datos frescos (189 registros totales, checks del 15-ago).
+- **Figura 7.3** (ranking por score): ahora capturada desde `/dashboard`, la vista real de clientes, con 137 productos y los nuevos dropdowns oscuros ya corregidos.
+- **Figura 7.4 (nueva)**: agregué el gráfico de evolución del score en el tiempo, una funcionalidad que no existía cuando se sacaron las capturas viejas.
+
+También actualicé la tabla de evidencia cuantitativa (Sección 7.1): el tiempo de respuesta de `/dashboard` medido el 10/08 ya no correspondía a la misma página (esa ruta cambió de estructura hoy), así que lo remedí en caliente hoy: bajó de 2,2–6,1s a 0,5–1,1s, porque la vista de clientes ahora es mucho más liviana que el panel combinado viejo. Agregué una fila nueva para `/admin` (1,9–4,0s, el panel pesado con todas las consultas). El resto de la tabla (productos, scores, sesiones, etc.) sigue fechado al 10/08 como estaba, sin tocar — sigue siendo evidencia válida de ese momento.
+
+Actualicé también la referencia de RF05 en la matriz de trazabilidad (Sección 3.4) para que apunte a la Figura 7.4 (evolución del score), más directa que la anterior.
+
+Recompilé (`pdflatex` ×2), sin errores, 67 páginas (bajó de 68 por el tamaño de las imágenes nuevas), 0 anotaciones, 0 menciones de IA.
