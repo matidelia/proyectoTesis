@@ -3,6 +3,7 @@
 
 % Comando para iniciar la sección de anexos en el índice
 \newcommand{\initappendix}{%
+  \phantomsection%
   \addcontentsline{toc}{chapter}{Anexo}%
 }
 
@@ -14,6 +15,7 @@
   \markboth{Anexo \thechapter: #1}{}%
 }
 
+\clearpage
 \initappendix
 
 \input{chapters/appendix/proposal.tex} % Propuesta de Tema aprobada, como respaldo documental/administrativo
