@@ -254,3 +254,21 @@ También actualicé la tabla de evidencia cuantitativa (Sección 7.1): el tiempo
 Actualicé también la referencia de RF05 en la matriz de trazabilidad (Sección 3.4) para que apunte a la Figura 7.4 (evolución del score), más directa que la anterior.
 
 Recompilé (`pdflatex` ×2), sin errores, 67 páginas (bajó de 68 por el tamaño de las imágenes nuevas), 0 anotaciones, 0 menciones de IA.
+
+## 40. Portada: tutor en una línea + nombre de universidad duplicado, y bug de links del índice
+
+**Portada** (`chapters/title.tex`):
+- "Tutor:" y el nombre ahora van en la misma línea: "Tutor: **Salas, Joaquín**" (antes el nombre quedaba en un párrafo aparte, abajo).
+- La dirección institucional decía "(UADE) Universidad Argentina de la Empresa..." -- el nombre de la universidad aparecía dos veces seguidas (la sigla y el nombre completo, en ese orden inusual). Lo cambié al orden estándar: "Universidad Argentina de la Empresa (UADE), Lima 717...".
+
+**Bug real en los links del índice** (encontrado al revisar tu reporte sobre la Bibliografía):
+
+La entrada "Bibliografía" del índice usaba `\addcontentsline` sin `\phantomsection` antes. Sin ese punto de anclaje, hyperref no tiene dónde apuntar el link exactamente ahí, así que cae al último punto de anclaje anterior que encuentra (en este caso, la Lista de Tablas) -- de ahí que "vaya a cualquier lado". Encontré el mismo problema en la entrada separadora "Anexo" del índice (apuntaba a la última página del Capítulo 7 en lugar de a la primera página real del Anexo A).
+
+Corregido en dos lugares:
+- `main.tex`: agregado `\phantomsection` antes del `\addcontentsline` de Bibliografía.
+- `chapters/appendix/annex.tex`: agregado `\phantomsection` al comando `\initappendix`, y un `\clearpage` antes de invocarlo para que el punto de anclaje caiga en la página donde arranca el Anexo A, no una página antes.
+
+Los anexos individuales (A, B, C, D) y todos los capítulos/secciones normales **ya estaban bien** -- usan `\chapter`/`\section` que hyperref ancla automáticamente. Verifiqué las 57 entradas del índice programáticamente (comparando el texto que hay exactamente en el punto de destino de cada link contra el título de la entrada): las 57 apuntan correctamente después del fix.
+
+Recompilé (`pdflatex` ×3), sin errores, 67 páginas, 0 anotaciones, 0 menciones de IA.
