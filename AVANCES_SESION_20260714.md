@@ -46,7 +46,7 @@ Continúa de `AVANCES_SESION_20260713.md`. Contexto general en `ANALISIS_ALINEAC
 2. Además el filesystem quedó degradado: todo lo que enumera `node_modules` se cuelga (antivirus/disco saturado).
 
 **SOLUCIÓN: REINICIAR WINDOWS.** Después del reinicio:
-- Ejecutar: `py -3 <scratchpad>/reinsertar_diagramas.py` (reemplaza los 3 diagramas del docx por las versiones estilo simple — guarda vía archivo temporal, es seguro). Si el scratchpad de la sesión cambió, regenerar los diagramas con los scripts o pedirle a Claude que lo rehaga: la lógica es reemplazar los `w:drawing` cerca de los 3 epígrafes.
+- Ejecutar: `py -3 <scratchpad>/reinsertar_diagramas.py` (reemplaza los 3 diagramas del docx por las versiones estilo simple — guarda vía archivo temporal, es seguro). Si el scratchpad de la sesión cambió, regenerar los diagramas con los scripts o rehacerlo manualmente: la lógica es reemplazar los `w:drawing` cerca de los 3 epígrafes.
 - Si el archivo siguiera bloqueado: regenerar TODO desde `PFI_50_completado.docx` (original intacto) → los scripts de la cadena completa son `corregir_stack.py` + `insertar_diagramas.py` del scratchpad.
 
 ---

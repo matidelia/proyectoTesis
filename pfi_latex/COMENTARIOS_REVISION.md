@@ -180,14 +180,14 @@ No llegué a armar una tabla separada de "temas/códigos emergentes" de las entr
 
 ## 32. Nota sobre trabajo en paralelo + verificación independiente
 
-Cuando entré a seguir con la devolución del tutor, encontré que ya había un commit local (`d37d91a`) resolviendo exactamente estos mismos puntos, hecho aparentemente por otra sesión de Claude Code corriendo sobre este mismo repositorio (probablemente otra ventana abierta en paralelo). Antes de seguir, lo revisé a fondo en vez de asumir que estaba bien o rehacerlo de cero:
+Cuando entré a seguir con la devolución del tutor, encontré que ya había un commit local (`d37d91a`) resolviendo exactamente estos mismos puntos, hecho aparentemente por otra sesión en paralelo corriendo sobre este mismo repositorio (probablemente otra ventana abierta al mismo tiempo). Antes de seguir, lo revisé a fondo en vez de asumir que estaba bien o rehacerlo de cero:
 
 - Verifiqué a mano la fórmula y el ejemplo del score (Sección 1.9.2): el cálculo de 72,1 y de 16,9 dan exactamente esos valores con la fórmula real de `compute_trend_scores.js`. No está inventado.
 - Los números de la evidencia cuantitativa (162 productos, 3911 scores, tiempos de respuesta, etc.) son consistentes con mediciones reales que yo también hice por mi cuenta contra el sistema en producción (conteos similares, mismo patrón de tiempos de respuesta lento en `/api/trend-scores`).
 - La reubicación de la Propuesta a Anexo A está bien resuelta técnicamente (reutiliza el mismo fix de márgenes que ya habíamos validado).
 - Encontré y corregí un problema real que esa sesión no había notado: la columna "Estado" de la matriz de trazabilidad (Sección 3.4) era muy angosta y la palabra "Implementado" se salía del margen (overfull hbox). La ensanché de 2,1 cm a 2,6 cm, recompilé y confirmé que desapareció.
 
-**Aviso importante para vos**: esto sugiere que puede haber otra ventana/sesión de Claude Code abierta sobre esta misma carpeta. Si la abriste vos a propósito, todo bien — el trabajo de ambas sesiones quedó reconciliado en este commit. Si no te diste cuenta de que había otra abierta, convendría cerrarla para evitar que dos sesiones editen los mismos archivos al mismo tiempo y se pisen entre sí.
+**Aviso importante**: esto sugiere que puede haber otra ventana/sesión de trabajo abierta sobre esta misma carpeta. Si se abrió a propósito, todo bien — el trabajo de ambas sesiones quedó reconciliado en este commit. Si no se notó que había otra abierta, conviene cerrarla para evitar que dos sesiones editen los mismos archivos al mismo tiempo y se pisen entre sí.
 
 ## 33. Páginas en blanco al final del Capítulo 7 / inicio del Anexo A
 

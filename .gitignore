@@ -58,3 +58,7 @@ test_output.*
 
 # Area de trabajo experimental
 /scratch/
+
+# Config local de asistentes de codigo (no debe aparecer en el repo publico)
+CLAUDE.md
+AGENTS.md
