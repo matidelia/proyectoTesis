@@ -8,13 +8,34 @@ export const dynamic = 'force-dynamic';
 // precio actual y variación de precio dentro de la ventana analizada.
 export async function GET() {
   try {
+    // Solo hacen falta las últimas 2 mediciones de cada producto (actual y
+    // anterior, para el delta de HU02). Traer TODO el historial y filtrar
+    // en JS se iba volviendo más lento cada semana a medida que se
+    // acumulaba la minería 3x/día — esto selecciona esas 2 filas por
+    // producto directamente en la base en vez de descartar el resto en
+    // memoria después de traerlo.
+    const topIds = await prisma.$queryRaw<{ id: string }[]>`
+      SELECT id FROM (
+        SELECT id, ROW_NUMBER() OVER (PARTITION BY "productId" ORDER BY "computedAt" DESC) AS rn
+        FROM "TrendScore"
+      ) t WHERE rn <= 2
+    `;
+
+    // La variación de precio se mide contra una ventana de ~7 días; 21 días
+    // da margen de sobra sin volver a cargar el historial de precios completo.
+    const priceCutoff = new Date(Date.now() - 21 * 24 * 60 * 60 * 1000);
+
     const scores = await prisma.trendScore.findMany({
+      where: { id: { in: topIds.map((r) => r.id) } },
       orderBy: { computedAt: 'desc' },
       include: {
         product: {
           include: {
             category: true,
-            priceHistory: { orderBy: { timestamp: 'asc' } },
+            priceHistory: {
+              where: { timestamp: { gte: priceCutoff } },
+              orderBy: { timestamp: 'asc' },
+            },
           },
         },
       },
