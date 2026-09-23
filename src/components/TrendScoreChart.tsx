@@ -40,6 +40,7 @@ export default function TrendScoreChart() {
   const [itemsLoading, setItemsLoading] = useState(true);
   const [itemsError, setItemsError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string>('');
+  const [rangeFilter, setRangeFilter] = useState<'all' | '7d' | '30d'>('all');
   const [data, setData] = useState<HistoryResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,11 +95,20 @@ export default function TrendScoreChart() {
   const paddingX = 50;
   const paddingY = 30;
 
+  // Filtro de rango de fecha (HU04): acota el historial que se grafica.
+  const visibleHistory = useMemo(() => {
+    if (!data) return [];
+    if (rangeFilter === 'all') return data.history;
+    const days = rangeFilter === '7d' ? 7 : 30;
+    const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+    return data.history.filter(h => new Date(h.computedAt).getTime() >= cutoff);
+  }, [data, rangeFilter]);
+
   const chartData = useMemo(() => {
-    if (!data || data.history.length === 0) return null;
-    const points = data.history.map((h, i) => {
-      const x = data.history.length > 1
-        ? paddingX + (i / (data.history.length - 1)) * (width - 2 * paddingX)
+    if (visibleHistory.length === 0) return null;
+    const points = visibleHistory.map((h, i) => {
+      const x = visibleHistory.length > 1
+        ? paddingX + (i / (visibleHistory.length - 1)) * (width - 2 * paddingX)
         : width / 2;
       const y = height - paddingY - (h.score / 100) * (height - 2 * paddingY);
       return { x, y, score: h.score, date: new Date(h.computedAt) };
@@ -112,25 +122,25 @@ export default function TrendScoreChart() {
       areaPath = `${linePath} L ${points[points.length - 1].x} ${height - paddingY} L ${points[0].x} ${height - paddingY} Z`;
     }
     return { points, linePath, areaPath };
-  }, [data]);
+  }, [visibleHistory]);
 
   const stats = useMemo(() => {
-    if (!data || data.history.length === 0) return null;
-    const scores = data.history.map(h => h.score);
+    if (visibleHistory.length === 0) return null;
+    const scores = visibleHistory.map(h => h.score);
     const first = scores[0];
     const current = scores[scores.length - 1];
     const diff = Math.round((current - first) * 10) / 10;
     return { first, current, diff, points: scores.length };
-  }, [data]);
+  }, [visibleHistory]);
 
   const latestComponents = useMemo(() => {
-    if (!data || data.history.length === 0) return null;
-    const comp = data.history[data.history.length - 1].components;
+    if (visibleHistory.length === 0) return null;
+    const comp = visibleHistory[visibleHistory.length - 1].components;
     if (!comp || typeof comp !== 'object') return null;
     return COMPONENT_ORDER
       .filter(key => typeof comp[key] === 'number')
       .map(key => ({ key, value: comp[key] as number }));
-  }, [data]);
+  }, [visibleHistory]);
 
   if (itemsLoading) {
     return (
@@ -171,17 +181,29 @@ export default function TrendScoreChart() {
             Elegí un producto para ver cómo fue cambiando su puntaje con el tiempo. Ordenados por score, igual que el ranking de arriba.
           </p>
         </div>
-        <ThemedSelect
-          value={selectedId}
-          onChange={setSelectedId}
-          minWidth={280}
-          maxWidth={340}
-          options={items.map(p => {
-            const shortName = p.name.length > 32 ? p.name.slice(0, 32) + '…' : p.name;
-            const priceLabel = p.price != null ? `$${p.price.toLocaleString('es-AR')}` : 'sin precio';
-            return { value: p.productId, label: `${shortName} — ${priceLabel} — score ${p.score}` };
-          })}
-        />
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <ThemedSelect
+            value={selectedId}
+            onChange={setSelectedId}
+            minWidth={280}
+            maxWidth={340}
+            options={items.map(p => {
+              const shortName = p.name.length > 32 ? p.name.slice(0, 32) + '…' : p.name;
+              const priceLabel = p.price != null ? `$${p.price.toLocaleString('es-AR')}` : 'sin precio';
+              return { value: p.productId, label: `${shortName} — ${priceLabel} — score ${p.score}` };
+            })}
+          />
+          <ThemedSelect
+            value={rangeFilter}
+            onChange={v => setRangeFilter(v as 'all' | '7d' | '30d')}
+            minWidth={160}
+            options={[
+              { value: 'all', label: 'Todo el historial' },
+              { value: '7d', label: 'Últimos 7 días' },
+              { value: '30d', label: 'Últimos 30 días' },
+            ]}
+          />
+        </div>
       </div>
 
       {loading && (
@@ -196,16 +218,18 @@ export default function TrendScoreChart() {
         </div>
       )}
 
-      {!loading && !error && data && data.history.length < 2 && (
+      {!loading && !error && data && visibleHistory.length < 2 && (
         <div style={{
           padding: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)',
           background: 'rgba(255,255,255,0.03)', borderRadius: '10px',
         }}>
-          📈 Este producto todavía tiene un solo cálculo de score — hace falta más historial para graficar la evolución.
+          {data.history.length >= 2
+            ? '📈 No hay suficientes mediciones en el rango de fecha elegido — probá con "Todo el historial".'
+            : '📈 Este producto todavía tiene un solo cálculo de score — hace falta más historial para graficar la evolución.'}
         </div>
       )}
 
-      {!loading && !error && chartData && stats && data && data.history.length >= 2 && (
+      {!loading && !error && chartData && stats && data && visibleHistory.length >= 2 && (
         <div style={{ display: 'grid', gridTemplateColumns: '3fr 1.2fr', gap: '1.5rem', flexWrap: 'wrap' }}>
 
           {/* Gráfico SVG */}

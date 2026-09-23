@@ -49,6 +49,8 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'score' | 'variation'>('score');
   const [nameFilter, setNameFilter] = useState<string>('');
+  const [minPrice, setMinPrice] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
 
   useEffect(() => {
     fetch('/api/trend-scores')
@@ -78,13 +80,21 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
       const q = nameFilter.trim().toLowerCase();
       items = items.filter(i => i.name.toLowerCase().includes(q));
     }
+    const min = minPrice.trim() ? Number(minPrice) : null;
+    const max = maxPrice.trim() ? Number(maxPrice) : null;
+    if (min != null && !Number.isNaN(min)) {
+      items = items.filter(i => i.price != null && i.price >= min);
+    }
+    if (max != null && !Number.isNaN(max)) {
+      items = items.filter(i => i.price != null && i.price <= max);
+    }
     if (sortBy === 'variation') {
       items = [...items].sort(
         (a, b) => Math.abs(b.variationPct ?? 0) - Math.abs(a.variationPct ?? 0)
       );
     }
     return items;
-  }, [data, categoryFilter, sortBy, nameFilter]);
+  }, [data, categoryFilter, sortBy, nameFilter, minPrice, maxPrice]);
 
   // Export CSV (RF06): genera el archivo en el cliente y lo descarga.
   // Función del nivel pago del modelo freemium (Sección 5.4) — requiere sesión.
@@ -192,6 +202,28 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
             ...categories.map(c => ({ value: c, label: c })),
           ]}
         />
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <input
+            type="number" min={0} placeholder="Precio mín."
+            value={minPrice} onChange={e => setMinPrice(e.target.value)}
+            style={{
+              background: 'rgba(255,255,255,0.06)', color: '#fff',
+              border: '1px solid var(--glass-border)', borderRadius: '8px',
+              padding: '0.4rem 0.6rem', fontSize: '0.85rem', width: 110,
+            }}
+          />
+          <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>–</span>
+          <input
+            type="number" min={0} placeholder="Precio máx."
+            value={maxPrice} onChange={e => setMaxPrice(e.target.value)}
+            style={{
+              background: 'rgba(255,255,255,0.06)', color: '#fff',
+              border: '1px solid var(--glass-border)', borderRadius: '8px',
+              padding: '0.4rem 0.6rem', fontSize: '0.85rem', width: 110,
+            }}
+          />
+        </div>
 
         <ThemedSelect
           value={sortBy}
