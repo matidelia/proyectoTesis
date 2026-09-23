@@ -34,6 +34,15 @@ model Category {
 model Product {
   id                String          @id @default(cuid())
   mlId              String          @unique
+  // Identificador del producto de catalogo de Mercado Libre (item.id de
+  // /products/search), estable entre vendedores. mlId, en cambio, es la
+  // publicacion puntual del vendedor mas barato en el momento del ultimo
+  // scraping y puede cambiar de un scraping a otro sin que sea "otro
+  // producto" -- por eso, cuando esta disponible, catalogProductId es la
+  // identidad real del producto (ver Cap. 1, subseccion "A que producto
+  // se refiere el sistema"). Nullable porque los productos capturados
+  // antes de esta migracion no lo tienen retroactivamente.
+  catalogProductId String?         @unique
   name              String
   imageUrl          String?
   price             Float?

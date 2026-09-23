@@ -170,23 +170,33 @@ async function updateWatchlist() {
       const currency = cheapest.currency_id || 'ARS';
       const sellerId = cheapest.seller_id ? BigInt(cheapest.seller_id) : null;
 
-      // Guardar / actualizar en base de datos
-      const dbProduct = await prisma.product.upsert({
-        where: { mlId },
-        update: {
-          price: price,
-          lastSeen: new Date(),
-          name: item.name // mantener el nombre limpio
-        },
-        create: {
-          mlId: mlId,
-          name: item.name,
-          price: price,
-          currency: currency,
-          condition: cheapest.condition,
-          sellerId: sellerId
-        }
-      });
+      // Guardar / actualizar en base de datos. Identidad real = item.catalogId
+      // (estable entre vendedores), no mlId (la publicación más barata del
+      // momento, que puede cambiar de vendedor de una corrida a otra) --
+      // mismo criterio que mine_carril1.js, ver comentario ahí.
+      const commonUpdate = { price, lastSeen: new Date(), name: item.name };
+      let dbProduct;
+      const legacyByMlId = await prisma.product.findUnique({ where: { mlId } });
+      if (legacyByMlId && !legacyByMlId.catalogProductId) {
+        dbProduct = await prisma.product.update({
+          where: { id: legacyByMlId.id },
+          data: { catalogProductId: item.catalogId, ...commonUpdate },
+        });
+      } else {
+        dbProduct = await prisma.product.upsert({
+          where: { catalogProductId: item.catalogId },
+          update: { mlId, ...commonUpdate },
+          create: {
+            mlId,
+            catalogProductId: item.catalogId,
+            name: item.name,
+            price: price,
+            currency: currency,
+            condition: cheapest.condition,
+            sellerId: sellerId,
+          },
+        });
+      }
 
       // Registrar punto en la serie temporal
       await prisma.priceHistory.create({

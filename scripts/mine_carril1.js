@@ -195,34 +195,68 @@ async function ensureCategory(mlCategoryId, name) {
 }
 
 // ─── Guardar en DB ────────────────────────────────────────────────────────────
-// context: { categoryDbId, permalink, keyword, rankPosition }
+// context: { categoryDbId, permalink, keyword, rankPosition, catalogProductId }
+//
+// Identidad del producto (ver Cap. 1 de la tesis, "A que producto se
+// refiere el sistema"): cuando context.catalogProductId esta disponible
+// (siempre que item venga de /products/{id}/items), ESA es la clave de
+// upsert -- no mlId. mlId sigue guardandose y actualizandose porque indica
+// cual es la publicacion mas barata vigente, pero puede cambiar de vendedor
+// de una corrida a otra sin que el producto deje de ser "el mismo": antes
+// de este cambio, cada cambio de vendedor mas barato creaba una fila nueva
+// y cortaba el historico de scores.
 async function saveProduct(item, productName, context = {}) {
   if (!item.price || item.price <= 10) return false;
 
   const mlId = item.item_id || item.id;
   const sellerId = item.seller_id ? BigInt(item.seller_id) : null;
-  const { categoryDbId = null, permalink = null, keyword = null, rankPosition = null } = context;
+  const {
+    categoryDbId = null, permalink = null, keyword = null,
+    rankPosition = null, catalogProductId = null,
+  } = context;
 
-  const product = await prisma.product.upsert({
-    where: { mlId },
-    update: {
-      price: item.price,
-      lastSeen: new Date(),
-      ...(categoryDbId ? { categoryId: categoryDbId } : {}),
-      ...(permalink ? { permalink } : {}),
-    },
-    create: {
-      mlId,
-      name: productName,
-      price: item.price,
-      currency: item.currency_id || 'ARS',
-      imageUrl: null,
-      condition: item.condition,
-      sellerId,
-      categoryId: categoryDbId,
-      permalink,
-    },
-  });
+  const commonUpdate = {
+    price: item.price,
+    lastSeen: new Date(),
+    ...(categoryDbId ? { categoryId: categoryDbId } : {}),
+    ...(permalink ? { permalink } : {}),
+  };
+
+  let product;
+
+  if (catalogProductId) {
+    // Backfill: si ya existe una fila creada ANTES de este cambio con este
+    // mismo mlId pero sin catalogProductId vinculado, se vincula ahora en
+    // vez de crear una fila nueva -- preserva el historico de esa fila
+    // legacy en lugar de cortarlo.
+    const legacyByMlId = await prisma.product.findUnique({ where: { mlId } });
+    if (legacyByMlId && !legacyByMlId.catalogProductId) {
+      product = await prisma.product.update({
+        where: { id: legacyByMlId.id },
+        data: { catalogProductId, ...commonUpdate },
+      });
+    } else {
+      product = await prisma.product.upsert({
+        where: { catalogProductId },
+        update: { mlId, ...commonUpdate },
+        create: {
+          mlId, catalogProductId, name: productName, price: item.price,
+          currency: item.currency_id || 'ARS', imageUrl: null,
+          condition: item.condition, sellerId, categoryId: categoryDbId, permalink,
+        },
+      });
+    }
+  } else {
+    product = await prisma.product.upsert({
+      where: { mlId },
+      update: commonUpdate,
+      create: {
+        mlId, name: productName, price: item.price,
+        currency: item.currency_id || 'ARS', imageUrl: null,
+        condition: item.condition, sellerId, categoryId: categoryDbId, permalink,
+      },
+    });
+  }
 
   await prisma.priceHistory.create({
     data: { productId: product.id, price: item.price },
@@ -314,6 +348,7 @@ async function mine() {
                 permalink: `https://www.mercadolibre.com.ar/p/${productId}`,
                 keyword,
                 rankPosition: itemIndex + 1,
+                catalogProductId: productId,
               });
               if (saved) {
                 savedInCategory++;
