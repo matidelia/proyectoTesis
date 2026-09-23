@@ -1,15 +1,25 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import PriceChartClient from '@/components/PriceChartClient';
 import TrendsDashboard from '@/components/TrendsDashboard';
 import EndpointHealthDashboard from '@/components/EndpointHealthDashboard';
 import TrendScoreTable from '@/components/TrendScoreTable';
+import LogoutButton from '@/components/LogoutButton';
+import { getSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage({ searchParams }: { searchParams: any }) {
   const { auth, msg } = await searchParams;
+
+  // El middleware (src/middleware.ts) ya bloquea el acceso sin role="admin";
+  // esta relectura es defensa en profundidad y da el email para mostrar en el header.
+  const session = await getSession();
+  if (!session || session.role !== 'admin') {
+    redirect('/login?next=/admin');
+  }
 
   const searchHistory = await prisma.searchHistory.findMany({
     orderBy: { timestamp: 'desc' },
@@ -124,6 +134,14 @@ export default async function AdminPage({ searchParams }: { searchParams: any })
               Conectar ML
             </Link>
           )}
+
+          <div style={{
+            padding: '0.4rem 0.9rem', background: 'rgba(255,255,255,0.04)', color: 'var(--text-secondary)',
+            borderRadius: '9999px', fontSize: '0.75rem', border: '1px solid var(--glass-border)',
+          }}>
+            {session.email}
+          </div>
+          <LogoutButton />
         </div>
       </div>
 

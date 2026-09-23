@@ -3,16 +3,24 @@ import Link from 'next/link';
 import prisma from '@/lib/prisma';
 import TrendScoreTable from '@/components/TrendScoreTable';
 import TrendScoreChart from '@/components/TrendScoreChart';
+import LogoutButton from '@/components/LogoutButton';
+import { getSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 // Panel para clientes: ranking de productos en tendencia + evolución del
 // score en el tiempo. No incluye datos técnicos/operativos (estado de APIs,
 // historial de minería, catálogo crudo) — esos quedan en /admin.
+//
+// Nivel gratuito vs. pago (Sección 5.4, modelo de negocio): el ranking es
+// visible para todos; la evolución histórica completa y la exportación CSV
+// (en TrendScoreTable) requieren sesión iniciada.
 export default async function DashboardPage() {
   const totalMonitored = await prisma.product.count({
     where: { trendScores: { some: {} } },
   });
+  const session = await getSession();
+  const loggedIn = !!session;
 
   return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', paddingBottom: '4rem' }}>
@@ -53,16 +61,29 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div style={{
-          padding: '0.4rem 0.9rem',
-          background: 'rgba(0,166,80,0.1)',
-          color: '#00a650',
-          borderRadius: '9999px',
-          fontSize: '0.8rem',
-          border: '1px solid #00a65044',
-          fontWeight: 600,
-        }}>
-          {totalMonitored} productos monitoreados
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div style={{
+            padding: '0.4rem 0.9rem',
+            background: 'rgba(0,166,80,0.1)',
+            color: '#00a650',
+            borderRadius: '9999px',
+            fontSize: '0.8rem',
+            border: '1px solid #00a65044',
+            fontWeight: 600,
+          }}>
+            {totalMonitored} productos monitoreados
+          </div>
+
+          {loggedIn ? (
+            <LogoutButton />
+          ) : (
+            <Link href="/login?next=/dashboard" style={{
+              padding: '0.4rem 1rem', background: 'var(--accent-primary)', color: '#000',
+              borderRadius: '9999px', fontSize: '0.8rem', fontWeight: 700, textDecoration: 'none',
+            }}>
+              Iniciar sesión
+            </Link>
+          )}
         </div>
       </div>
 
@@ -75,19 +96,42 @@ export default async function DashboardPage() {
             title="Productos en Tendencia — Score"
             subtitle="Ranking por indicador compuesto: frecuencia de aparición, permanencia, posición en catálogo y estabilidad de precio."
           />
-          <TrendScoreTable />
+          <TrendScoreTable loggedIn={loggedIn} />
         </section>
 
         {/* ── SECCIÓN 2: Evolución del Score (gráficos) ── */}
+        {/* Nivel pago del modelo freemium (Sección 5.4): historial completo solo con sesión iniciada. */}
         <section style={{ marginTop: '2.5rem' }}>
           <SectionTitle
             icon="📈"
             title="Evolución de la Tendencia"
             subtitle="Cómo fue cambiando el score de un producto a lo largo del tiempo — así se confirma si una tendencia se sostiene o fue solo un pico pasajero."
           />
-          <div style={{ background: 'var(--glass-bg)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '2rem' }}>
-            <TrendScoreChart />
-          </div>
+          {loggedIn ? (
+            <div style={{ background: 'var(--glass-bg)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '2rem' }}>
+              <TrendScoreChart />
+            </div>
+          ) : (
+            <div style={{
+              background: 'var(--glass-bg)', borderRadius: '16px', border: '1px solid var(--glass-border)',
+              padding: '2.5rem', textAlign: 'center',
+            }}>
+              <p style={{ fontSize: '1.5rem', margin: 0 }}>🔒</p>
+              <p style={{ color: '#fff', fontWeight: 600, marginTop: '0.5rem' }}>
+                Historial completo disponible con cuenta
+              </p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                Creá una cuenta gratis para ver la evolución del score y exportar el ranking.
+              </p>
+              <Link href="/register" style={{
+                display: 'inline-block', marginTop: '1rem', padding: '0.5rem 1.2rem',
+                background: 'var(--accent-primary)', color: '#000', borderRadius: '9999px',
+                fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none',
+              }}>
+                Crear cuenta
+              </Link>
+            </div>
+          )}
         </section>
 
       </div>

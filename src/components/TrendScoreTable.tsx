@@ -41,7 +41,7 @@ function scoreColor(score: number): string {
   return '#9ca3af';
 }
 
-export default function TrendScoreTable() {
+export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boolean }) {
   const [data, setData] = useState<ScoresData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,9 +85,10 @@ export default function TrendScoreTable() {
     return items;
   }, [data, categoryFilter, sortBy, nameFilter]);
 
-  // Export CSV (RF06): genera el archivo en el cliente y lo descarga
+  // Export CSV (RF06): genera el archivo en el cliente y lo descarga.
+  // Función del nivel pago del modelo freemium (Sección 5.4) — requiere sesión.
   const exportCsv = () => {
-    if (!filtered.length) return;
+    if (!loggedIn || !filtered.length) return;
     const header = 'producto,categoria,precio,moneda,variacion_pct,score,periodo,calculado,link';
     const esc = (s: string) => '"' + s.replace(/"/g, '""') + '"';
     const rows = filtered.map(i => [
@@ -203,14 +204,18 @@ export default function TrendScoreTable() {
 
         <button
           onClick={exportCsv}
+          disabled={!loggedIn}
+          title={loggedIn ? undefined : 'Iniciá sesión para exportar (función paga)'}
           style={{
             marginLeft: 'auto', padding: '0.4rem 1rem',
-            background: 'rgba(0,166,80,0.12)', color: '#00a650',
-            border: '1px solid rgba(0,166,80,0.35)', borderRadius: '8px',
-            fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer',
+            background: loggedIn ? 'rgba(0,166,80,0.12)' : 'rgba(255,255,255,0.05)',
+            color: loggedIn ? '#00a650' : 'var(--text-secondary)',
+            border: loggedIn ? '1px solid rgba(0,166,80,0.35)' : '1px solid var(--glass-border)',
+            borderRadius: '8px',
+            fontSize: '0.85rem', fontWeight: 600, cursor: loggedIn ? 'pointer' : 'not-allowed',
           }}
         >
-          ⬇ Exportar CSV
+          {loggedIn ? '⬇ Exportar CSV' : '🔒 Exportar CSV'}
         </button>
       </div>
 

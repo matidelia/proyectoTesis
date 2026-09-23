@@ -112,3 +112,15 @@ model EndpointHealthLog {
   @@index([timestamp])
   @@index([endpoint, timestamp])
 }
+
+// Cuentas de la aplicacion (distintas del OAuthToken, que es la credencial
+// de la app contra la API de Mercado Libre). "admin" protege /admin;
+// "customer" habilita las funciones del nivel pago del modelo freemium
+// (exportacion CSV, evolucion historica completa) en /dashboard.
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("customer") // "customer" | "admin"
+  createdAt    DateTime @default(now())
+}
