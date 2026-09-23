@@ -32,25 +32,25 @@ A continuación se presentan capturas del sistema en funcionamiento (agosto de 2
 
 \section{Evidencia cuantitativa del sistema en producción}\label{sec:evidencia-cuantitativa}
 
-Más allá de la afirmación de que el sistema está desplegado y capturando datos, esta sección documenta con números concretos, medidos directamente sobre la base de datos y los endpoints en producción el 10 de agosto de 2026, cómo se comporta el prototipo actual.
+Más allá de la afirmación de que el sistema está desplegado y capturando datos, esta sección documenta con números concretos, medidos directamente sobre la base de datos y los endpoints en producción, cómo se comporta el prototipo actual. Los volúmenes de datos se remidieron el 23/09/2026 para reflejar el crecimiento del histórico desde la primera medición (10/08/2026); los tiempos de respuesta mantienen la fecha de su propia medición, indicada en cada fila.
 
 \begin{table}[H]
 	\centering
 	\small
-	\caption{Métricas del sistema en producción}
+	\caption{Métricas del sistema en producción (volúmenes de datos medidos el 23/09/2026)}
 	\label{tab:evidencia}
 	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{5.2cm} X@{}}
 		\toprule
 		\textbf{Indicador} & \textbf{Valor medido} \\
 		\midrule
-		Rango temporal del histórico & 14/07/2026 -- 10/08/2026 (26 días de operación continua) \\
-		Productos monitoreados & 162 \\
+		Rango temporal del histórico & 14/07/2026 -- 23/09/2026 (71 días de operación continua) \\
+		Productos monitoreados & 274 \\
 		Categorías monitoreadas & 6 (Computación, Celulares, Electrónica, Ropa y Accesorios, Alimentos y Bebidas, Limpieza del Hogar) \\
-		Apariciones registradas (\texttt{TrendSnapshot}) & 2234 \\
-		Registros de precio (\texttt{PriceHistory}) & 2324 \\
-		Scores de tendencia calculados (\texttt{TrendScore}) & 3911 \\
-		Registros de monitoreo de endpoints (\texttt{EndpointHealthLog}) & 729 \\
-		Sesiones de minería estimadas & $\sim$73 (agrupando snapshots por cortes de inactividad $>$40 min), $\sim$30,6 apariciones registradas por sesión en promedio \\
+		Apariciones registradas (\texttt{TrendSnapshot}) & 5717 \\
+		Registros de precio (\texttt{PriceHistory}) & 5807 \\
+		Scores de tendencia calculados (\texttt{TrendScore}) & 11539 \\
+		Registros de monitoreo de endpoints (\texttt{EndpointHealthLog}) & 1899 \\
+		Sesiones de minería estimadas & $\sim$203 (agrupando snapshots por cortes de inactividad $>$40 min), $\sim$28,2 apariciones registradas por sesión en promedio \\
 		Frecuencia de captura configurada & 3 corridas diarias (cron programado, ver Sección~\ref{sec:evolucion-tecnica}) \\
 		Tiempo de respuesta -- \texttt{/api/health}, \texttt{/api/status} & 0,5 -- 2,1\,s (medido, 3 muestras c/u) \\
 		Tiempo de respuesta -- \texttt{/dashboard} (panel de clientes) & 0,5 -- 1,1\,s en caliente (medido, 5 muestras el 15/08/2026, tras separar el panel de clientes del panel técnico) \\
