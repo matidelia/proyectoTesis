@@ -2,8 +2,26 @@
 
 \section{Resumen de aportes}
 
-Completar.
+El objetivo general del proyecto (Sección~\ref{sec:objetivo-general}) fue desarrollar una plataforma capaz de detectar tempranamente productos emergentes en Mercado Libre, combinando captura automatizada, un histórico propio y análisis temporal con métricas descriptivas y modelos supervisados. Al cierre de este hito, los cinco objetivos específicos (Sección~\ref{sec:objetivos-especificos}) están cubiertos:
+
+\begin{itemize}
+	\item La captura automatizada y periódica (RF01) opera de forma autónoma desde el despliegue, con 274 productos y 71 días de histórico continuo acumulados sin intervención manual (Sección~\ref{sec:evidencia-cuantitativa}).
+	\item El score de tendencia (RF02) quedó formalizado con una fórmula auditable de cuatro componentes ponderados, validada con ejemplos reales del sistema (Sección~\ref{sec:score-formal}) y con su desglose expuesto en el dashboard -- decisión tomada directamente a partir de un hallazgo de la Entrevista 2 (Sección~\ref{sec:pruebas}).
+	\item El dashboard de filtrado y ordenamiento (RF03), la API REST (RF04), los gráficos de evolución temporal (RF05) y la exportación CSV (RF06) están implementados y verificados en producción, según documenta la matriz de trazabilidad (Sección~\ref{sec:trazabilidad}).
+	\item Las bases metodológicas para el modelo supervisado no solo quedaron sentadas, sino que se ejecutaron como un primer checkpoint entrenado y evaluado: un Random Forest con \emph{recall} de 0,807 y AUC-ROC de 0,903 sobre el histórico disponible (Sección~\ref{sec:ml-resultados}), con la variable más relevante (aceleración de la frecuencia de aparición) siendo interpretable y consistente con el criterio que describieron los propios vendedores entrevistados.
+\end{itemize}
+
+Más allá de los requerimientos funcionales, el proyecto aporta evidencia de que la problemática elegida es real y no supuesta: el 88,9\,\% de los vendedores encuestados reconoce detectar tendencias tarde o solo a veces a tiempo, y el 68,9\,\% adoptaría una herramienta automatizada para resolverlo (Capítulo~\ref{chapter06}). Las tres entrevistas en profundidad no solo confirmaron estos números de forma cualitativa, sino que moldearon decisiones de diseño concretas y verificables en el sistema: la explicabilidad del score, la prioridad de las alertas por sobre la consulta manual, y el peso de la permanencia temporal en la fórmula.
+
+El proyecto también deja resuelto lo que en la instancia de revisión oral del hito del 50\,\% se señaló como insuficiente para un trabajo de esta envergadura: un modelo de negocio desarrollado con viabilidad económica cuantificada en dos escenarios (Sección~\ref{sec:viabilidad-economica}), una identidad de marca propia e independiente de Mercado Libre (Tendar, Sección~\ref{sec:modelo-negocio}), y una definición explícita de a qué se refiere el sistema cuando habla de ``un producto'' ante la ambigüedad de que un mismo modelo lo vendan simultáneamente decenas de vendedores distintos. Ninguno de estos tres puntos estaba resuelto en la entrega anterior; los tres se abordaron de forma honesta, incluyendo el reconocimiento explícito de sus límites en lugar de ocultarlos.
 
 \section{Trabajo futuro}
 
-Completar.
+\begin{itemize}
+	\item \textbf{Reentrenamiento del modelo con más histórico}: el checkpoint actual (Sección~\ref{sec:ml-resultados}) cubre 71 días, todavía por debajo de los varios meses estimados como necesarios para observar ciclos completos de aparición-crecimiento-declive por categoría. El pipeline ya quedó versionado y es reejecutable sin cambios de diseño a medida que el histórico siga creciendo.
+	\item \textbf{Integración del modelo al dashboard}: el checkpoint se entrenó y evaluó de forma reproducible, pero todavía no está expuesto como funcionalidad visible para el usuario final -- es la extensión natural antes de la entrega final.
+	\item \textbf{Resolución de la identidad de producto por catálogo}: incorporar el identificador de catálogo de la API oficial para agregar publicaciones equivalentes de distintos vendedores bajo un mismo producto, en lugar de calcular un score por publicación individual (Capítulo~\ref{chapter01}).
+	\item \textbf{Optimización continua de rendimiento}: RNF02 ya se corrigió una vez (de 6,3--7,6\,s a 1,7--2,9\,s, Sección~\ref{sec:pruebas}); a medida que el histórico crezca conviene monitorear que el tiempo de respuesta se mantenga dentro del objetivo.
+	\item \textbf{Ampliación del alcance geográfico del User Research}: la encuesta y las entrevistas se concentraron en CABA y Buenos Aires (Capítulo~\ref{chapter06}); una muestra con mayor representación del resto del país fortalecería la validación de la problemática a nivel nacional.
+	\item \textbf{Validación del modelo de negocio con usuarios reales}: los escenarios de viabilidad económica (Sección~\ref{sec:viabilidad-economica}) se construyeron sobre supuestos declarados y la disposición a pagar relevada en una sola entrevista; una prueba piloto con suscriptores reales permitiría reemplazar esos supuestos por datos de conversión efectivos.
+\end{itemize}

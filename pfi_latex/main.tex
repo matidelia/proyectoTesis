@@ -217,6 +217,13 @@
 \setlength{\cftbeforetoctitleskip}{12pt}
 \setlength{\cftaftertoctitleskip}{6pt}
 
+% Espacio antes de cada entrada de capitulo en el indice: al agregar mas
+% secciones el indice paso a ocupar una pagina de mas, dejando "Bibliografia"
+% sola en una hoja casi en blanco. Se acota este espacio (el default de
+% tocloft es mayor) para que todo el indice vuelva a entrar en las mismas
+% paginas que ocupaba antes.
+\setlength{\cftbeforechapskip}{6pt}
+
 % Fuente del título (14pt, negrita)
 \renewcommand{\cftloftitlefont}{\bfseries\fontsize{14pt}{16pt}\selectfont}
 \renewcommand{\cftlottitlefont}{\bfseries\fontsize{14pt}{16pt}\selectfont}
@@ -273,8 +280,7 @@
 	\input{chapters/chapter05} % Competencias y Estrategia de Mercado
 	\input{chapters/chapter06} % User Research
 	\input{chapters/chapter07} % Demo - Avances de Implementación
-% La Conclusion queda pendiente para la entrega final (no corresponde
-% completa a este avance del 50%). Ver COMENTARIOS_REVISION.md.
+	\input{chapters/conclusion} % Conclusion: aportes ligados a objetivos + trabajo futuro
 
 	\appendix
 	% annex.tex ya incluye internamente schedule_of_activities, surveys e interviews

@@ -62,3 +62,7 @@ test_output.*
 # Config local de asistentes de codigo (no debe aparecer en el repo publico)
 CLAUDE.md
 AGENTS.md
+
+# Dataset exportado de produccion para el modelo de ML (reproducible con el script, no versionar)
+ml/dataset.json
+ml/export_err.log

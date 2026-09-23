@@ -31,12 +31,20 @@ Desarrollar una plataforma inteligente capaz de detectar tempranamente productos
 	\item Construir un dataset histórico propio y calcular, a partir de él, un score de tendencia por producto en base a variables temporales (RF02).
 	\item Diseñar un dashboard que permita filtrar y ordenar los productos monitoreados, y visualizar la evolución temporal de precios y categorías (RF03, RF05).
 	\item Exponer los resultados mediante una API REST propia y permitir su exportación para uso externo (RF04, RF06).
-	\item Sentar las bases metodológicas -- variable objetivo, etiquetado y esquema de validación -- para incorporar en una etapa posterior un modelo de aprendizaje automático supervisado que complemente el score descriptivo (Sección~\ref{sec:alcance}).
+	\item Entrenar y evaluar, como complemento del score descriptivo, un primer modelo de aprendizaje automático supervisado -- con su variable objetivo, etiquetado y esquema de validación ya definidos -- que se reentrenará con más volumen histórico en las etapas siguientes (Sección~\ref{sec:alcance}, Sección~\ref{sec:ml-resultados}).
 \end{enumerate}
 
 \section{Concepto central}\label{sec:concepto-central}
 
 A los fines del proyecto, un producto emergente será aquel que, durante una ventana temporal definida, presente crecimiento sostenido en frecuencia de aparición, permanencia y/o publicaciones asociadas, con variaciones de precio o categoría que permitan diferenciarlo de aumentos aislados. Esta definición convierte la idea general de tendencia en un conjunto de indicadores medibles a partir del histórico propio.
+
+\subsection*{¿A qué ``producto'' se refiere el sistema?}
+
+Una misma referencia comercial -- por ejemplo, un modelo puntual de auricular o de organizador de placard -- suele estar publicada en Mercado Libre por decenas de vendedores distintos, cada uno con su propio precio, stock y reputación. Conviene aclarar explícitamente a cuál de esas instancias se refiere el sistema cuando calcula un score de tendencia, ya que la ambigüedad fue señalada como punto débil en la instancia de revisión oral del hito del 50\,\%.
+
+En la implementación actual, el sistema identifica cada producto por el identificador de una publicación puntual de un vendedor específico (ver el diagrama Entidad-Relación, Figura~\ref{fig:diagrama-er}), no por un producto canónico que agrupe todas las publicaciones equivalentes de distintos vendedores bajo un mismo modelo -- concepto que Mercado Libre expone en su propio catálogo mediante un identificador de catálogo para los ítems de ``Compra Segura''. Esto es una decisión de diseño deliberada y no una omisión: el score de tendencia está pensado para responder la pregunta del vendedor (``¿mi publicación puntual, dentro de mi categoría, está ganando o perdiendo tracción?''), no para declarar cuál es ``el'' ganador entre publicaciones equivalentes de la competencia. El componente de ranking de la fórmula (Sección~\ref{sec:score-formal}) ya captura parte de esa dimensión competitiva, al comparar la posición del producto contra los demás de su misma categoría.
+
+La limitación reconocida es que, si muchos vendedores publican el mismo modelo, el sistema hoy calcula un score independiente por cada publicación en lugar de un score agregado por modelo, lo que puede diluir la señal cuando la demanda de un producto se reparte entre muchas publicaciones equivalentes. La extensión planificada para resolverlo es incorporar el identificador de catálogo de la API oficial cuando esté disponible para la categoría, agregando las apariciones y el histórico de precios de todas las publicaciones que comparten ese identificador antes de calcular el score -- sin necesidad de rediseñar el modelo de datos, ya que la entidad de producto podría extenderse con ese campo opcional sin romper su relación existente con el histórico de apariciones, el histórico de precios y los scores ya calculados.
 
 \section{Decisiones técnicas}
 
@@ -62,8 +70,8 @@ El objetivo general del proyecto (Sección~\ref{sec:objetivo-general}) incluye t
 
 \begin{itemize}
 	\item \textbf{Ya implementado (hito 50\,\%)}: captura automatizada de datos (RF01), score de tendencia basado en métricas descriptivas ponderadas -- frecuencia, permanencia, ranking y estabilidad de precio (RF02), dashboard con ranking y filtros (RF03), API REST (RF04), gráficos de evolución temporal (RF05) y exportación CSV (RF06). El sistema se encuentra desplegado en producción y capturando datos de forma autónoma.
-	\item \textbf{Planificado para el 75\,\%}: incorporación de Python (Pandas + Scikit-Learn) como motor de Machine Learning supervisado, entrenado sobre el histórico ya acumulado, para clasificar productos según su probabilidad de sostener el crecimiento (ver Sección~\ref{sec:evolucion-tecnica}).
-	\item \textbf{Planificado para el 100\,\%}: validación y ajuste del modelo supervisado con más volumen histórico, análisis de resultados y limitaciones, y redacción del informe final.
+	\item \textbf{Implementado como checkpoint temprano}: un primer modelo de Machine Learning supervisado (Python, Pandas + Scikit-Learn), entrenado y evaluado sobre el histórico acumulado hasta la fecha, que clasifica productos según su probabilidad de sostener el crecimiento (Sección~\ref{sec:ml-resultados}). Se lo trata como un checkpoint y no como versión final porque todavía no cubre varios ciclos completos de aparición-crecimiento-declive por categoría (Sección~\ref{sec:ml-resultados}).
+	\item \textbf{Planificado para el 100\,\%}: reentrenamiento y validación del modelo con más volumen histórico a medida que el sistema sigue capturando datos, análisis final de resultados y limitaciones, y redacción del informe final.
 \end{itemize}
 
 \section{Tecnologías utilizadas}\label{sec:tecnologias-utilizadas}
@@ -106,20 +114,47 @@ En proyectos orientados al análisis de tendencias, estos modelos pueden utiliza
 
 La utilización de variables temporales y métricas descriptivas permite construir modelos con capacidad de aprendizaje progresivo, aportando mayor precisión en la identificación de oportunidades comerciales.
 
-En una primera etapa, el proyecto prioriza métricas descriptivas y reglas de análisis temporal. Posteriormente, esas variables podrán utilizarse como entrada de modelos supervisados, por ejemplo para clasificar productos según su probabilidad de presentar crecimiento sostenido. Esta decisión es consistente con trabajos como el de \textcite{ElalemMaierSeifert2023}, donde se analiza la predicción de productos nuevos con ciclos de vida cortos y disponibilidad limitada de datos históricos.
+En una primera etapa, el proyecto priorizó métricas descriptivas y reglas de análisis temporal, dejando sentado el diseño metodológico del modelo supervisado para aplicarlo apenas el histórico alcanzara un volumen mínimo razonable. Esa etapa siguiente ya se ejecutó como un primer checkpoint (Sección~\ref{sec:ml-resultados}), entrenando un clasificador sobre las variables descriptivas ya calculadas. Esta decisión es consistente con trabajos como el de \textcite{ElalemMaierSeifert2023}, donde se analiza la predicción de productos nuevos con ciclos de vida cortos y disponibilidad limitada de datos históricos.
 
-\subsubsection*{Diseño metodológico previsto para el modelo supervisado}
+\subsubsection*{Diseño metodológico del modelo supervisado}
 
-Aunque el modelo todavía no se entrena en este hito (Sección~\ref{sec:alcance}), su diseño metodológico se define desde ahora para que la construcción del histórico actual ya sea compatible con esa etapa futura:
+El diseño metodológico se definió antes de tener volumen suficiente para entrenar, de modo que la construcción del histórico fuera compatible desde el principio con esta etapa:
 
 \begin{itemize}
 	\item \textbf{Variable objetivo}: clasificación binaria por producto y ventana, derivada de los propios datos históricos: 1 si el score del producto en la ventana siguiente sube al menos 5 puntos respecto de la ventana actual (el mismo umbral ya usado hoy para la alerta de HU02), 0 en caso contrario.
 	\item \textbf{Estrategia de etiquetado}: automática y retrospectiva, sin intervención manual. Cada par de \texttt{TrendScore} consecutivos de un mismo producto genera un ejemplo etiquetado, comparando el score de una ventana contra el de la ventana siguiente. Esto es posible porque el sistema ya persiste el historial completo de scores, no solo el último.
-	\item \textbf{Variables de entrada (\emph{features})}: los cuatro componentes ya calculados (frecuencia, permanencia, ranking, estabilidad), su variación respecto de la ventana anterior, la categoría del producto y la variación porcentual de precio.
-	\item \textbf{Separación entrenamiento/validación}: al tratarse de una serie temporal, se usará una separación por corte de fecha (\emph{time-based split}) en lugar de una separación aleatoria, entrenando con datos hasta una fecha de corte y validando con datos posteriores, para evitar fuga de información desde el futuro hacia el pasado.
-	\item \textbf{Métricas de evaluación}: dado que se espera una clase minoritaria (pocos productos efectivamente despegan), se priorizarán \emph{precision}, \emph{recall}, F1-score y AUC-ROC por sobre el \emph{accuracy} simple, con foco particular en el \emph{recall} de la clase positiva -- perder una tendencia real (falso negativo) es más costoso para el vendedor que una alerta de más (falso positivo).
-	\item \textbf{Volumen histórico mínimo}: al cierre de este hito el sistema acumula 26 días de histórico (Sección~\ref{sec:evidencia-cuantitativa}). Antes de entrenar el modelo se espera contar con varios ciclos completos de aparición-crecimiento-declive por categoría, lo que en la práctica requiere varios meses adicionales de captura continua; hasta entonces, el sistema sigue operando con el score descriptivo ya implementado.
+	\item \textbf{Variables de entrada (\emph{features})}: los cuatro componentes ya calculados (frecuencia, permanencia, ranking, estabilidad), su variación respecto de la ventana anterior, la categoría del producto y la variación porcentual de precio (esta última derivada de la estabilidad ya calculada: $1 - \text{estabilidad}$).
+	\item \textbf{Separación entrenamiento/validación}: al tratarse de una serie temporal, se usa una separación por corte de fecha (\emph{time-based split}) en lugar de una separación aleatoria, entrenando con datos hasta una fecha de corte y validando con datos posteriores, para evitar fuga de información desde el futuro hacia el pasado.
+	\item \textbf{Métricas de evaluación}: dado que se esperaba una clase minoritaria (pocos productos efectivamente despegan), se priorizan \emph{precision}, \emph{recall}, F1-score y AUC-ROC por sobre el \emph{accuracy} simple, con foco particular en el \emph{recall} de la clase positiva -- perder una tendencia real (falso negativo) es más costoso para el vendedor que una alerta de más (falso positivo).
 \end{itemize}
+
+\subsubsection*{Resultados del entrenamiento (checkpoint)}\label{sec:ml-resultados}
+
+Con el histórico acumulado hasta el 22/09/2026 (71 días de captura continua desde el despliegue, Sección~\ref{sec:evidencia-cuantitativa}) se ejecutó un primer entrenamiento siguiendo exactamente el diseño anterior. El pipeline completo -- exportación del histórico, etiquetado automático, separación por corte de fecha y entrenamiento -- quedó versionado como dos scripts dentro del repositorio (uno en Node.js para la exportación, otro en Python para el entrenamiento), de forma reproducible y reejecutable a medida que se acumula más historia.
+
+El dataset resultante tiene 11.312 ejemplos etiquetados sobre 227 productos distintos, con un 6,9\,\% de ejemplos positivos -- consistente con la clase minoritaria esperada en el diseño metodológico. La separación por corte de fecha (80\,\% más antiguo para entrenamiento, 20\,\% más reciente para validación, sin aleatorizar) dejó 9049 ejemplos de entrenamiento y 2263 de validación.
+
+Se compararon dos modelos, ambos con balanceo de clases:
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados del checkpoint del modelo supervisado (set de validación)}
+	\label{tab:ml-resultados}
+	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.6cm} X X X X@{}}
+		\toprule
+		\textbf{Modelo} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} & \textbf{AUC-ROC} \\
+		\midrule
+		Regresión Logística (\emph{baseline}) & 0,122 & 0,746 & 0,209 & 0,804 \\
+		Random Forest & 0,298 & 0,807 & 0,435 & 0,903 \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+El Random Forest domina al \emph{baseline} lineal en las cuatro métricas y se adopta como modelo de referencia de este checkpoint. Su AUC-ROC de 0,903 indica una separación fuerte entre las dos clases; el \emph{recall} de 0,807 significa que el modelo detecta al 81\,\% de los productos que efectivamente sostienen su crecimiento en la ventana siguiente, priorizando -- tal como se definió en el diseño metodológico -- no perder tendencias reales por sobre evitar falsas alertas (la precisión de 0,298 refleja ese compromiso: de cada 10 alertas, cerca de 3 se confirman).
+
+La variable más relevante para el modelo es \texttt{delta\_frecuencia} (variación de la frecuencia de aparición respecto de la ventana anterior, 30,7\,\% de la importancia total), seguida por \texttt{permanencia} (16,6\,\%) y \texttt{frecuencia} (13,3\,\%). Este orden es interpretable y consistente con la intuición del negocio: lo que más anticipa que un producto siga creciendo es que su frecuencia de aparición esté acelerando, no solo que ya sea alta -- coincide además con el criterio que el vendedor entrevistado describió para distinguir una moda de una tendencia real (Sección~\ref{chapter06}).
+
+Este resultado se presenta como un \textbf{checkpoint} y no como el modelo final del proyecto: cubre 71 días de histórico, todavía por debajo de los varios meses continuos que se estimaron necesarios para observar ciclos completos de aparición-crecimiento-declive por categoría. El plan para el 100\,\% (Sección~\ref{sec:alcance}) es reentrenar el mismo pipeline, sin cambios de diseño, a medida que el histórico siga creciendo, y volver a evaluar si las métricas se sostienen con más datos.
 
 \section{Stack tecnológico preliminar}\label{sec:stack-preliminar}
 
