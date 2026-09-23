@@ -89,7 +89,10 @@ async function getValidToken() {
   }
 }
 
-async function getCheapestItem(catalogId, accessToken) {
+// Trae TODOS los vendedores activos del producto de catálogo (hasta 5), no
+// solo el más barato -- misma agregación entre vendedores que mine_carril1.js
+// (Sección 1.10.2 de la tesis).
+async function getActiveItems(catalogId, accessToken) {
   const url = `https://api.mercadolibre.com/products/${catalogId}/items?limit=5`;
   const res = await fetch(url, {
     headers: {
@@ -107,11 +110,13 @@ async function getCheapestItem(catalogId, accessToken) {
   const listings = data.results || [];
   if (listings.length === 0) return null;
 
-  // Encontrar el precio más económico
-  return listings.reduce(
+  const cheapest = listings.reduce(
     (min, item) => (item.price < min.price ? item : min),
     listings[0]
   );
+  const avgPrice = listings.reduce((sum, item) => sum + item.price, 0) / listings.length;
+
+  return { cheapest, avgPrice, sellerCount: listings.length };
 }
 
 async function updateWatchlist() {
@@ -158,15 +163,16 @@ async function updateWatchlist() {
         await randomDelay(CONFIG.LONG_PAUSE, 'Pausa larga humana');
       }
 
-      const cheapest = await getCheapestItem(item.catalogId, accessToken);
+      const active = await getActiveItems(item.catalogId, accessToken);
 
-      if (!cheapest) {
+      if (!active) {
         console.log(`  ↷ Sin publicaciones activas en este momento.`);
         continue;
       }
 
+      const { cheapest, avgPrice, sellerCount } = active;
       const mlId = cheapest.item_id || cheapest.id;
-      const price = cheapest.price;
+      const price = cheapest.price; // precio mostrado al comprador (el mas barato)
       const currency = cheapest.currency_id || 'ARS';
       const sellerId = cheapest.seller_id ? BigInt(cheapest.seller_id) : null;
 
@@ -198,15 +204,17 @@ async function updateWatchlist() {
         });
       }
 
-      // Registrar punto en la serie temporal
+      // Registrar punto en la serie temporal. avgPrice (no price) para que
+      // la estabilidad del score use el precio agregado entre vendedores,
+      // no solo el más barato del momento (Sección 1.10.2).
       await prisma.priceHistory.create({
         data: {
           productId: dbProduct.id,
-          price: price
+          price: avgPrice
         }
       });
 
-      console.log(`  ✅ Actualizado: $${price.toLocaleString('es-AR')} ${currency} (Publicación: ${mlId})`);
+      console.log(`  ✅ Actualizado: $${price.toLocaleString('es-AR')} ${currency} (Publicación: ${mlId}, ${sellerCount} vendedores, prom. $${avgPrice.toFixed(0)})`);
       updatedCount++;
 
     } catch (err) {

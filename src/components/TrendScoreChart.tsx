@@ -142,6 +142,15 @@ export default function TrendScoreChart() {
       .map(key => ({ key, value: comp[key] as number }));
   }, [visibleHistory]);
 
+  // Vendedores activos promedio en la última ventana (agregación entre
+  // vendedores, Sección 1.10.2) -- dato informativo, no forma parte del
+  // peso del score, pero explica de dónde sale la estabilidad de precio.
+  const latestSellerCount = useMemo(() => {
+    if (visibleHistory.length === 0) return null;
+    const comp = visibleHistory[visibleHistory.length - 1].components as any;
+    return typeof comp?.avgSellerCount === 'number' ? comp.avgSellerCount : null;
+  }, [visibleHistory]);
+
   if (itemsLoading) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
@@ -344,6 +353,15 @@ export default function TrendScoreChart() {
                     </div>
                   </div>
                 ))}
+                {latestSellerCount != null && (
+                  <div style={{
+                    borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.6rem',
+                    display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-secondary)',
+                  }}>
+                    <span>Vendedores compitiendo (prom.)</span>
+                    <span style={{ color: '#fff', fontWeight: 700 }}>{latestSellerCount}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>

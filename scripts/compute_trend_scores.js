@@ -72,7 +72,17 @@ function computeComponents(snapshots, prices, windowDays, maxFreq) {
     estabilidad = 0.5; // un solo registro: neutro
   }
 
-  return { frecuencia, permanencia, ranking, estabilidad };
+  // Dato informativo (no pesado en la fórmula): cuántos vendedores activos
+  // competían en promedio por este producto durante la ventana. La
+  // estabilidad de precio (arriba) ya se calcula sobre precios agregados
+  // entre vendedores (PriceHistory.price = promedio, no el más barato de
+  // cada corrida) desde la Sección 1.10.2; esto solo lo hace explícito.
+  const sellerCounts = snapshots.map(s => s.sellerCount).filter(c => c != null);
+  const avgSellerCount = sellerCounts.length > 0
+    ? Math.round((sellerCounts.reduce((a, b) => a + b, 0) / sellerCounts.length) * 10) / 10
+    : null;
+
+  return { frecuencia, permanencia, ranking, estabilidad, avgSellerCount };
 }
 
 // ─── Proceso principal ────────────────────────────────────────────────────────

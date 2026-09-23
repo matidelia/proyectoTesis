@@ -123,6 +123,7 @@ model TrendSnapshot {
   product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   keyword      String? // keyword de búsqueda con la que apareció
   rankPosition Int? // posición en los resultados del catálogo (1 = primero)
+  sellerCount  Int? // cantidad de vendedores activos detectados para este producto de catalogo en esta aparicion (agregacion entre vendedores, ver Seccion 1.10.2)
   capturedAt   DateTime @default(now())
 
   @@index([productId])

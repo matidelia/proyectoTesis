@@ -166,8 +166,12 @@ async function getProductName(productId, headers) {
   }
 }
 
-// ─── Item Más Barato del Catálogo ─────────────────────────────────────────────
-async function getCheapestItem(productId, headers) {
+// ─── Vendedores activos del producto de catálogo ──────────────────────────────
+// Antes se quedaba solo con el item más barato (getCheapestItem). Ahora
+// trae TODOS los vendedores activos (hasta 5) para poder agregar la señal
+// entre todos ellos -- no solo trackear al más barato de cada momento
+// (Sección 1.10.2). Devuelve null si no hay ningún vendedor activo.
+async function getActiveItems(productId, headers) {
   const res = await fetch(`https://api.mercadolibre.com/products/${productId}/items?limit=5`, { headers });
 
   if (!res.ok) {
@@ -179,7 +183,10 @@ async function getCheapestItem(productId, headers) {
   const items = data.results || [];
   if (items.length === 0) return null;
 
-  return items.reduce((min, item) => (item.price < min.price ? item : min), items[0]);
+  const cheapest = items.reduce((min, item) => (item.price < min.price ? item : min), items[0]);
+  const avgPrice = items.reduce((sum, item) => sum + item.price, 0) / items.length;
+
+  return { items, cheapest, avgPrice, sellerCount: items.length };
 }
 
 // ─── Categoría en DB ──────────────────────────────────────────────────────────
@@ -195,7 +202,7 @@ async function ensureCategory(mlCategoryId, name) {
 }
 
 // ─── Guardar en DB ────────────────────────────────────────────────────────────
-// context: { categoryDbId, permalink, keyword, rankPosition, catalogProductId }
+// context: { categoryDbId, permalink, keyword, rankPosition, catalogProductId, avgPrice, sellerCount }
 //
 // Identidad del producto (ver Cap. 1 de la tesis, "A que producto se
 // refiere el sistema"): cuando context.catalogProductId esta disponible
@@ -205,6 +212,13 @@ async function ensureCategory(mlCategoryId, name) {
 // de una corrida a otra sin que el producto deje de ser "el mismo": antes
 // de este cambio, cada cambio de vendedor mas barato creaba una fila nueva
 // y cortaba el historico de scores.
+//
+// Agregacion entre vendedores (Seccion 1.10.2): `item` sigue siendo el mas
+// barato (define Product.price, el precio que ve un comprador) pero el
+// historial que alimenta la estabilidad del score (PriceHistory) usa
+// avgPrice -- el promedio entre TODOS los vendedores activos detectados en
+// esta aparicion, no solo el mas barato del momento. sellerCount queda
+// registrado en el TrendSnapshot como señal de competencia/saturacion.
 async function saveProduct(item, productName, context = {}) {
   if (!item.price || item.price <= 10) return false;
 
@@ -213,6 +227,7 @@ async function saveProduct(item, productName, context = {}) {
   const {
     categoryDbId = null, permalink = null, keyword = null,
     rankPosition = null, catalogProductId = null,
+    avgPrice = item.price, sellerCount = null,
   } = context;
 
   const commonUpdate = {
@@ -258,13 +273,17 @@ async function saveProduct(item, productName, context = {}) {
     });
   }
 
+  // avgPrice (no item.price) para que la estabilidad del score se calcule
+  // sobre el precio de mercado agregado, no sobre un vendedor puntual.
   await prisma.priceHistory.create({
-    data: { productId: product.id, price: item.price },
+    data: { productId: product.id, price: avgPrice },
   });
 
-  // Registro temporal de aparición (base de frecuencia/permanencia/ranking)
+  // Registro temporal de aparición (base de frecuencia/permanencia/ranking).
+  // sellerCount: cuántos vendedores activos competían por este producto
+  // en esta aparición (agregación entre vendedores, Sección 1.10.2).
   await prisma.trendSnapshot.create({
-    data: { productId: product.id, keyword, rankPosition },
+    data: { productId: product.id, keyword, rankPosition, sellerCount },
   });
 
   return true;
@@ -333,26 +352,30 @@ async function mine() {
             }
 
             try {
-              const [productName, item] = await Promise.all([
+              const [productName, active] = await Promise.all([
                 getProductName(productId, headers),
-                getCheapestItem(productId, headers),
+                getActiveItems(productId, headers),
               ]);
 
-              if (!item) {
+              if (!active) {
                 console.log(`  ↷ [${productId}] Sin publicaciones activas.`);
                 continue;
               }
 
-              const saved = await saveProduct(item, productName, {
+              const { cheapest, avgPrice, sellerCount } = active;
+
+              const saved = await saveProduct(cheapest, productName, {
                 categoryDbId,
                 permalink: `https://www.mercadolibre.com.ar/p/${productId}`,
                 keyword,
                 rankPosition: itemIndex + 1,
                 catalogProductId: productId,
+                avgPrice,
+                sellerCount,
               });
               if (saved) {
                 savedInCategory++;
-                console.log(`  ✓ [${productId}] "${productName.substring(0, 50)}" → $${item.price} ${item.currency_id}`);
+                console.log(`  ✓ [${productId}] "${productName.substring(0, 50)}" → $${cheapest.price} ${cheapest.currency_id} (${sellerCount} vendedores, prom. $${avgPrice.toFixed(0)})`);
               } else {
                 console.log(`  ↷ [${productId}] Precio inválido, omitido.`);
               }
