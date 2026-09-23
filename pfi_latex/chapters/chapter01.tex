@@ -22,7 +22,7 @@ El enfoque planteado se sostiene sobre tres ejes principales: la recolección au
 
 \subsection{Objetivo General}\label{sec:objetivo-general}
 
-Desarrollar una plataforma inteligente capaz de detectar tempranamente productos emergentes en Mercado Libre mediante la recolección automatizada de datos provenientes de su API oficial, la construcción de un dataset histórico propio y el análisis temporal utilizando métricas descriptivas y modelos supervisados de aprendizaje automático. Este es el objetivo general del proyecto completo; qué parte de él ya está implementada en este hito del 50\,\% y qué parte queda planificada para las etapas siguientes se detalla explícitamente en la Sección~\ref{sec:alcance} (Alcance por hito).
+Desarrollar una plataforma inteligente capaz de detectar tempranamente productos emergentes en Mercado Libre mediante la recolección automatizada de datos provenientes de su API oficial, la construcción de un dataset histórico propio y el análisis temporal utilizando métricas descriptivas y modelos supervisados de aprendizaje automático. Este es el objetivo general del proyecto completo; qué parte de él ya está implementada en este hito del 75\,\% y qué parte queda planificada para la etapa final se detalla explícitamente en la Sección~\ref{sec:alcance} (Alcance por hito).
 
 \subsection{Objetivos Específicos}\label{sec:objetivos-especificos}
 
@@ -66,12 +66,11 @@ El alcance no incluye scraping, acceso a datos privados de usuarios ni predicci�
 
 \subsection*{Alcance por hito}
 
-El objetivo general del proyecto (Sección~\ref{sec:objetivo-general}) incluye tanto métricas descriptivas como modelos supervisados de aprendizaje automático. Dado que esta entrega corresponde al hito del 50\,\%, ambos componentes no se encuentran en el mismo estado de avance, y se detalla a continuación qué corresponde a cada etapa:
+El objetivo general del proyecto (Sección~\ref{sec:objetivo-general}) incluye tanto métricas descriptivas como modelos supervisados de aprendizaje automático. Esta entrega corresponde al hito del 75\,\%: ambos componentes ya están implementados, aunque en distinto grado de madurez, y se detalla a continuación el estado de cada uno:
 
 \begin{itemize}
-	\item \textbf{Ya implementado (hito 50\,\%)}: captura automatizada de datos (RF01), score de tendencia basado en métricas descriptivas ponderadas -- frecuencia, permanencia, ranking y estabilidad de precio (RF02), dashboard con ranking y filtros (RF03), API REST (RF04), gráficos de evolución temporal (RF05) y exportación CSV (RF06). El sistema se encuentra desplegado en producción y capturando datos de forma autónoma.
-	\item \textbf{Implementado como checkpoint temprano}: un primer modelo de Machine Learning supervisado (Python, Pandas + Scikit-Learn), entrenado y evaluado sobre el histórico acumulado hasta la fecha, que clasifica productos según su probabilidad de sostener el crecimiento (Sección~\ref{sec:ml-resultados}). Se lo trata como un checkpoint y no como versión final porque todavía no cubre varios ciclos completos de aparición-crecimiento-declive por categoría (Sección~\ref{sec:ml-resultados}).
-	\item \textbf{Planificado para el 100\,\%}: reentrenamiento y validación del modelo con más volumen histórico a medida que el sistema sigue capturando datos, análisis final de resultados y limitaciones, y redacción del informe final.
+	\item \textbf{Ya implementado (hitos 50\,\% y 75\,\%)}: captura automatizada de datos (RF01), score de tendencia basado en métricas descriptivas ponderadas -- frecuencia, permanencia, ranking y estabilidad de precio (RF02), dashboard con ranking y filtros (RF03), API REST (RF04), gráficos de evolución temporal (RF05), exportación CSV (RF06), y un primer modelo de Machine Learning supervisado (Python, Pandas + Scikit-Learn), entrenado y evaluado sobre el histórico acumulado, que clasifica productos según su probabilidad de sostener el crecimiento (Sección~\ref{sec:ml-resultados}). Este último se trata como un \emph{checkpoint} y no como versión final del modelo, porque todavía no cubre varios ciclos completos de aparición-crecimiento-declive por categoría. El sistema se encuentra desplegado en producción y capturando datos de forma autónoma.
+	\item \textbf{Planificado para el 100\,\%}: reentrenamiento y validación del modelo de ML con más volumen histórico a medida que el sistema sigue capturando datos, análisis final de resultados y limitaciones, y redacción del informe final (incluyendo Resumen, Abstract y Agradecimientos, reservados para esa entrega).
 \end{itemize}
 
 \section{Tecnologías utilizadas}\label{sec:tecnologias-utilizadas}
