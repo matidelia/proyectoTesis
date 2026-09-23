@@ -21,6 +21,9 @@ export default async function DashboardPage() {
   });
   const session = await getSession();
   const loggedIn = !!session;
+  const unreadAlerts = loggedIn
+    ? await prisma.alert.count({ where: { userId: session!.userId, read: false } })
+    : 0;
 
   return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', paddingBottom: '4rem' }}>
@@ -73,6 +76,27 @@ export default async function DashboardPage() {
           }}>
             {totalMonitored} productos monitoreados
           </div>
+
+          {loggedIn && (
+            <Link href="/alerts" style={{
+              position: 'relative', padding: '0.4rem 0.9rem',
+              background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)',
+              borderRadius: '9999px', fontSize: '0.85rem', border: '1px solid var(--glass-border)',
+              textDecoration: 'none', fontWeight: 600,
+            }}>
+              🔔 Alertas
+              {unreadAlerts > 0 && (
+                <span style={{
+                  position: 'absolute', top: -6, right: -6, background: '#ef4444', color: '#fff',
+                  borderRadius: '9999px', fontSize: '0.65rem', fontWeight: 800,
+                  minWidth: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: '0 3px',
+                }}>
+                  {unreadAlerts}
+                </span>
+              )}
+            </Link>
+          )}
 
           {loggedIn ? (
             <LogoutButton />

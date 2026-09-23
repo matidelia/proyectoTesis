@@ -51,6 +51,7 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
   const [nameFilter, setNameFilter] = useState<string>('');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
+  const [watchedIds, setWatchedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetch('/api/trend-scores')
@@ -65,6 +66,34 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
         setLoading(false);
       });
   }, []);
+
+  // Seguimiento de productos (HU02): solo tiene sentido con sesión iniciada.
+  useEffect(() => {
+    if (!loggedIn) {
+      setWatchedIds(new Set());
+      return;
+    }
+    fetch('/api/watchlist')
+      .then(r => r.json())
+      .then(d => setWatchedIds(new Set<string>(d.productIds || [])))
+      .catch(() => {});
+  }, [loggedIn]);
+
+  const toggleWatch = async (productId: string) => {
+    if (!loggedIn) return;
+    const res = await fetch('/api/watchlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId }),
+    });
+    if (!res.ok) return;
+    const { watching } = await res.json();
+    setWatchedIds(prev => {
+      const next = new Set(prev);
+      if (watching) next.add(productId); else next.delete(productId);
+      return next;
+    });
+  };
 
   const categories = useMemo(() => {
     if (!data) return [];
@@ -280,6 +309,9 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
               >
                 🎯 Prob. ML
               </th>
+              <th style={{ padding: '0.5rem', textAlign: 'center' }} title="Seguir un producto (requiere cuenta) para recibir una alerta cuando empiece a crecer">
+                🔔
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -355,6 +387,22 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
                         {Math.round(item.growthProbability * 100)}%
                       </span>
                     )}
+                  </td>
+                  <td style={{ padding: '0.5rem', textAlign: 'center' }}>
+                    <button
+                      onClick={() => toggleWatch(item.productId)}
+                      disabled={!loggedIn}
+                      title={loggedIn
+                        ? (watchedIds.has(item.productId) ? 'Dejar de seguir' : 'Seguir (te avisamos si crece)')
+                        : 'Iniciá sesión para seguir productos'}
+                      style={{
+                        background: 'none', border: 'none', fontSize: '1.1rem',
+                        cursor: loggedIn ? 'pointer' : 'not-allowed',
+                        opacity: loggedIn ? 1 : 0.35,
+                      }}
+                    >
+                      {watchedIds.has(item.productId) ? '🔔' : '🔕'}
+                    </button>
                   </td>
                 </tr>
               );

@@ -49,8 +49,48 @@ model Product {
   trendSnapshots    TrendSnapshot[]
   trendScores       TrendScore[]
   mlPredictions     MLPrediction[]
+  watches           Watch[]
+  alerts            Alert[]
 
   @@index([categoryId])
+}
+
+// Un cliente "sigue" un producto puntual para recibir alertas de HU02
+// cuando ese producto empiece a crecer. Sin esto, la alerta no tendria a
+// quien avisarle -- es lo que permite pasar de "hay que ir a mirar el
+// dashboard" a "me avisan" (hallazgo de la Entrevista 1 y 2, Seccion 6.7).
+model Watch {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+}
+
+// Alerta generada cuando un producto seguido cruza el umbral de crecimiento
+// (mismo umbral de HU02/RF02, Seccion 1.10.2). Se genera en batch
+// (scripts/generate_alerts.js), no en cada request; trendScoreId evita
+// duplicar la misma alerta si el script se corre mas de una vez sobre el
+// mismo calculo de score.
+model Alert {
+  id            String   @id @default(cuid())
+  userId        String
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  trendScoreId  String
+  score         Float
+  previousScore Float
+  scoreDelta    Float
+  read          Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, trendScoreId])
+  @@index([userId])
+  @@index([productId])
 }
 
 model PriceHistory {
