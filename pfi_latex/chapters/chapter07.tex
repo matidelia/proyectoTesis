@@ -1,6 +1,6 @@
 \chapter{Demo -- Avances de Implementación}\label{chapter07}
 
-A continuación se presentan capturas del sistema en funcionamiento (agosto de 2026), correspondientes al avance de implementación de este hito del 75\%: el pipeline de captura y su monitoreo, la base de datos histórica, la API REST y el dashboard con el ranking por score de tendencia. El sistema se encuentra publicado y accesible en producción, con captura de datos automatizada ejecutándose de manera autónoma varias veces por día. La interfaz web se divide en dos vistas: un panel para clientes (\texttt{/dashboard}), con el ranking de productos y la evolución del score en el tiempo, y un panel técnico interno (\texttt{/admin}) con el monitoreo de endpoints y los registros de minería, que se documenta a continuación como evidencia de RNF01.
+A continuación se presentan capturas del sistema en funcionamiento, correspondientes al avance de implementación de este hito del 75\%: el pipeline de captura y su monitoreo, la base de datos histórica, la API REST y el dashboard con el ranking por score de tendencia. El sistema se encuentra publicado y accesible en producción, con captura de datos automatizada ejecutándose de manera autónoma varias veces por día. La interfaz web tiene un panel para clientes (\texttt{/dashboard}), con el ranking de productos y la evolución del score en el tiempo, y un panel técnico interno (\texttt{/admin}) con el monitoreo de endpoints y los registros de minería, que se documenta a continuación como evidencia de RNF01. Ambos paneles se capturaron en agosto de 2026; las pantallas de cuentas y alertas incorporadas después (Sección~\ref{sec:demo-cuentas}) se capturaron el 23/09/2026, ya con \texttt{/admin} protegido por autenticación (RNF06).
 
 \begin{figure}[ht]
 	\centering
@@ -30,6 +30,53 @@ A continuación se presentan capturas del sistema en funcionamiento (agosto de 2
 	\label{fig:demo-evolucion}
 \end{figure}
 
+\section{Cuentas, predicción de ML y alertas en producción}\label{sec:demo-cuentas}
+
+A partir de la devolución del jurado en la revisión oral del hito del 50\,\% (``esto es solo un dashboard''), se incorporaron tres funcionalidades que responden directamente a esa observación y que ya están desplegadas en producción: la probabilidad del modelo de ML visible por producto (RF07), un sistema de cuentas con nivel gratuito y pago (RF08) y alertas reales para productos seguidos (RF09).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./images/demo/demo_login.png}
+	\caption{Pantalla de inicio de sesión (\texttt{/login}).}
+	\label{fig:demo-login}
+\end{figure}
+
+Sin sesión iniciada, el ranking se ve completo pero la exportación CSV y el botón de seguir un producto aparecen deshabilitados (candado en el botón, campana en gris) -- el nivel gratuito del modelo freemium (Sección~\ref{sec:modelo-negocio}):
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{./images/demo/demo_dashboard_anonimo.png}
+	\caption{Ranking sin sesión iniciada: exportación bloqueada y columna de predicción del modelo de ML (RF07) visible para todos.}
+	\label{fig:demo-anonimo}
+\end{figure}
+
+Con sesión iniciada, la exportación se habilita y el botón de seguimiento por producto queda activo (campana roja = no seguido, campana dorada = seguido -- el primer producto de la Figura~\ref{fig:demo-logueado} está seguido por esta cuenta de prueba):
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{./images/demo/demo_dashboard_logueado.png}
+	\caption{Mismo ranking con sesión iniciada: exportación habilitada (RF06/RF08) y badge de alertas sin leer en el header.}
+	\label{fig:demo-logueado}
+\end{figure}
+
+Más abajo en la misma vista, con sesión iniciada se desbloquea el gráfico de evolución histórica completo (antes limitado al resumen visible en la Figura~\ref{fig:demo-evolucion}):
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{./images/demo/demo_dashboard_evolucion_logueado.png}
+	\caption{Evolución histórica completa, desbloqueada con sesión iniciada (nivel pago del modelo freemium).}
+	\label{fig:demo-evolucion-logueado}
+\end{figure}
+
+Por último, la bandeja de alertas (\texttt{/alerts}, RF09) muestra las notificaciones reales generadas cuando un producto seguido cruza el umbral de crecimiento. La alerta de la Figura~\ref{fig:demo-alerts} corresponde a un caso real: el producto de la Figura~\ref{fig:demo-logueado} (score 93,9) fue seguido con esta cuenta y, al recalcularse su score, generó la alerta que se ve a continuación:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./images/demo/demo_alerts.png}
+	\caption{Bandeja de alertas de un cliente (\texttt{/alerts}): notificación real de un producto seguido que cruzó el umbral de crecimiento (HU02, HU07).}
+	\label{fig:demo-alerts}
+\end{figure}
+
 \section{Evidencia cuantitativa del sistema en producción}\label{sec:evidencia-cuantitativa}
 
 Más allá de la afirmación de que el sistema está desplegado y capturando datos, esta sección documenta con números concretos, medidos directamente sobre la base de datos y los endpoints en producción, cómo se comporta el prototipo actual. Los volúmenes de datos se remidieron el 23/09/2026 para reflejar el crecimiento del histórico desde la primera medición (10/08/2026); los tiempos de respuesta mantienen la fecha de su propia medición, indicada en cada fila.
@@ -50,6 +97,8 @@ Más allá de la afirmación de que el sistema está desplegado y capturando dat
 		Registros de precio (\texttt{PriceHistory}) & 5807 \\
 		Scores de tendencia calculados (\texttt{TrendScore}) & 11539 \\
 		Registros de monitoreo de endpoints (\texttt{EndpointHealthLog}) & 1899 \\
+		Predicciones del modelo de ML cargadas (\texttt{MLPrediction}, RF07) & 227 (una por producto con score) \\
+		Cuentas de usuario registradas (\texttt{User}, RF08) & 2 (1 admin, 1 cliente de demostración) \\
 		Sesiones de minería estimadas & $\sim$203 (agrupando snapshots por cortes de inactividad $>$40 min), $\sim$28,2 apariciones registradas por sesión en promedio \\
 		Frecuencia de captura configurada & 3 corridas diarias (cron programado, ver Sección~\ref{sec:evolucion-tecnica}) \\
 		Tiempo de respuesta -- \texttt{/api/health}, \texttt{/api/status} & 0,5 -- 2,1\,s (medido, 3 muestras c/u) \\
