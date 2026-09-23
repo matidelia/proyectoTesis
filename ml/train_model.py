@@ -23,6 +23,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
@@ -127,6 +128,27 @@ def main():
         zip(X_train.columns, rf.feature_importances_), key=lambda x: -x[1]
     )
 
+    # --- Modelo de produccion: mismo Random Forest, pero reentrenado con
+    # TODO el dataset (train + validacion) una vez que ya se reporto la
+    # metrica honesta sobre el split de validacion arriba. Es la practica
+    # estandar: evaluar con el split, desplegar entrenado con todo. ---
+    X_full = build_features(df, categoria_cols)
+    y_full = df["label"].values
+    rf_prod = RandomForestClassifier(
+        n_estimators=300, max_depth=8, min_samples_leaf=5,
+        class_weight="balanced", random_state=42, n_jobs=-1,
+    )
+    rf_prod.fit(X_full, y_full)
+
+    model_version = f"random_forest_checkpoint_{df['computedAt'].max().date()}"
+    bundle = {
+        "model": rf_prod,
+        "feature_cols": FEATURE_COLS_BASE,
+        "categoria_cols": categoria_cols,
+        "model_version": model_version,
+    }
+    joblib.dump(bundle, ROOT / "model.joblib")
+
     # --- Reporte ---
     lines = []
     lines.append("# Resultados del modelo supervisado (checkpoint exploratorio)\n")
@@ -136,6 +158,9 @@ def main():
     lines.append(f"- Split por fecha de corte (80/20, no aleatorio): corte en {cutoff}.")
     lines.append(f"- Train: {len(train_df)} ejemplos ({train_df['label'].mean()*100:.2f}% positivos).")
     lines.append(f"- Validacion: {len(val_df)} ejemplos ({val_df['label'].mean()*100:.2f}% positivos).\n")
+    lines.append(f"- Modelo de produccion guardado en `ml/model.joblib` (version `{model_version}`), "
+                  f"reentrenado con el dataset completo (train+validacion) despues de reportar las "
+                  f"metricas de abajo sobre el split de validacion. Se usa desde `ml/predict.py`.\n")
 
     for r in results:
         lines.append(f"## {r['name']}")

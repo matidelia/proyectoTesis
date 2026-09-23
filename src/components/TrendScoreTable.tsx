@@ -18,6 +18,7 @@ interface ScoreItem {
   period: string;
   computedAt: string;
   variationPct: number | null;
+  growthProbability: number | null;
 }
 
 interface ScoresData {
@@ -241,6 +242,12 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
               <th style={{ padding: '0.5rem', textAlign: 'right' }}>Precio</th>
               <th style={{ padding: '0.5rem', textAlign: 'right' }}>Variación</th>
               <th style={{ padding: '0.5rem', textAlign: 'right' }}>Score</th>
+              <th
+                style={{ padding: '0.5rem', textAlign: 'right' }}
+                title="Probabilidad estimada por el modelo de ML supervisado (checkpoint) de que el score siga subiendo en la próxima ventana"
+              >
+                🎯 Prob. ML
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -304,6 +311,18 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
                         {item.score}
                       </span>
                     </div>
+                  </td>
+                  <td style={{ padding: '0.5rem', textAlign: 'right' }}>
+                    {item.growthProbability == null ? (
+                      <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>—</span>
+                    ) : (
+                      <span style={{
+                        fontWeight: 700,
+                        color: scoreColor(item.growthProbability * 100),
+                      }}>
+                        {Math.round(item.growthProbability * 100)}%
+                      </span>
+                    )}
                   </td>
                 </tr>
               );

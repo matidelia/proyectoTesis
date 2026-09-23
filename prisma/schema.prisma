@@ -48,6 +48,7 @@ model Product {
   priceHistory      PriceHistory[]
   trendSnapshots    TrendSnapshot[]
   trendScores       TrendScore[]
+  mlPredictions     MLPrediction[]
 
   @@index([categoryId])
 }
@@ -111,6 +112,22 @@ model EndpointHealthLog {
   @@index([endpoint])
   @@index([timestamp])
   @@index([endpoint, timestamp])
+}
+
+// Prediccion del modelo de ML supervisado (Seccion 1.5.4 de la tesis) para
+// un producto: probabilidad de que su score siga creciendo en la ventana
+// siguiente. Se recalcula corriendo ml/predict.py + scripts/import_ml_predictions.js
+// contra el modelo entrenado (ml/model.joblib), no en cada request.
+model MLPrediction {
+  id           String   @id @default(cuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  probability  Float    // 0 a 1: probabilidad de que el score suba >=5 puntos en la ventana siguiente
+  modelVersion String   // ej: "random_forest_checkpoint_2026-09-23"
+  computedAt   DateTime @default(now())
+
+  @@index([productId])
+  @@index([computedAt])
 }
 
 // Cuentas de la aplicacion (distintas del OAuthToken, que es la credencial

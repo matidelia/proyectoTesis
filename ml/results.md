@@ -6,6 +6,8 @@
 - Train: 9049 ejemplos (7.34% positivos).
 - Validacion: 2263 ejemplos (5.04% positivos).
 
+- Modelo de produccion guardado en `ml/model.joblib` (version `random_forest_checkpoint_2026-09-22`), reentrenado con el dataset completo (train+validacion) despues de reportar las metricas de abajo sobre el split de validacion. Se usa desde `ml/predict.py`.
+
 ## Regresion Logistica (baseline)
 - Precision: 0.122
 - Recall: 0.746
