@@ -99,7 +99,16 @@ export default async function DashboardPage() {
           )}
 
           {loggedIn ? (
-            <LogoutButton />
+            <>
+              <Link href="/account" style={{
+                padding: '0.4rem 0.9rem', background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)',
+                borderRadius: '9999px', fontSize: '0.8rem', border: '1px solid var(--glass-border)',
+                textDecoration: 'none', fontWeight: 600,
+              }}>
+                Mi cuenta
+              </Link>
+              <LogoutButton />
+            </>
           ) : (
             <Link href="/login?next=/dashboard" style={{
               padding: '0.4rem 1rem', background: 'var(--accent-primary)', color: '#000',

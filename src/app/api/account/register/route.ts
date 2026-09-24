@@ -2,12 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { createSession } from '@/lib/auth';
+import { checkRateLimit, clientIp } from '@/lib/rateLimit';
+
+const MAX_REGISTRATIONS = 5;
+const WINDOW_MS = 60 * 60 * 1000; // 1 hora
 
 // Registro de cuentas de cliente (nivel pago del modelo freemium, Seccion
 // 5.4 de la tesis). Las cuentas de administrador no se autorregistran por
 // aca: se crean con scripts/create_admin_user.js.
 export async function POST(req: NextRequest) {
   try {
+    if (!checkRateLimit(`register:ip:${clientIp(req)}`, MAX_REGISTRATIONS, WINDOW_MS)) {
+      return NextResponse.json(
+        { error: 'Demasiados registros desde este origen. Probá de nuevo más tarde.' },
+        { status: 429 }
+      );
+    }
+
     const { email, password } = await req.json();
 
     if (typeof email !== 'string' || typeof password !== 'string') {

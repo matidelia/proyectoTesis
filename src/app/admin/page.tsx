@@ -135,12 +135,13 @@ export default async function AdminPage({ searchParams }: { searchParams: any })
             </Link>
           )}
 
-          <div style={{
+          <Link href="/account" style={{
             padding: '0.4rem 0.9rem', background: 'rgba(255,255,255,0.04)', color: 'var(--text-secondary)',
             borderRadius: '9999px', fontSize: '0.75rem', border: '1px solid var(--glass-border)',
+            textDecoration: 'none',
           }}>
             {session.email}
-          </div>
+          </Link>
           <LogoutButton />
         </div>
       </div>
