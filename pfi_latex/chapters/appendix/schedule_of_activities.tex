@@ -1,11 +1,13 @@
 \anexo{Cronograma de Actividades}
 
-Las columnas del cronograma representan los cuartos del calendario planificado para todo el PFI (25\,\%, 50\,\%, 75\,\% y 100\,\% del tiempo total del proyecto), y el sombreado indica en qué cuarto se trabajó cada actividad, en base al historial real de desarrollo (commits y bitácoras de sesión). Los cuartos ya transcurridos (25\,\%, 50\,\% y 75\,\%) tienen fecha calendario asociada; el cuarto 100\,\% todavía no tiene fecha de entrega fijada por la cátedra al momento de esta entrega, y se deja indicado como ``a definir'' en lugar de estimarse arbitrariamente. Esta entrega corresponde al hito del 75\,\%: además de las actividades ya en curso desde el cuarto anterior, se sumaron el entrenamiento y evaluación del primer modelo de Machine Learning supervisado, y el desarrollo del modelo de negocio, la viabilidad económica y el branding. El análisis final de resultados y la redacción completa del informe (incluyendo Resumen, Abstract y Agradecimientos) corresponden a la última etapa del proyecto y todavía no se iniciaron.
+Las columnas del cronograma representan los cuartos del calendario planificado para todo el PFI (25\,\%, 50\,\%, 75\,\% y 100\,\% del tiempo total del proyecto), y el sombreado indica en qué cuarto se trabajó cada actividad, en base al historial real de desarrollo (commits y bitácoras de sesión). Los cuartos ya transcurridos (25\,\%, 50\,\% y 75\,\%) tienen fecha calendario asociada; el cuarto 100\,\% todavía no tiene fecha de entrega fijada por la cátedra al momento de esta entrega, y se deja indicado como ``a definir'' en lugar de estimarse arbitrariamente. Esta entrega corresponde al hito del 75\,\%: además de las actividades ya en curso desde el cuarto anterior, se sumaron el entrenamiento y evaluación del primer modelo de Machine Learning supervisado, el desarrollo del modelo de negocio, la viabilidad económica y el branding, y -- a partir de observaciones puntuales de la revisión oral del hito del 50\,\% -- un sistema de cuentas y autenticación, la resolución de la identidad de producto por catálogo, la agregación del score entre vendedores y un endurecimiento de seguridad sobre las cuentas. El análisis final de resultados y la redacción completa del informe (incluyendo Resumen, Abstract y Agradecimientos) corresponden a la última etapa del proyecto y todavía no se iniciaron.
 
 \newcommand{\avance}{\cellcolor{black!75}}
 
 \begin{table}[ht]
 	\centering
+	\small
+	\renewcommand{\arraystretch}{0.85}
 	\caption{Cronograma de actividades}
 	\label{tab:gantt}
 	\begin{tabularx}{\textwidth}{@{}X c c c c@{}}
@@ -27,6 +29,9 @@ Las columnas del cronograma representan los cuartos del calendario planificado p
 		Cálculo de métricas temporales                        &         & \avance &         &         \\
 		Entrenamiento y evaluación del modelo de ML supervisado &         &         & \avance &         \\
 		Modelo de negocio, viabilidad económica y branding     &         &         & \avance &         \\
+		Sistema de cuentas, autenticación y alertas            &         &         & \avance &         \\
+		Identidad de producto por catálogo y score agregado    &         &         & \avance &         \\
+		Endurecimiento de seguridad (rate limiting, cambio de contraseña) &  &        & \avance &         \\
 		Pruebas funcionales y ajustes                         & \avance & \avance & \avance &         \\
 		Análisis de resultados y limitaciones                 &         &         & \avance &         \\
 		Redacción final y preparación de defensa               &         &         &         &         \\
