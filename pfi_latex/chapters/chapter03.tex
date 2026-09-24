@@ -55,7 +55,7 @@ La siguiente matriz vincula cada requerimiento con su estado real de implementac
 	\midrule
 	\endhead
 	RF01 & Implementado & 274 productos y 5717 apariciones capturados en 71 días de operación continua (14/7 al 23/9/2026), en $\sim$203 sesiones de minería estimadas. & Sec.~\ref{sec:evidencia-cuantitativa}, Fig.~\ref{fig:diagrama-componentes} \\
-	RF02 & Implementado & 11539 scores calculados y persistidos con desglose completo. Fórmula, pesos y ejemplo real documentados. & Sec.~\ref{sec:score-formal} \\
+	RF02 & Implementado & 11573+ scores calculados y persistidos con desglose completo. Fórmula, pesos y ejemplo real documentados. Desde el 23/09/2026 el componente de estabilidad se calcula sobre el precio promedio entre vendedores activos (no el más barato); verificado con una corrida real de minería, 12 productos con datos de múltiples vendedores cargados. & Sec.~\ref{sec:score-formal} \\
 	RF03 & Implementado & Filtro por categoría, precio (mín./máx.) y orden por score/variación en el ranking; filtro por rango de fecha (7/30 días/todo) en el gráfico de evolución. & Fig.~\ref{fig:demo-score} \\
 	RF04 & Implementado & 5 endpoints REST en producción (\texttt{/api/trend-scores}, \texttt{/api/health}, \texttt{/api/status}, \texttt{/api/search}, \texttt{/api/trends}), más los de cuentas y alertas (\texttt{/api/account/*}, \texttt{/api/watchlist}, \texttt{/api/alerts}). & Sec.~\ref{sec:evidencia-cuantitativa} \\
 	RF05 & Implementado & Gráfico de evolución del score de tendencia por producto y panel de tendencias desglosado por categoría, ambos en el dashboard. & Fig.~\ref{fig:demo-evolucion} \\
