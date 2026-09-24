@@ -1,7 +1,12 @@
 # Minería automática en la nube (GitHub Actions)
 # ==============================================
 # Reemplaza la dependencia de la PC local: corre 3 veces al día aunque
-# la notebook esté apagada. Cadena completa: minería → score → backup.
+# la notebook esté apagada. Cadena completa:
+#   minería → score (RF02) → predicción de ML (Seccion 1.5.4) → alertas (HU02) → backup.
+#
+# La prediccion usa el modelo ya entrenado (ml/model.joblib, versionado en el
+# repo); este workflow NO reentrena en cada corrida, solo corre predict.py
+# sobre el estado actual. Reentrenar es una accion manual (python ml/train_model.py).
 #
 # Requiere 4 secrets en GitHub (Settings → Secrets and variables → Actions):
 #   DATABASE_URL     → URL del POOLER de Supabase (aws-1-sa-east-1.pooler...)
@@ -46,14 +51,36 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Instalar dependencias (incluye prisma generate)
+      - name: Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: ml/requirements.txt
+
+      - name: Instalar dependencias de Node (incluye prisma generate)
         run: npm ci
+
+      - name: Instalar dependencias de Python (ML)
+        run: pip install -r ml/requirements.txt
 
       - name: Minería Carril 1 (protocolo humano)
         run: node scripts/mine_carril1.js
 
       - name: Calcular scores de tendencia (RF02)
         run: node scripts/compute_trend_scores.js --days=7
+
+      - name: Exportar features actuales para el modelo de ML
+        run: node scripts/export_latest_features.js > ml/latest_features.json
+
+      - name: Predecir probabilidad de crecimiento (Seccion 1.5.4)
+        run: python ml/predict.py
+
+      - name: Guardar predicciones en MLPrediction
+        run: node scripts/import_ml_predictions.js
+
+      - name: Generar alertas de productos seguidos (HU02)
+        run: node scripts/generate_alerts.js
 
       - name: Backup local de la base (RNF04)
         run: node scripts/backup_db.js

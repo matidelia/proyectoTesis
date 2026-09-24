@@ -64,9 +64,10 @@ CLAUDE.md
 AGENTS.md
 
 # Datos y artefactos del pipeline de ML exportados de produccion o generados
-# por los scripts (reproducibles, no versionar; ver ml/train_model.py y ml/predict.py)
+# por los scripts (reproducibles, no versionar; ver ml/train_model.py y ml/predict.py).
+# ml/model.joblib SI se versiona: es el modelo ya entrenado que predict.py
+# necesita en runtime (CI/CD no reentrena en cada corrida, solo predice).
 ml/dataset.json
 ml/export_err.log
-ml/model.joblib
 ml/latest_features.json
 ml/predictions.json
