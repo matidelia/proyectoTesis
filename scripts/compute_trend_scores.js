@@ -5,10 +5,11 @@
  * de las métricas temporales sobre una ventana de análisis (default 7 días).
  *
  * Fórmula (score 0-100):
- *   score = 100 * ( 0.35 * frecuencia      // apariciones en la ventana (normalizada)
- *                 + 0.25 * permanencia     // días distintos con presencia / días de la ventana
- *                 + 0.20 * ranking         // posición promedio en el catálogo (1 = mejor)
- *                 + 0.20 * estabilidad )   // estabilidad de precio (descarta picos artificiales)
+ *   score = 100 * ( 0.30 * frecuencia      // apariciones en la ventana (normalizada)
+ *                 + 0.21 * permanencia     // días distintos con presencia / días de la ventana
+ *                 + 0.17 * ranking         // posición promedio en el catálogo (1 = mejor)
+ *                 + 0.17 * estabilidad     // estabilidad de precio (descarta picos artificiales)
+ *                 + 0.15 * saturacion )    // pocos vendedores compitiendo = oportunidad temprana
  *
  * Justificación de cada componente (ver tabla "Métricas preliminares" del PFI):
  *  - frecuencia:   presencia sostenida → señal principal de tendencia.
@@ -16,6 +17,14 @@
  *  - ranking:      aparecer arriba en el catálogo indica relevancia.
  *  - estabilidad:  un precio estable con alta presencia indica demanda real;
  *                  variaciones bruscas suelen ser picos aislados u ofertas.
+ *  - saturacion:   cantidad de vendedores activos compitiendo por el mismo
+ *                  producto de catálogo (Sección 1.10.2 "Agregación entre
+ *                  vendedores"). Pocos vendedores con señal de crecimiento es
+ *                  la oportunidad temprana que describieron los vendedores
+ *                  entrevistados (Anexo D); a medida que se satura de oferta,
+ *                  el mismo crecimiento vale menos como oportunidad. Los
+ *                  pesos anteriores se reescalaron un 85% para liberar este
+ *                  15%, sin cambiar su orden relativo de importancia.
  *
  * Uso:  node scripts/compute_trend_scores.js [--days=7]
  * Guarda un registro TrendScore por producto con el desglose en `components`.
@@ -29,12 +38,14 @@ const prisma = new PrismaClient();
 
 // ─── Configuración ────────────────────────────────────────────────────────────
 const WEIGHTS = {
-  frecuencia: 0.35,
-  permanencia: 0.25,
-  ranking: 0.20,
-  estabilidad: 0.20,
+  frecuencia: 0.30,
+  permanencia: 0.21,
+  ranking: 0.17,
+  estabilidad: 0.17,
+  saturacion: 0.15,
 };
 const MAX_RANK = 8; // ITEMS_PER_CATEGORY de la minería: posiciones 1..8
+const MAX_SELLERS = 5; // limite de /products/{id}/items (Sección 1.10.2)
 
 function getWindowDays() {
   const arg = process.argv.find(a => a.startsWith('--days='));
@@ -72,17 +83,22 @@ function computeComponents(snapshots, prices, windowDays, maxFreq) {
     estabilidad = 0.5; // un solo registro: neutro
   }
 
-  // Dato informativo (no pesado en la fórmula): cuántos vendedores activos
-  // competían en promedio por este producto durante la ventana. La
-  // estabilidad de precio (arriba) ya se calcula sobre precios agregados
-  // entre vendedores (PriceHistory.price = promedio, no el más barato de
-  // cada corrida) desde la Sección 1.10.2; esto solo lo hace explícito.
+  // 5. Saturación: cuántos vendedores activos competían en promedio por este
+  // producto durante la ventana (Sección 1.10.2, "Agregación entre
+  // vendedores"). 1 vendedor → saturación 1.0 (todavía sin competencia,
+  // oportunidad temprana); MAX_SELLERS vendedores → saturación 0.0 (mercado
+  // ya consolidado). Productos capturados antes de este cambio no tienen
+  // avgSellerCount (metodología de un solo vendedor): se usa 0.5 como valor
+  // neutro, mismo criterio que ya se aplica a estabilidad con un solo precio.
   const sellerCounts = snapshots.map(s => s.sellerCount).filter(c => c != null);
   const avgSellerCount = sellerCounts.length > 0
     ? Math.round((sellerCounts.reduce((a, b) => a + b, 0) / sellerCounts.length) * 10) / 10
     : null;
+  const saturacion = avgSellerCount != null
+    ? Math.max(0, Math.min(1, 1 - (avgSellerCount - 1) / (MAX_SELLERS - 1)))
+    : 0.5;
 
-  return { frecuencia, permanencia, ranking, estabilidad, avgSellerCount };
+  return { frecuencia, permanencia, ranking, estabilidad, saturacion, avgSellerCount };
 }
 
 // ─── Proceso principal ────────────────────────────────────────────────────────
@@ -127,7 +143,8 @@ async function main() {
       (WEIGHTS.frecuencia * comp.frecuencia +
         WEIGHTS.permanencia * comp.permanencia +
         WEIGHTS.ranking * comp.ranking +
-        WEIGHTS.estabilidad * comp.estabilidad);
+        WEIGHTS.estabilidad * comp.estabilidad +
+        WEIGHTS.saturacion * comp.saturacion);
 
     await prisma.trendScore.create({
       data: {

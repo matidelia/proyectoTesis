@@ -185,7 +185,7 @@ export default async function AdminPage({ searchParams }: { searchParams: any })
           <SectionTitle
             icon="🏆"
             title="Productos en Tendencia — Score"
-            subtitle="Ranking por indicador compuesto: frecuencia de aparición, permanencia, posición en catálogo y estabilidad de precio."
+            subtitle="Ranking por indicador compuesto: frecuencia de aparición, permanencia, posición en catálogo, estabilidad de precio y cuántos vendedores compiten por el mismo producto."
           />
           <TrendScoreTable />
         </section>

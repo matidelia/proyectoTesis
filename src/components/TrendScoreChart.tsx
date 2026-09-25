@@ -31,9 +31,10 @@ const COMPONENT_LABELS: Record<string, string> = {
   permanencia: 'Permanencia',
   ranking: 'Posición en catálogo',
   estabilidad: 'Estabilidad de precio',
+  saturacion: 'Poca competencia (saturación)',
 };
 
-const COMPONENT_ORDER = ['frecuencia', 'permanencia', 'ranking', 'estabilidad'];
+const COMPONENT_ORDER = ['frecuencia', 'permanencia', 'ranking', 'estabilidad', 'saturacion'];
 
 export default function TrendScoreChart() {
   const [items, setItems] = useState<ScoreItem[]>([]);
