@@ -8,11 +8,14 @@
 # repo); este workflow NO reentrena en cada corrida, solo corre predict.py
 # sobre el estado actual. Reentrenar es una accion manual (python ml/train_model.py).
 #
-# Requiere 4 secrets en GitHub (Settings → Secrets and variables → Actions):
+# Requiere 5 secrets en GitHub (Settings → Secrets and variables → Actions):
 #   DATABASE_URL     → URL del POOLER de Supabase (aws-1-sa-east-1.pooler...)
 #   DIRECT_URL       → misma URL del pooler
 #   ML_APP_ID        → app de Mercado Libre
 #   ML_CLIENT_SECRET → secret de la app
+#   RESEND_API_KEY   → envio real de alertas por email (RF09); si falta,
+#                      las alertas se siguen generando en /alerts, solo que
+#                      sin el email (ver scripts/generate_alerts.js)
 #
 # IMPORTANTE: usar la URL del pooler (IPv4). Los runners de GitHub no tienen
 # IPv6, igual que Render — la conexión directa db.*.supabase.co NO funciona.
@@ -40,6 +43,7 @@ jobs:
       DIRECT_URL: ${{ secrets.DIRECT_URL }}
       ML_APP_ID: ${{ secrets.ML_APP_ID }}
       ML_CLIENT_SECRET: ${{ secrets.ML_CLIENT_SECRET }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
 
     steps:
       - name: Checkout

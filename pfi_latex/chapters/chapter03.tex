@@ -62,7 +62,7 @@ La siguiente matriz vincula cada requerimiento con su estado real de implementac
 	RF06 & Implementado & Exportación a CSV del ranking filtrado, disponible en el dashboard (nivel pago, Sección~\ref{sec:modelo-negocio}). & Fig.~\ref{fig:demo-score} \\
 	RF07 & Implementado & Columna ``Prob. ML'' en el ranking con la probabilidad calculada por el checkpoint del modelo supervisado, cargada para los 243 productos con score. & Sec.~\ref{sec:ml-resultados} \\
 	RF08 & Implementado & Registro y login con contraseña hasheada (bcrypt) y sesión firmada (JWT); nivel gratuito vs. pago diferenciado en el dashboard. & Sec.~\ref{sec:modelo-negocio} \\
-	RF09 & Implementado & Botón de seguir por producto (requiere cuenta) y bandeja de alertas en \texttt{/alerts}, generadas al cruzar el umbral de crecimiento. & -- \\
+	RF09 & Implementado & Botón de seguir por producto (requiere cuenta) y bandeja de alertas en \texttt{/alerts}, generadas al cruzar el umbral de crecimiento y enviadas también por email (Resend) desde el 28/09/2026. & -- \\
 	RNF01 & Implementado & Sin bloqueos por rate-limit en 71 días de operación; los únicos 2 endpoints bloqueados lo están por política de Mercado Libre, no por exceso de solicitudes. & Sec.~\ref{sec:evidencia-cuantitativa} \\
 	RNF02 & Implementado & Medido en producción el 21/09/2026, tras acotar la consulta a las últimas 2 mediciones por producto: \texttt{/api/trend-scores} responde en 1,7--2,9\,s en caliente, dentro del objetivo de 3\,s (antes: 6,3--7,6\,s). Detalle de la corrección y su verificación en la Sección~\ref{sec:pruebas}. & Sec.~\ref{sec:evidencia-cuantitativa}, \ref{sec:pruebas} \\
 	RNF03 & Implementado & Desplegado en Render, con build reproducible (generación de Prisma Client en \texttt{postinstall}). & -- \\
@@ -73,7 +73,7 @@ La siguiente matriz vincula cada requerimiento con su estado real de implementac
 	\bottomrule
 \end{longtable}
 
-Las historias de usuario se consideran implementadas de forma directa cuando su(s) RF asociado(s) están implementados: HU01 (RF01--RF03), HU03 (RF05), HU04 (RF03) y HU05 (RF01). HU02 y HU07 quedan cubiertas por RF09 (seguir un producto y recibir una alerta in-app cuando cruza el umbral de crecimiento) -- con una limitación reconocida: la alerta hoy se ve en \texttt{/alerts} dentro de la aplicación, pero todavía no se envía por email o push, porque eso requiere dar de alta una cuenta en un proveedor externo de correo (Sección~\ref{sec:alcance}). HU06 queda cubierta por RF08.
+Las historias de usuario se consideran implementadas de forma directa cuando su(s) RF asociado(s) están implementados: HU01 (RF01--RF03), HU03 (RF05), HU04 (RF03) y HU05 (RF01). HU02 y HU07 quedan cubiertas por RF09 (seguir un producto y recibir una alerta cuando cruza el umbral de crecimiento): visible en \texttt{/alerts} dentro de la aplicación y, desde el 28/09/2026, enviada también por email de forma automática vía Resend (\texttt{scripts/generate\_alerts.js}, ejecutado por el mismo workflow de GitHub Actions que la genera). HU06 queda cubierta por RF08.
 
 \section{Metodología de desarrollo}\label{sec:metodologia}
 

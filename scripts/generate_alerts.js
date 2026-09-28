@@ -17,6 +17,37 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const GROWTH_THRESHOLD = 5; // mismo umbral que HU02 en /api/trend-scores
+const APP_URL = 'https://proyectotesis-e4et.onrender.com';
+
+// Envio real de alertas por email (RF09, item de "trabajo futuro" resuelto).
+// Usa la API REST de Resend directamente (sin SDK, para no sumar una
+// dependencia por un solo endpoint). Si no hay RESEND_API_KEY configurada
+// (por ejemplo, en un entorno de desarrollo sin la clave), la alerta se
+// sigue generando en /alerts como siempre, solo que sin el email -- el
+// envio nunca es lo que hace fallar el resto del script.
+async function sendAlertEmail(to, { productName, score, previousScore, scoreDelta }) {
+  if (!process.env.RESEND_API_KEY) return;
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Tendar <onboarding@resend.dev>',
+        to: [to],
+        subject: `📈 ${productName} está en crecimiento`,
+        html: `<p>El producto que seguís, <strong>${productName}</strong>, subió de ${previousScore} a ${score} puntos (+${scoreDelta}) en el score de tendencia.</p><p><a href="${APP_URL}/alerts">Ver el detalle en Tendar</a></p>`,
+      }),
+    });
+    if (!res.ok) {
+      console.error(`  ⚠ Resend respondió ${res.status} al enviar a ${to}: ${await res.text()}`);
+    }
+  } catch (e) {
+    console.error(`  ⚠ Error de red enviando email a ${to}: ${e.message}`);
+  }
+}
 
 async function main() {
   // Productos con al menos un Watch activo (no tiene sentido calcular para el resto).
@@ -46,6 +77,7 @@ async function main() {
     if (scoreDelta < GROWTH_THRESHOLD) continue;
 
     const watchers = await prisma.watch.findMany({ where: { productId } });
+    const product = await prisma.product.findUnique({ where: { id: productId }, select: { name: true } });
 
     for (const w of watchers) {
       try {
@@ -60,6 +92,16 @@ async function main() {
           },
         });
         created++;
+
+        const user = await prisma.user.findUnique({ where: { id: w.userId }, select: { email: true } });
+        if (user) {
+          await sendAlertEmail(user.email, {
+            productName: product?.name || 'un producto',
+            score: curr.score,
+            previousScore: prev.score,
+            scoreDelta,
+          });
+        }
       } catch (e) {
         // Ya existe una alerta para este usuario + este TrendScore (constraint unique) -- se ignora.
         if (!String(e.message).includes('Unique constraint')) throw e;
