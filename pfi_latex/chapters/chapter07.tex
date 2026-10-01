@@ -1,4 +1,4 @@
-\chapter{Demo -- Avances de Implementación}\label{chapter07}
+\chapter{Demo: Avances de Implementación}\label{chapter07}
 
 A continuación se presentan capturas del sistema en funcionamiento, correspondientes al avance de implementación de este hito del 75\%: el pipeline de captura y su monitoreo, la base de datos histórica, la API REST y el dashboard con el ranking por score de tendencia. El sistema se encuentra publicado y accesible en producción, con captura de datos automatizada ejecutándose de manera autónoma varias veces por día. La interfaz web tiene un panel para clientes (\texttt{/dashboard}), con el ranking de productos y la evolución del score en el tiempo, y un panel técnico interno (\texttt{/admin}) con el monitoreo de endpoints y los registros de minería, que se documenta a continuación como evidencia de RNF01. Ambos paneles se capturaron en agosto de 2026; las pantallas de cuentas y alertas incorporadas después (Sección~\ref{sec:demo-cuentas}) se capturaron el 23/09/2026, ya con \texttt{/admin} protegido por autenticación (RNF06).
 
@@ -41,7 +41,7 @@ A partir de la devolución del jurado en la revisión oral del hito del 50\,\% (
 	\label{fig:demo-login}
 \end{figure}
 
-Sin sesión iniciada, el ranking se ve completo pero la exportación CSV y el botón de seguir un producto aparecen deshabilitados (candado en el botón, campana en gris) -- el nivel gratuito del modelo freemium (Sección~\ref{sec:modelo-negocio}):
+Sin sesión iniciada, el ranking se ve completo pero la exportación CSV y el botón de seguir un producto aparecen deshabilitados (candado en el botón, campana en gris), correspondiente al nivel gratuito del modelo freemium (Sección~\ref{sec:modelo-negocio}):
 
 \begin{figure}[H]
 	\centering
@@ -50,7 +50,7 @@ Sin sesión iniciada, el ranking se ve completo pero la exportación CSV y el bo
 	\label{fig:demo-anonimo}
 \end{figure}
 
-Con sesión iniciada, la exportación se habilita y el botón de seguimiento por producto queda activo (campana roja = no seguido, campana dorada = seguido -- el primer producto de la Figura~\ref{fig:demo-logueado} está seguido por esta cuenta de prueba):
+Con sesión iniciada, la exportación se habilita y el botón de seguimiento por producto queda activo (campana roja = no seguido, campana dorada = seguido; el primer producto de la Figura~\ref{fig:demo-logueado} está seguido por esta cuenta de prueba):
 
 \begin{figure}[H]
 	\centering
@@ -101,17 +101,17 @@ Más allá de la afirmación de que el sistema está desplegado y capturando dat
 		Cuentas de usuario registradas (\texttt{User}, RF08) & 2 (1 admin, 1 cliente de demostración) \\
 		Sesiones de minería estimadas & $\sim$203 (agrupando snapshots por cortes de inactividad $>$40 min), $\sim$28,2 apariciones registradas por sesión en promedio \\
 		Frecuencia de captura configurada & 3 corridas diarias (cron programado, ver Sección~\ref{sec:evolucion-tecnica}) \\
-		Tiempo de respuesta -- \texttt{/api/health}, \texttt{/api/status} & 0,5 -- 2,1\,s (medido, 3 muestras c/u) \\
-		Tiempo de respuesta -- \texttt{/dashboard} (panel de clientes) & 0,5 -- 1,1\,s en caliente (medido, 5 muestras el 15/08/2026, tras separar el panel de clientes del panel técnico) \\
-		Tiempo de respuesta -- \texttt{/admin} (panel técnico) & 1,9 -- 4,0\,s (medido, 3 muestras el 15/08/2026) \\
-		Tiempo de respuesta -- \texttt{/api/trend-scores} & 1,7 -- 2,9\,s en caliente (medido, 5 muestras el 21/09/2026, tras la corrección de RNF02 -- ver Sección~\ref{sec:pruebas}) \\
+		Tiempo de respuesta: \texttt{/api/health}, \texttt{/api/status} & 0,5 -- 2,1\,s (medido, 3 muestras c/u) \\
+		Tiempo de respuesta: \texttt{/dashboard} (panel de clientes) & 0,5 -- 1,1\,s en caliente (medido, 5 muestras el 15/08/2026, tras separar el panel de clientes del panel técnico) \\
+		Tiempo de respuesta: \texttt{/admin} (panel técnico) & 1,9 -- 4,0\,s (medido, 3 muestras el 15/08/2026) \\
+		Tiempo de respuesta: \texttt{/api/trend-scores} & 1,7 -- 2,9\,s en caliente (medido, 5 muestras el 21/09/2026, tras la corrección de RNF02, ver Sección~\ref{sec:pruebas}) \\
 		\bottomrule
 	\end{tabularx}
 \end{table}
 
 Un ejemplo real de exportación CSV (RF06) generado desde el dashboard el mismo día incluye columnas \texttt{producto, categoria, precio, moneda, variacion\_pct, score, periodo, calculado, link}, con una fila por cada producto del ranking filtrado en pantalla al momento de la exportación (ver Figura~\ref{fig:demo-score}).
 
-Un hallazgo temprano de esta medición (10/08/2026) fue que \texttt{/api/trend-scores} -- el endpoint que alimenta el ranking principal -- no cumplía el objetivo de RNF02 (respuesta en menos de 3 segundos): la consulta traía los 3911 scores históricos con sus relaciones completas en cada solicitud, en lugar de traer solamente las últimas mediciones vigentes por producto. La corrección aplicada y su verificación posterior en producción se documentan en la Sección~\ref{sec:pruebas}.
+Un hallazgo temprano de esta medición (10/08/2026) fue que \texttt{/api/trend-scores} (el endpoint que alimenta el ranking principal) no cumplía el objetivo de RNF02 (respuesta en menos de 3 segundos): la consulta traía los 3911 scores históricos con sus relaciones completas en cada solicitud, en lugar de traer solamente las últimas mediciones vigentes por producto. La corrección aplicada y su verificación posterior en producción se documentan en la Sección~\ref{sec:pruebas}.
 
 \section{Pruebas funcionales y resultados}\label{sec:pruebas}
 
@@ -125,4 +125,4 @@ La medición del 10/08/2026 (Tabla~\ref{tab:evidencia}) mostró que \texttt{/api
 
 La Entrevista 2 (Anexo D, Sección~\ref{chapter06}) incluyó una instancia de prueba de usabilidad: se mostró el dashboard en funcionamiento a un vendedor real (Lucas) y se le pidió que interpretara la pantalla sin explicación previa (pregunta 3, ``¿Qué entendés que muestra esta pantalla?''). El entrevistado identificó correctamente el propósito del ranking y del score sin asistencia, lo que valida que la interfaz comunica su función principal sin necesidad de instrucciones adicionales.
 
-Esa misma instancia motivó una decisión de diseño a partir de sus resultados: la pregunta sobre qué le faltaba a la herramienta (pregunta 8) y la objeción de que el score funcionaba como una ``caja negra'' (pregunta 10) llevaron a que el desglose de sus cuatro componentes -- frecuencia, permanencia, ranking, estabilidad -- se muestre explícitamente en el dashboard en lugar de solo el puntaje final, decisión ya documentada en la Sección~\ref{sec:score-formal}.
+Esa misma instancia motivó una decisión de diseño a partir de sus resultados: la pregunta sobre qué le faltaba a la herramienta (pregunta 8) y la objeción de que el score funcionaba como una ``caja negra'' (pregunta 10) llevaron a que el desglose de sus cuatro componentes (frecuencia, permanencia, ranking, estabilidad) se muestre explícitamente en el dashboard en lugar de solo el puntaje final, decisión ya documentada en la Sección~\ref{sec:score-formal}.
