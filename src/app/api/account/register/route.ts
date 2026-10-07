@@ -3,14 +3,10 @@ import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { createSession } from '@/lib/auth';
 import { checkRateLimit, clientIp } from '@/lib/rateLimit';
+import { isValidEmail, isValidPassword } from '@/lib/validation';
 
 const MAX_REGISTRATIONS = 5;
 const WINDOW_MS = 60 * 60 * 1000; // 1 hora
-
-// Validación simple pero real (antes solo chequeaba que tuviera un "@" en
-// cualquier lado, así que "a@" pasaba). No pretende cubrir el RFC 5322
-// completo, solo rechazar los casos claramente inválidos.
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Registro de cuentas de cliente (nivel pago del modelo freemium, Seccion
 // 5.4 de la tesis). Las cuentas de administrador no se autorregistran por
@@ -30,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Faltan email o contraseña.' }, { status: 400 });
     }
     const normalizedEmail = email.trim().toLowerCase();
-    if (!EMAIL_RE.test(normalizedEmail) || password.length < 8) {
+    if (!isValidEmail(normalizedEmail) || !isValidPassword(password)) {
       return NextResponse.json(
         { error: 'Email inválido o contraseña muy corta (mínimo 8 caracteres).' },
         { status: 400 }

@@ -102,6 +102,12 @@ function computeComponents(snapshots, prices, windowDays, maxFreq) {
 }
 
 // ─── Proceso principal ────────────────────────────────────────────────────────
+// No cubierto por tests unitarios a propósito: es orquestación de I/O (consultas
+// reales a Prisma/PostgreSQL), no lógica de negocio. Probarlo de forma unitaria
+// implicaría mockear el cliente de Prisma por completo sin validar un
+// comportamiento real -- la lógica que sí importa (computeComponents, el cálculo
+// del score) está cubierta arriba. Ver Sección "Validación del sistema".
+/* v8 ignore start */
 async function main() {
   const windowDays = getWindowDays();
   const period = `${windowDays}d`;
@@ -178,6 +184,11 @@ async function main() {
   console.log();
 }
 
-main()
-  .catch(e => console.error('\n❌ Error crítico:', e.message))
-  .finally(() => prisma.$disconnect());
+if (require.main === module) {
+  main()
+    .catch(e => console.error('\n❌ Error crítico:', e.message))
+    .finally(() => prisma.$disconnect());
+}
+/* v8 ignore stop */
+
+module.exports = { computeComponents, WEIGHTS, MAX_RANK, MAX_SELLERS, getWindowDays };
