@@ -21,7 +21,7 @@ A continuación se detallan los requerimientos funcionales y no funcionales del 
 	\item RF02 -- El sistema debe calcular un score de tendencia por producto en base a variables temporales.
 	\item RF03 -- El sistema debe permitir filtrar y ordenar productos por categoría, score, variación de precio, rango de precio y rango de fecha.
 	\item RF04 -- El sistema debe exponer los resultados mediante una API REST (Next.js API Routes).
-	\item RF05 -- El dashboard debe mostrar gráficos de evolución temporal por producto y categoría.
+	\item RF05 -- El sistema debe mostrar, en el dashboard, gráficos de evolución temporal por producto y categoría.
 	\item RF06 -- El sistema debe permitir exportar el listado de productos en tendencia (CSV).
 	\item RF07 -- El sistema debe exponer, para cada producto, la probabilidad estimada por el modelo de Machine Learning supervisado (Sección~\ref{sec:ml-resultados}) de que su score siga creciendo.
 	\item RF08 -- El sistema debe permitir a un usuario crear una cuenta y autenticarse, para diferenciar el nivel gratuito del nivel pago del modelo freemium (Sección~\ref{sec:modelo-negocio}).
@@ -31,18 +31,18 @@ A continuación se detallan los requerimientos funcionales y no funcionales del 
 \section{Requerimientos No Funcionales}
 
 \begin{enumerate}
-	\item RNF01 -- La captura de datos no debe exceder los límites de rate-limit de la API oficial de Mercado Libre.
-	\item RNF02 -- El dashboard debe responder consultas en menos de 3 segundos sobre el dataset histórico. El modelo de datos incluye índices en PostgreSQL (productId, timestamp, categoryId) diseñados para sostener ese tiempo de respuesta a medida que el histórico escala.
-	\item RNF03 -- El backend debe poder desplegarse en plataformas cloud con escalado gestionado. Actualmente se despliega en Render con build reproducible (generación de Prisma Client en postinstall).
-	\item RNF04 -- Los datos históricos deben persistirse con respaldo (backup) periódico.
-	\item RNF05 -- Las credenciales y tokens de acceso (OAuth2 de Mercado Libre) deben gestionarse exclusivamente del lado servidor, sin exponerse nunca al cliente, con renovación automática de tokens.
-	\item RNF06 -- El panel administrativo (\texttt{/admin}) no debe ser accesible sin autenticación, dado que expone información operativa interna (logs de minería, estado de endpoints).
-	\item RNF07 -- Las contraseñas de los usuarios deben almacenarse con hash seguro (nunca en texto plano ni reversible).
+	\item RNF01 -- El sistema debe respetar los límites de rate-limit de la API oficial de Mercado Libre durante la captura de datos.
+	\item RNF02 -- El sistema debe responder las consultas del dashboard en menos de 3 segundos sobre el dataset histórico. El modelo de datos incluye índices en PostgreSQL (productId, timestamp, categoryId) diseñados para sostener ese tiempo de respuesta a medida que el histórico escala.
+	\item RNF03 -- El sistema debe poder desplegarse en plataformas cloud con escalado gestionado. Actualmente se despliega en Render con build reproducible (generación de Prisma Client en postinstall).
+	\item RNF04 -- El sistema debe persistir los datos históricos con respaldo (backup) periódico.
+	\item RNF05 -- El sistema debe gestionar las credenciales y tokens de acceso (OAuth2 de Mercado Libre) exclusivamente del lado servidor, sin exponerlos nunca al cliente, con renovación automática de tokens.
+	\item RNF06 -- El sistema debe exigir autenticación para acceder al panel administrativo (\texttt{/admin}), dado que expone información operativa interna (logs de minería, estado de endpoints).
+	\item RNF07 -- El sistema debe almacenar las contraseñas de los usuarios con hash seguro (nunca en texto plano ni reversible).
 \end{enumerate}
 
 \section{Matriz de trazabilidad}\label{sec:trazabilidad}
 
-La siguiente matriz vincula cada requerimiento con su estado real de implementación al cierre de este hito y con la evidencia concreta que lo respalda, medida sobre el sistema en producción (ver evidencia cuantitativa detallada en la Sección~\ref{sec:evidencia-cuantitativa}).
+La siguiente matriz vincula cada requerimiento con su estado real de implementación y con la evidencia concreta que lo respalda, medida sobre el sistema en producción (ver evidencia cuantitativa detallada en la Sección~\ref{sec:evidencia-cuantitativa}).
 
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{7.8cm} >{\raggedright\arraybackslash}p{2.1cm}@{}}
 	\caption{Matriz de trazabilidad de requerimientos} \label{tab:trazabilidad} \\

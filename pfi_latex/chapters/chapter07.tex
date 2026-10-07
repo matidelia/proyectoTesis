@@ -1,6 +1,6 @@
 \chapter{Demo: Avances de Implementación}\label{chapter07}
 
-A continuación se presentan capturas del sistema en funcionamiento, correspondientes al avance de implementación de este hito del 75\%: el pipeline de captura y su monitoreo, la base de datos histórica, la API REST y el dashboard con el ranking por score de tendencia. El sistema se encuentra publicado y accesible en producción, con captura de datos automatizada ejecutándose de manera autónoma varias veces por día. La interfaz web tiene un panel para clientes (\texttt{/dashboard}), con el ranking de productos y la evolución del score en el tiempo, y un panel técnico interno (\texttt{/admin}) con el monitoreo de endpoints y los registros de minería, que se documenta a continuación como evidencia de RNF01. Ambos paneles se capturaron en agosto de 2026; las pantallas de cuentas y alertas incorporadas después (Sección~\ref{sec:demo-cuentas}) se capturaron el 23/09/2026, ya con \texttt{/admin} protegido por autenticación (RNF06).
+A continuación se presentan capturas del sistema en funcionamiento: el pipeline de captura y su monitoreo, la base de datos histórica, la API REST y el dashboard con el ranking por score de tendencia. El sistema se encuentra publicado y accesible en producción, con captura de datos automatizada ejecutándose de manera autónoma varias veces por día. La interfaz web tiene un panel para clientes (\texttt{/dashboard}), con el ranking de productos y la evolución del score en el tiempo, y un panel técnico interno (\texttt{/admin}) con el monitoreo de endpoints y los registros de minería, que se documenta a continuación como evidencia de RNF01. Ambos paneles se capturaron en agosto de 2026; las pantallas de cuentas y alertas incorporadas después (Sección~\ref{sec:demo-cuentas}) se capturaron el 23/09/2026, ya con \texttt{/admin} protegido por autenticación (RNF06).
 
 \begin{figure}[ht]
 	\centering
@@ -32,7 +32,7 @@ A continuación se presentan capturas del sistema en funcionamiento, correspondi
 
 \section{Cuentas, predicción de ML y alertas en producción}\label{sec:demo-cuentas}
 
-A partir de la devolución del jurado en la revisión oral del hito del 50\,\% (``esto es solo un dashboard''), se incorporaron tres funcionalidades que responden directamente a esa observación y que ya están desplegadas en producción: la probabilidad del modelo de ML visible por producto (RF07), un sistema de cuentas con nivel gratuito y pago (RF08) y alertas reales para productos seguidos (RF09).
+El sistema incorpora tres funcionalidades adicionales, ya desplegadas en producción, que lo distinguen de un dashboard de solo consulta: la probabilidad del modelo de ML visible por producto (RF07), un sistema de cuentas con nivel gratuito y pago (RF08) y alertas reales para productos seguidos (RF09).
 
 \begin{figure}[H]
 	\centering
