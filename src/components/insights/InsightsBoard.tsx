@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { roundSellers, type Signal } from '@/lib/insights';
+import { sellerTrend, type Signal } from '@/lib/insights';
 
 interface Item {
   productId: string;
@@ -17,6 +17,8 @@ interface Item {
   delta72h: number | null;
   probability: number | null;
   sellers: number | null;
+  sellersStart: number | null;
+  sellersAt: string | null;
   components: Record<ComponentKey, number | null>;
   series: number[];
   signal: Signal;
@@ -36,7 +38,7 @@ const COMPONENTS: { key: ComponentKey; label: string }[] = [
   { key: 'permanencia', label: 'Permanencia' },
   { key: 'ranking', label: 'Posición en catálogo' },
   { key: 'estabilidad', label: 'Estabilidad de precio' },
-  { key: 'saturacion', label: 'Poca competencia' },
+  { key: 'saturacion', label: 'Poca competencia (promedio de 7 días)' },
 ];
 
 const card: React.CSSProperties = {
@@ -51,11 +53,39 @@ const fmtPrice = (p: number | null) => (p == null ? '—' : `$${Math.round(p).to
 const fmtDelta = (d: number | null) => (d == null ? '—' : `${d > 0 ? '+' : ''}${d.toLocaleString('es-AR')}`);
 const deltaColor = (d: number | null) => (d == null || d === 0 ? 'var(--text-secondary)' : d > 0 ? '#00a650' : '#ef4444');
 const short = (s: string, n: number) => (s.length > n ? s.slice(0, n) + '…' : s);
-const fmtSellers = (s: number | null) => {
-  const n = roundSellers(s);
+const fmtSellers = (n: number | null) => {
   if (n == null) return 'vendedores s/d';
   return n === 1 ? '1 vendedor' : `${n} vendedores`;
 };
+
+// Menos vendedores = menos competencia, por eso "saliendo" va en verde.
+const SELLER_TREND_STYLE = {
+  saliendo: { arrow: '▼', color: '#00a650' },
+  entrando: { arrow: '▲', color: '#f97316' },
+  estable: { arrow: '', color: 'var(--text-secondary)' },
+};
+
+function SellersInline({ item }: { item: Item }) {
+  const trend = sellerTrend(item.sellers, item.sellersStart);
+  const style = trend ? SELLER_TREND_STYLE[trend] : null;
+  return (
+    <span title={trend && trend !== 'estable' ? `Hace 7 días: ${fmtSellers(item.sellersStart)}` : undefined}>
+      {fmtSellers(item.sellers)}
+      {style?.arrow && <span style={{ color: style.color, marginLeft: 3 }}>{style.arrow}</span>}
+    </span>
+  );
+}
+
+function sellersChangeText(item: Item): string | undefined {
+  const trend = sellerTrend(item.sellers, item.sellersStart);
+  if (trend === 'saliendo') return `bajó desde ${item.sellersStart} en 7 días: la competencia se está yendo`;
+  if (trend === 'entrando') return `subió desde ${item.sellersStart} en 7 días: están entrando competidores`;
+  if (trend === 'estable') return 'sin cambios en los últimos 7 días';
+  if (item.sellers != null && item.sellersAt) {
+    return `sin capturas recientes: dato del ${new Date(item.sellersAt).toLocaleDateString('es-AR')}`;
+  }
+  return undefined;
+}
 
 export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
   const [items, setItems] = useState<Item[] | null>(null);
@@ -277,7 +307,7 @@ function Opportunities({ items, onSelect }: { items: Item[]; onSelect: (i: Item)
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', marginTop: 4, fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                 <SignalBadge signal={i.signal} />
                 <span>{i.category}</span>
-                <span>· {fmtSellers(i.sellers)}</span>
+                <span>· <SellersInline item={i} /></span>
                 <span style={{ color: deltaColor(i.delta72h) }}>· {fmtDelta(i.delta72h)} en 72 h</span>
                 {i.signal === 'vigilar' && i.probability != null && <span>· ML {Math.round(i.probability * 100)}%</span>}
               </div>
@@ -529,9 +559,8 @@ function ProductDrawer({ item, loggedIn, watching, onToggleWatch, onClose }: {
       {note && <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', opacity: 0.75, marginTop: 2 }}>{note}</div>}
     </div>
   );
-  const sellersNote = item.sellers != null && item.sellers !== roundSellers(item.sellers)
-    ? `promedio ${item.sellers.toLocaleString('es-AR')} en los últimos 7 días`
-    : undefined;
+  const sellersNote = sellersChangeText(item);
+  const trend = sellerTrend(item.sellers, item.sellersStart);
 
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 200, display: 'flex', justifyContent: 'flex-end' }}>
@@ -556,7 +585,16 @@ function ProductDrawer({ item, loggedIn, watching, onToggleWatch, onClose }: {
           {stat('Score de tendencia', <span style={{ color }}>{item.score.toLocaleString('es-AR')}</span>)}
           {stat('Cambio en 72 h', <span style={{ color: deltaColor(item.delta72h) }}>{fmtDelta(item.delta72h)}</span>)}
           {stat('Prob. de subir 5+ pts más (ML)', item.probability != null ? `${Math.round(item.probability * 100)}%` : '—')}
-          {stat('Compitiendo por el producto', fmtSellers(item.sellers), sellersNote)}
+          {stat(
+            'Vendedores en la última captura',
+            <span>
+              {fmtSellers(item.sellers)}
+              {trend && trend !== 'estable' && (
+                <span style={{ color: SELLER_TREND_STYLE[trend].color, marginLeft: 4 }}>{SELLER_TREND_STYLE[trend].arrow}</span>
+              )}
+            </span>,
+            sellersNote,
+          )}
           {stat('Precio actual', fmtPrice(item.price))}
           {stat('Mediciones en la serie', item.series.length)}
         </div>

@@ -1,5 +1,24 @@
 import { describe, it, expect } from 'vitest';
-import { classifySignal, deltaOverHours, roundSellers } from '@/lib/insights';
+import { classifySignal, deltaOverHours, sellerTrend } from '@/lib/insights';
+
+describe('sellerTrend', () => {
+  it('detecta vendedores saliendo aunque el promedio de la ventana sea alto', () => {
+    expect(sellerTrend(1, 5)).toBe('saliendo');
+  });
+
+  it('detecta vendedores entrando', () => {
+    expect(sellerTrend(4, 1)).toBe('entrando');
+  });
+
+  it('estable si no cambió', () => {
+    expect(sellerTrend(2, 2)).toBe('estable');
+  });
+
+  it('sin dato si falta alguna de las dos capturas', () => {
+    expect(sellerTrend(null, 3)).toBeNull();
+    expect(sellerTrend(3, null)).toBeNull();
+  });
+});
 
 describe('classifySignal', () => {
   const base = { probability: null, sellers: null, delta72h: null };
@@ -7,13 +26,6 @@ describe('classifySignal', () => {
   it('marca como saturado con 4 o más vendedores, aunque el score sea alto', () => {
     expect(classifySignal({ ...base, score: 95, sellers: 4 })).toBe('saturado');
     expect(classifySignal({ ...base, score: 95, sellers: 5 })).toBe('saturado');
-  });
-
-  it('decide con el promedio de vendedores redondeado, igual que se muestra', () => {
-    expect(classifySignal({ ...base, score: 90, sellers: 3.6 })).toBe('saturado');
-    expect(classifySignal({ ...base, score: 90, sellers: 3.4 })).toBe('entrar');
-    expect(roundSellers(1.1)).toBe(1);
-    expect(roundSellers(null)).toBeNull();
   });
 
   it('recomienda entrar con score alto y poca competencia', () => {

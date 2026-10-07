@@ -8,10 +8,15 @@ export const SIGNAL_RULES = {
   saturatedSellers: 4,
 };
 
-// El score usa el promedio de vendedores de la ventana (ej. 1,1); para leerlo
-// y para decidir se usa redondeado, así lo que se muestra y la señal coinciden.
-export function roundSellers(sellers: number | null): number | null {
-  return sellers == null ? null : Math.round(sellers);
+export type SellerTrend = 'entrando' | 'saliendo' | 'estable';
+
+// Compara los vendedores de hoy con los del inicio de la ventana: un promedio
+// esconde si la competencia está creciendo o desapareciendo.
+export function sellerTrend(current: number | null, start: number | null): SellerTrend | null {
+  if (current == null || start == null) return null;
+  if (current > start) return 'entrando';
+  if (current < start) return 'saliendo';
+  return 'estable';
 }
 
 // La probabilidad del modelo de ML estima si el score va a subir >= 5 puntos
@@ -29,8 +34,7 @@ export function classifySignal({
   sellers: number | null;
   delta72h: number | null;
 }): Signal {
-  const rounded = roundSellers(sellers);
-  if (rounded != null && rounded >= SIGNAL_RULES.saturatedSellers) return 'saturado';
+  if (sellers != null && sellers >= SIGNAL_RULES.saturatedSellers) return 'saturado';
   if (score >= SIGNAL_RULES.enterScore) return 'entrar';
   if (score >= SIGNAL_RULES.watchScore) return 'vigilar';
   const modelSaysUp = probability != null && probability >= SIGNAL_RULES.minProbability;

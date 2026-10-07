@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 // del modelo de ML y la cantidad promedio de vendedores. No reemplaza a
 // /api/trend-scores (que sigue alimentando /dashboard).
 const SERIES_POINTS = 12; // ~4 días a 3 corridas diarias
+const SELLER_WINDOW_DAYS = 7; // misma ventana que el score
 
 type Components = {
   frecuencia?: number;
@@ -16,7 +17,6 @@ type Components = {
   ranking?: number;
   estabilidad?: number;
   saturacion?: number;
-  avgSellerCount?: number | null;
 };
 
 type ScoreRow = { productId: string; score: number; computedAt: Date; components: Components | null };
@@ -25,7 +25,8 @@ export async function GET() {
   try {
     // Las tres consultas son independientes: van en paralelo para pagar la
     // latencia a la base una sola vez.
-    const [scores, predictions, products] = await Promise.all([
+    const sellerWindowStart = new Date(Date.now() - SELLER_WINDOW_DAYS * 86400000);
+    const [scores, predictions, products, sellerRows] = await Promise.all([
       prisma.$queryRaw<ScoreRow[]>`
         SELECT "productId", score, "computedAt", components FROM (
           SELECT "productId", score, "computedAt", components,
@@ -48,7 +49,21 @@ export async function GET() {
           permalink: true, category: { select: { name: true } },
         },
       }),
+      // Vendedores de la última captura (lo que hay hoy) y de la primera
+      // captura de la ventana del score, para saber si están entrando o
+      // saliendo. El score sigue usando el promedio; esto es solo para decidir.
+      prisma.$queryRaw<{ productId: string; current: number; currentAt: Date; start: number | null }[]>`
+        SELECT "productId",
+               (array_agg("sellerCount" ORDER BY "capturedAt" DESC))[1] AS current,
+               max("capturedAt") AS "currentAt",
+               (array_agg("sellerCount" ORDER BY "capturedAt" ASC)
+                  FILTER (WHERE "capturedAt" >= ${sellerWindowStart}))[1] AS start
+        FROM "TrendSnapshot"
+        WHERE "sellerCount" IS NOT NULL
+        GROUP BY "productId"
+      `,
     ]);
+    const sellersByProduct = new Map(sellerRows.map((r) => [r.productId, r]));
 
     const seriesByProduct = new Map<string, ScoreRow[]>();
     for (const s of scores) {
@@ -67,6 +82,9 @@ export async function GET() {
         const points = series.map((s) => ({ t: new Date(s.computedAt).getTime(), score: s.score }));
         const probability = probByProduct.get(p.id) ?? null;
         const delta72h = deltaOverHours(points, 72);
+        const sellerData = sellersByProduct.get(p.id);
+        const sellers = sellerData ? Number(sellerData.current) : null;
+        const sellersStart = sellerData?.start != null ? Number(sellerData.start) : null;
 
         return {
           productId: p.id,
@@ -80,7 +98,9 @@ export async function GET() {
           computedAt: new Date(last.computedAt).toISOString(),
           delta72h,
           probability,
-          sellers: comp.avgSellerCount ?? null,
+          sellers,
+          sellersStart,
+          sellersAt: sellerData ? new Date(sellerData.currentAt).toISOString() : null,
           components: {
             frecuencia: comp.frecuencia ?? null,
             permanencia: comp.permanencia ?? null,
@@ -92,7 +112,7 @@ export async function GET() {
           signal: classifySignal({
             score: last.score,
             probability,
-            sellers: comp.avgSellerCount ?? null,
+            sellers,
             delta72h,
           }),
         };
