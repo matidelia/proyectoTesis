@@ -56,9 +56,7 @@ Con la identidad del producto ya resuelta contra el catálogo, quedaba una limit
 
 \section{Decisiones técnicas}
 
-Las decisiones técnicas adoptadas dentro del proyecto responden principalmente a la necesidad de garantizar escalabilidad, automatización, persistencia histórica y capacidad analítica.
-
-La Propuesta de Tema aprobada originalmente (incluida como Anexo~\ref{anexo:propuesta} de este documento) planteaba un desarrollo basado en Python, con librerías de análisis de datos y machine learning (pandas, numpy, scikit-learn) y de visualización (matplotlib, seaborn), sobre una base de datos MySQL o una alternativa NoSQL a definir. Durante el diseño técnico posterior a la aprobación de la propuesta, esas decisiones se revisaron: se optó por unificar el desarrollo en JavaScript/TypeScript sobre Next.js, exponiendo el sistema como una aplicación web con backend propio (API REST) en lugar de mantener un script de análisis separado del dashboard, y por usar PostgreSQL como motor relacional gestionado. El stack resultante de esa revisión es el que se detalla en la Sección~\ref{sec:tecnologias-utilizadas} y en la tabla de la Sección~\ref{sec:stack-preliminar}, y se ajustó una vez más durante la implementación, según se explica en la Sección~\ref{sec:evolucion-tecnica}. Python se reserva para el motor analítico y de Machine Learning (ver Sección~\ref{sec:evolucion-tecnica} y el alcance definido en la Sección~\ref{sec:alcance}).
+Las decisiones técnicas adoptadas dentro del proyecto responden principalmente a la necesidad de garantizar escalabilidad, automatización, persistencia histórica y capacidad analítica. El detalle del stack tecnológico elegido, su evolución durante la implementación y la arquitectura general del sistema se desarrollan en la Sección~\ref{sec:metodologia} (Arquitectura y tecnologías utilizadas).
 
 Para eso, se plantea una arquitectura basada en APIs REST oficiales, permitiendo acceder a información estructurada y confiable proveniente del marketplace. Asimismo, la construcción de datasets históricos resulta fundamental para realizar análisis temporales y detectar patrones de crecimiento sostenido.
 
@@ -90,7 +88,7 @@ Las APIs REST constituyen uno de los mecanismos de comunicación más utilizados
 
 En el contexto del comercio electrónico, las APIs facilitan el acceso automatizado a información relacionada con productos, búsquedas, tendencias y categorías, permitiendo construir soluciones analíticas basadas en datos externos confiables y actualizados.
 
-La API oficial de Mercado Libre representa la principal fuente de información utilizada dentro del proyecto, ya que permite acceder de manera estructurada a distintos recursos del marketplace mediante autenticación y solicitudes controladas.
+La API oficial de Mercado Libre\footnote{Documentación de APIs de Mercado Libre, disponible en \url{https://developers.mercadolibre.com.ar/} (consultado 2026-08-03).} representa la principal fuente de información utilizada dentro del proyecto, ya que permite acceder de manera estructurada a distintos recursos del marketplace mediante autenticación y solicitudes controladas.
 
 \subsection{Minería de Datos}
 
@@ -161,81 +159,6 @@ El Random Forest domina al \emph{baseline} lineal en las cuatro métricas y se a
 La variable más relevante para el modelo es \texttt{delta\_frecuencia} (variación de la frecuencia de aparición respecto de la ventana anterior, 30,7\,\% de la importancia total), seguida por \texttt{permanencia} (16,6\,\%) y \texttt{frecuencia} (13,3\,\%). Este orden es interpretable y consistente con la intuición del negocio: lo que más anticipa que un producto siga creciendo es que su frecuencia de aparición esté acelerando, no solo que ya sea alta. Esto coincide, además, con el criterio que el vendedor entrevistado describió para distinguir una moda de una tendencia real (Sección~\ref{chapter06}).
 
 Este resultado se presenta como un \textbf{checkpoint} y no como el modelo final del proyecto: cubre 71 días de histórico, todavía por debajo de los varios meses continuos que se estimaron necesarios para observar ciclos completos de aparición-crecimiento-declive por categoría. El plan para el 100\,\% (Sección~\ref{sec:alcance}) es reentrenar el mismo pipeline, sin cambios de diseño, a medida que el histórico siga creciendo, y volver a evaluar si las métricas se sostienen con más datos.
-
-\section{Stack tecnológico preliminar}\label{sec:stack-preliminar}
-
-El stack tecnológico se define de manera preliminar para bajar la arquitectura a decisiones más concretas, sin cerrar completamente futuras modificaciones de implementación.
-
-\begin{table}[ht]
-	\centering
-	\caption{Stack tecnológico preliminar}
-	\label{tab:stack}
-	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{4.2cm} X@{}}
-		\toprule
-		\textbf{Componente} & \textbf{Tecnología propuesta} & \textbf{Justificación} \\
-		\midrule
-		Frontend & Next.js (React + TypeScript) & Permite construir dashboards web con componentes reutilizables y tipado estático. \\
-		Backend & Next.js (API Routes) + TypeScript & Facilita exponer servicios REST y conectar la lógica de negocio con el análisis de datos. \\
-		Captura de datos & Node.js + consultas a API oficial & Permite automatizar solicitudes controladas a Mercado Libre sin depender de scraping externo. \\
-		Persistencia & PostgreSQL (Supabase) + Prisma ORM & Permite almacenar información estructurada e históricos temporales con consultas relacionales. \\
-		Análisis & Python (Pandas + Scikit-Learn) para la etapa de ML & Herramientas ampliamente utilizadas para procesamiento de datos y modelos supervisados. \\
-		Visualización & Dashboard web & Permite presentar tendencias, métricas y alertas en una interfaz comprensible para el usuario. \\
-		\bottomrule
-	\end{tabularx}
-\end{table}
-
-\section{Evolución de las decisiones técnicas}\label{sec:evolucion-tecnica}
-
-Durante la implementación del prototipo, el stack preliminar fue ajustado: el backend y la captura de datos se desarrollaron finalmente sobre Next.js (API Routes) y Node.js, unificando frontend y backend en un único lenguaje (TypeScript) y un único despliegue, lo que reduce la complejidad operativa del proyecto. La capa de persistencia (PostgreSQL, gestionada mediante el ORM Prisma) y la arquitectura general de componentes (captura \(\rightarrow\) base histórica \(\rightarrow\) motor analítico \(\rightarrow\) API \(\rightarrow\) dashboard) se mantienen sin cambios: se modificó la herramienta de implementación, no el diseño. Python (Pandas + Scikit-Learn) se reserva para el motor analítico y de Machine Learning, integrado leyendo directamente la base histórica PostgreSQL.
-
-\section{Arquitectura General}
-
-La arquitectura del sistema se encuentra organizada en distintos componentes que trabajan de manera integrada para permitir la captura, procesamiento, almacenamiento y visualización de información relacionada con tendencias comerciales.
-
-\subsection{Diagrama de componentes propuesto}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.95\textwidth]{./images/diagramas/diagrama_componentes.png}
-	\caption{Diagrama de componentes del sistema.}
-	\label{fig:diagrama-componentes}
-\end{figure}
-
-El flujo de datos comienza con consultas periódicas a la API oficial de Mercado Libre. Luego, la información recolectada se almacena en una base histórica. A partir de ese histórico, el motor analítico calcula métricas temporales que permiten identificar productos con crecimiento sostenido o cambios relevantes. El backend expone esos resultados para que el dashboard los presente de manera visual.
-
-El frontend (\emph{Dashboard (React)}, dentro del Carril 2 de la figura) cumple la función de representar la información de manera visual e intuitiva, permitiendo interpretar tendencias, métricas temporales y variaciones de comportamiento de los productos. La visualización de datos resulta fundamental para facilitar la toma de decisiones y transformar grandes volúmenes de información en indicadores comprensibles para el usuario.
-
-Por otro lado, el backend (\emph{API REST (API Routes)}, también dentro del Carril 2) actúa como el componente encargado de administrar el procesamiento general de la plataforma. Su función principal consiste en organizar la información obtenida, coordinar los distintos procesos internos y garantizar el correcto funcionamiento de la lógica del sistema.
-
-El motor de minería de datos (subsistema \emph{Captura automatizada, Carril 1}) representa uno de los elementos centrales del proyecto, ya que permite automatizar la obtención y análisis de información proveniente del marketplace. Su importancia radica en la capacidad de detectar patrones, registrar cambios temporales y construir históricos que luego pueden utilizarse para identificar comportamientos emergentes.
-
-La persistencia de datos (\emph{Base Histórica} en la figura; el detalle de las tablas se muestra más adelante en el diagrama Entidad-Relación) cumple un rol clave dentro de la plataforma debido a que posibilita almacenar información histórica de manera organizada y continua. Mantener registros temporales permite realizar comparaciones, analizar evolución de tendencias y generar bases de información útiles para futuros modelos analíticos.
-
-El monitoreo (\emph{probe\_endpoints.js}, dentro del Carril 1) contribuye a garantizar estabilidad y disponibilidad dentro del sistema, permitiendo controlar el comportamiento de los servicios utilizados y detectar posibles interrupciones o variaciones que puedan afectar la recolección de información.
-
-La arquitectura opera además en los dos carriles complementarios que se distinguen en la figura. El primero es el carril de captura en segundo plano: los procesos programados que construyen el histórico de manera sistemática y controlada, tres veces por día. El segundo es un carril de consulta en tiempo real: desde el dashboard, el usuario puede buscar productos puntuales consultando la API oficial en vivo, sin esperar a la próxima corrida de captura. Esta separación protege la recolección sistemática (cuyo ritmo está calibrado para respetar los límites de la API) de la carga variable de las consultas interactivas, y permite contrastar el histórico propio con el estado instantáneo del marketplace.
-
-\subsection{Diagrama de Clases (UML)}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.85\textwidth]{./images/diagramas/diagrama_clases_uml.png}
-	\caption{Diagrama de clases UML del sistema.}
-	\label{fig:diagrama-uml}
-\end{figure}
-
-El diagrama anterior representa las principales entidades del sistema y sus relaciones.
-
-\subsection{Modelo de Datos: Diagrama Entidad-Relación}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\textwidth]{./images/diagramas/diagrama_er.png}
-	\caption{Diagrama Entidad-Relación del modelo de datos.}
-	\label{fig:diagrama-er}
-\end{figure}
-
-El modelo de datos se implementa sobre PostgreSQL. El diagrama anterior muestra las tablas principales y sus relaciones (1:N).
 
 \section{Modelos y Arquitecturas Aplicables}
 
