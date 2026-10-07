@@ -68,7 +68,7 @@ La implementación de dashboards analíticos y mecanismos de monitoreo contribuy
 
 \section{Alcance}\label{sec:alcance}
 
-El proyecto se enfoca exclusivamente en Mercado Libre Argentina utilizando únicamente información obtenida mediante endpoints oficiales autorizados. La plataforma contempla procesos de captura automatizada, construcción de históricos temporales, monitoreo de endpoints y visualización analítica.
+El problema abordado (la asimetría de acceso a señales de demanda temprana entre vendedores) es común a cualquier plataforma de comercio electrónico o marketplace multicanal, y la arquitectura propuesta (captura periódica vía API, histórico propio y score ponderado) no depende de una API en particular. Dicho esto, la implementación y validación de este proyecto se acotan deliberadamente a un único caso concreto, Mercado Libre Argentina, por motivos de factibilidad dentro del plazo de la cursada: utiliza únicamente información obtenida mediante sus endpoints oficiales autorizados, y no se verificó el funcionamiento sobre otra plataforma. La plataforma contempla procesos de captura automatizada, construcción de históricos temporales, monitoreo de endpoints y visualización analítica.
 
 El alcance no incluye scraping, acceso a datos privados de usuarios ni predicción directa de ventas internas de Mercado Libre. La plataforma trabajará únicamente con datos disponibles mediante API oficial y con el histórico construido por el propio sistema.
 
