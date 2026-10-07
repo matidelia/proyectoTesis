@@ -26,6 +26,7 @@ export default defineConfig({
         'src/lib/rateLimit.ts',
         'src/lib/validation.ts',
         'src/lib/auth.ts',
+        'src/lib/insights.ts',
         'scripts/compute_trend_scores.js',
       ],
       thresholds: {
