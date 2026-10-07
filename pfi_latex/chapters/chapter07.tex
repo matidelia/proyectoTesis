@@ -5,28 +5,28 @@ A continuación se presentan capturas del sistema en funcionamiento: el pipeline
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.75\textwidth]{./images/demo/demo_dashboard.png}
-	\caption{Panel técnico interno del sistema en funcionamiento (agosto 2026).}
+	\caption{Panel técnico interno del sistema en funcionamiento (agosto 2026). Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-dashboard}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{./images/demo/demo_dashboard_apis.png}
-	\caption{Panel de disponibilidad de endpoints (EndpointHealthLog): monitoreo registrado en cada sesión de minería.}
+	\caption{Panel de disponibilidad de endpoints (EndpointHealthLog): monitoreo registrado en cada sesión de minería. Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-apis}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.85\textwidth]{./images/demo/demo_dashboard_score.png}
-	\caption{Panel de clientes: ranking de productos por score de tendencia (RF02), con filtros por categoría y exportación CSV (RF03/RF06).}
+	\caption{Panel de clientes: ranking de productos por score de tendencia (RF02), con filtros por categoría y exportación CSV (RF03/RF06). Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-score}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.85\textwidth]{./images/demo/demo_dashboard_evolucion.png}
-	\caption{Panel de clientes: evolución del score de tendencia de un producto en el tiempo, con el desglose de sus componentes (RF02, RF05).}
+	\caption{Panel de clientes: evolución del score de tendencia de un producto en el tiempo, con el desglose de sus componentes (RF02, RF05). Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-evolucion}
 \end{figure}
 
@@ -37,7 +37,7 @@ El sistema incorpora tres funcionalidades adicionales, ya desplegadas en producc
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth]{./images/demo/demo_login.png}
-	\caption{Pantalla de inicio de sesión (\texttt{/login}).}
+	\caption{Pantalla de inicio de sesión (\texttt{/login}). Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-login}
 \end{figure}
 
@@ -46,7 +46,7 @@ Sin sesión iniciada, el ranking se ve completo pero la exportación CSV y el bo
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\textwidth]{./images/demo/demo_dashboard_anonimo.png}
-	\caption{Ranking sin sesión iniciada: exportación bloqueada y columna de predicción del modelo de ML (RF07) visible para todos.}
+	\caption{Ranking sin sesión iniciada: exportación bloqueada y columna de predicción del modelo de ML (RF07) visible para todos. Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-anonimo}
 \end{figure}
 
@@ -55,7 +55,7 @@ Con sesión iniciada, la exportación se habilita y el botón de seguimiento por
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\textwidth]{./images/demo/demo_dashboard_logueado.png}
-	\caption{Mismo ranking con sesión iniciada: exportación habilitada (RF06/RF08) y badge de alertas sin leer en el header.}
+	\caption{Mismo ranking con sesión iniciada: exportación habilitada (RF06/RF08) y badge de alertas sin leer en el header. Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-logueado}
 \end{figure}
 
@@ -64,7 +64,7 @@ Más abajo en la misma vista, con sesión iniciada se desbloquea el gráfico de 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\textwidth]{./images/demo/demo_dashboard_evolucion_logueado.png}
-	\caption{Evolución histórica completa, desbloqueada con sesión iniciada (nivel pago del modelo freemium).}
+	\caption{Evolución histórica completa, desbloqueada con sesión iniciada (nivel pago del modelo freemium). Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-evolucion-logueado}
 \end{figure}
 
@@ -73,7 +73,7 @@ Por último, la bandeja de alertas (\texttt{/alerts}, RF09) muestra las notifica
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth]{./images/demo/demo_alerts.png}
-	\caption{Bandeja de alertas de un cliente (\texttt{/alerts}): notificación real de un producto seguido que cruzó el umbral de crecimiento (HU02, HU07).}
+	\caption{Bandeja de alertas de un cliente (\texttt{/alerts}): notificación real de un producto seguido que cruzó el umbral de crecimiento (HU02, HU07). Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-alerts}
 \end{figure}
 
@@ -84,7 +84,7 @@ Más allá de la afirmación de que el sistema está desplegado y capturando dat
 \begin{table}[H]
 	\centering
 	\small
-	\caption{Métricas del sistema en producción (volúmenes de datos medidos el 23/09/2026)}
+	\caption{Métricas del sistema en producción (volúmenes de datos medidos el 23/09/2026). Fuente: elaboración propia, datos medidos en producción.}
 	\label{tab:evidencia}
 	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{5.2cm} X@{}}
 		\toprule
