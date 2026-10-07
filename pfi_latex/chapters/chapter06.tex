@@ -18,6 +18,8 @@ Se obtuvieron 120 respuestas válidas. Para el análisis, las respuestas se segm
 
 Como limitación metodológica, la muestra no es representativa de todo el universo de usuarios de Mercado Libre Argentina, ya que se concentra principalmente en CABA y Buenos Aires. Por ese motivo, los resultados se interpretan como exploratorios y útiles para orientar el diseño inicial de la plataforma.
 
+A esa limitación geográfica se suman otras dos, igual de relevantes. Primero, de las 120 respuestas obtenidas, solo 45 (37,5\,\%) corresponden a vendedores, que son el usuario principal definido para la plataforma (User Persona 1, Martín, Tabla~\ref{tab:persona-martin}); el resto de la muestra (compradores y participantes sin rol activo) aporta señales complementarias de demanda, pero no valida directamente la problemática desde la perspectiva de quien usaría el sistema día a día. Segundo, el total de 120 respuestas queda por debajo de las 160 recomendadas como piso para esta cohorte. Ninguna de las dos limitaciones invalida los hallazgos: las tres entrevistas en profundidad (Anexos D a F) corroboran cualitativamente los mismos patrones observados en la encuesta, pero ambas se dejan explícitas para no sobredimensionar el alcance estadístico de un relevamiento que es, por diseño, exploratorio.
+
 \section{Composición de la muestra}
 
 La primera pregunta permitió dividir a los participantes según su rol principal en Mercado Libre. Sobre 120 respuestas, el 37,5\% indicó ser vendedor, el 50,8\% comprador y el 11,7\% ninguna de las opciones. Esto equivale a 45 vendedores, 61 compradores y 14 participantes sin rol activo declarado.
@@ -127,7 +129,7 @@ A partir del análisis temático de las tres entrevistas se identifican seis pat
 
 \section{User persona}
 
-A partir de los hallazgos reales de la encuesta se construyen dos user personas preliminares. No representan personas individuales encuestadas, sino perfiles sintéticos elaborados a partir de patrones observados en las respuestas. Su objetivo es conectar los resultados del relevamiento con necesidades concretas de diseño de la plataforma.
+A partir de los hallazgos de la encuesta y de las tres entrevistas en profundidad (Anexos D a F) se construyen tres user personas. No representan a ninguna persona individual de forma literal, sino perfiles sintéticos elaborados a partir de patrones observados en las respuestas y en las entrevistas. Su objetivo es conectar los resultados del relevamiento con necesidades concretas de diseño de la plataforma.
 
 \subsection*{User Persona 1: Martín, vendedor que necesita anticiparse}
 
@@ -163,6 +165,25 @@ A partir de los hallazgos reales de la encuesta se construyen dos user personas 
 		Frustración & Percibe que muchas veces aparecen los mismos productos destacados y que no siempre es fácil comparar alternativas, precios u opiniones del vendedor. \\
 		Objetivo & Comprar productos novedosos o recomendados con mayor confianza, comparando precio, reputación y señales de interés real. \\
 		Relación con la plataforma propuesta & Aunque no sería necesariamente la usuaria principal del sistema, su comportamiento ayuda a definir qué señales de demanda deberían observar los vendedores: precio, redes sociales, recomendaciones y aparición repetida de productos. Sus hábitos permiten definir variables complementarias para el sistema, especialmente precio, repetición de publicaciones, reputación y presencia en redes sociales. \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\subsection*{User Persona 3: Lucas, vendedor que necesita confiar antes de adoptar la herramienta}
+
+\begin{table}[H]
+	\centering
+	\caption{User Persona 3: Lucas}
+	\label{tab:persona-lucas}
+	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3cm} X@{}}
+		\toprule
+		\textbf{Campo} & \textbf{Descripción} \\
+		\midrule
+		Perfil & Lucas vende tecnología en Mercado Libre y hoy decide qué stockear combinando redes sociales, el ranking de la plataforma y el precio de su importador, en sus propias palabras, ``apostar con datos sueltos''. A diferencia de Martín (User Persona 1), que todavía no conoce una herramienta de detección temprana, Lucas ya vio el sistema en funcionamiento (Entrevista 2, Anexo E) y reacciona a él como un adoptante potencial que evalúa si confiar o no en el dato. \\
+		Necesidad & Antes de actuar sobre un score, necesita entender de dónde sale: la fuente del dato, el período de crecimiento, el volumen base y si el crecimiento es consistente o un pico aislado. Sin ese desglose, el número ``no significa nada'' para él. \\
+		Frustración & Que el score funcione como una caja negra, y que los datos de apariciones se puedan confundir con ventas reales cuando en realidad son una estimación. También le frustra un ranking genérico que no esté filtrado por su categoría. \\
+		Objetivo & Usar el ranking para decidir, en minutos y no en horas, a qué productos pedirles precio al importador esta misma semana, y recibir una alerta en vez de tener que entrar a revisar el panel. \\
+		Relación con la plataforma propuesta & Es un usuario directo que ya valida el desglose del score (frecuencia, permanencia, ranking, estabilidad, saturación) como condición para confiar en el dato y adoptar la herramienta en su operación semanal; también es quien más claramente prioriza las alertas (RF09) por sobre la consulta manual del dashboard. \\
 		\bottomrule
 	\end{tabularx}
 \end{table}
