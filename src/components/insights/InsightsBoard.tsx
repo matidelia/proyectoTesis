@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import type { Signal } from '@/lib/insights';
+import { roundSellers, type Signal } from '@/lib/insights';
 
 interface Item {
   productId: string;
@@ -51,6 +51,11 @@ const fmtPrice = (p: number | null) => (p == null ? '—' : `$${Math.round(p).to
 const fmtDelta = (d: number | null) => (d == null ? '—' : `${d > 0 ? '+' : ''}${d.toLocaleString('es-AR')}`);
 const deltaColor = (d: number | null) => (d == null || d === 0 ? 'var(--text-secondary)' : d > 0 ? '#00a650' : '#ef4444');
 const short = (s: string, n: number) => (s.length > n ? s.slice(0, n) + '…' : s);
+const fmtSellers = (s: number | null) => {
+  const n = roundSellers(s);
+  if (n == null) return 'vendedores s/d';
+  return n === 1 ? '1 vendedor' : `${n} vendedores`;
+};
 
 export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
   const [items, setItems] = useState<Item[] | null>(null);
@@ -272,7 +277,7 @@ function Opportunities({ items, onSelect }: { items: Item[]; onSelect: (i: Item)
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', marginTop: 4, fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                 <SignalBadge signal={i.signal} />
                 <span>{i.category}</span>
-                <span>· {i.sellers != null ? `${i.sellers.toLocaleString('es-AR')} vend.` : 'vend. s/d'}</span>
+                <span>· {fmtSellers(i.sellers)}</span>
                 <span style={{ color: deltaColor(i.delta72h) }}>· {fmtDelta(i.delta72h)} en 72 h</span>
                 {i.signal === 'vigilar' && i.probability != null && <span>· ML {Math.round(i.probability * 100)}%</span>}
               </div>
@@ -376,7 +381,7 @@ function OpportunityMap({ items, onSelect }: { items: Item[]; onSelect: (i: Item
           }}>
             <div style={{ fontWeight: 600 }}>{short(hover.name, 70)}</div>
             <div style={{ color: 'var(--text-secondary)', marginTop: 2 }}>
-              Score {hover.score.toLocaleString('es-AR')} · {hover.sellers} vendedores · {SIGNALS[hover.signal].label}
+              Score {hover.score.toLocaleString('es-AR')} · {fmtSellers(hover.sellers)} · {SIGNALS[hover.signal].label}
             </div>
           </div>
         )}
@@ -517,12 +522,16 @@ function ProductDrawer({ item, loggedIn, watching, onToggleWatch, onClose }: {
   }, [onClose]);
 
   const color = SIGNALS[item.signal].color;
-  const stat = (label: string, value: React.ReactNode) => (
+  const stat = (label: string, value: React.ReactNode, note?: string) => (
     <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '0.6rem 0.75rem' }}>
       <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#fff' }}>{value}</div>
       <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{label}</div>
+      {note && <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', opacity: 0.75, marginTop: 2 }}>{note}</div>}
     </div>
   );
+  const sellersNote = item.sellers != null && item.sellers !== roundSellers(item.sellers)
+    ? `promedio ${item.sellers.toLocaleString('es-AR')} en los últimos 7 días`
+    : undefined;
 
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 200, display: 'flex', justifyContent: 'flex-end' }}>
@@ -547,7 +556,7 @@ function ProductDrawer({ item, loggedIn, watching, onToggleWatch, onClose }: {
           {stat('Score de tendencia', <span style={{ color }}>{item.score.toLocaleString('es-AR')}</span>)}
           {stat('Cambio en 72 h', <span style={{ color: deltaColor(item.delta72h) }}>{fmtDelta(item.delta72h)}</span>)}
           {stat('Prob. de subir 5+ pts más (ML)', item.probability != null ? `${Math.round(item.probability * 100)}%` : '—')}
-          {stat('Vendedores compitiendo', item.sellers != null ? item.sellers.toLocaleString('es-AR') : 's/d')}
+          {stat('Compitiendo por el producto', fmtSellers(item.sellers), sellersNote)}
           {stat('Precio actual', fmtPrice(item.price))}
           {stat('Mediciones en la serie', item.series.length)}
         </div>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { classifySignal, deltaOverHours } from '@/lib/insights';
+import { classifySignal, deltaOverHours, roundSellers } from '@/lib/insights';
 
 describe('classifySignal', () => {
   const base = { probability: null, sellers: null, delta72h: null };
@@ -7,6 +7,13 @@ describe('classifySignal', () => {
   it('marca como saturado con 4 o más vendedores, aunque el score sea alto', () => {
     expect(classifySignal({ ...base, score: 95, sellers: 4 })).toBe('saturado');
     expect(classifySignal({ ...base, score: 95, sellers: 5 })).toBe('saturado');
+  });
+
+  it('decide con el promedio de vendedores redondeado, igual que se muestra', () => {
+    expect(classifySignal({ ...base, score: 90, sellers: 3.6 })).toBe('saturado');
+    expect(classifySignal({ ...base, score: 90, sellers: 3.4 })).toBe('entrar');
+    expect(roundSellers(1.1)).toBe(1);
+    expect(roundSellers(null)).toBeNull();
   });
 
   it('recomienda entrar con score alto y poca competencia', () => {
