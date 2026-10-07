@@ -21,6 +21,8 @@ interface Item {
   sellersAt: string | null;
   components: Record<ComponentKey, number | null>;
   series: number[];
+  active: boolean;
+  lastSeen: string;
   signal: Signal;
 }
 
@@ -30,8 +32,12 @@ const SIGNALS: Record<Signal, { label: string; color: string; hint: string }> = 
   entrar: { label: 'Entrar ya', color: '#00a650', hint: 'Score ≥ 70 y menos de 4 vendedores compitiendo' },
   vigilar: { label: 'Vigilar', color: '#ffe600', hint: 'Score entre 50 y 70, o score bajo que sube y el modelo de ML anticipa que va a seguir subiendo' },
   saturado: { label: 'Saturado', color: '#f97316', hint: '4 o más vendedores compitiendo por el mismo producto' },
-  'sin-senal': { label: 'Sin señal', color: '#71717a', hint: 'Score bajo y sin respaldo del modelo' },
+  debil: { label: 'Señal débil', color: '#71717a', hint: 'Score bajo y sin respaldo del modelo' },
+  inactivo: { label: 'Sin señal reciente', color: '#64748b', hint: 'Dejó de aparecer en las búsquedas de la minería: su score ya no se actualiza' },
 };
+
+const MAP_SIGNALS: Signal[] = ['entrar', 'vigilar', 'saturado', 'debil'];
+const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('es-AR');
 
 const COMPONENTS: { key: ComponentKey; label: string }[] = [
   { key: 'frecuencia', label: 'Frecuencia de aparición' },
@@ -89,6 +95,7 @@ function sellersChangeText(item: Item): string | undefined {
 
 export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
   const [items, setItems] = useState<Item[] | null>(null);
+  const [historicalCount, setHistoricalCount] = useState(0);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [category, setCategory] = useState<string | null>(null);
@@ -101,7 +108,8 @@ export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
       .then((d) => {
         if (d.error) throw new Error(d.details || d.error);
         setItems(d.items);
-        setUpdatedAt(d.timestamp);
+        setHistoricalCount(d.historicalCount ?? 0);
+        setUpdatedAt(d.latestCaptureAt ?? d.timestamp);
       })
       .catch((e) => setError(e.message));
   }, []);
@@ -133,6 +141,9 @@ export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
     () => (items ?? []).filter((i) => !category || i.category === category),
     [items, category]
   );
+  const active = useMemo(() => visible.filter((i) => i.active), [visible]);
+  const inactive = useMemo(() => visible.filter((i) => !i.active), [visible]);
+  const allActive = useMemo(() => (items ?? []).filter((i) => i.active), [items]);
 
   if (error) {
     return <div style={{ ...card, color: '#ef4444', marginTop: '2rem' }}>No se pudo cargar el tablero: {error}</div>;
@@ -149,17 +160,18 @@ export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
   return (
     <div style={{ marginTop: '1.5rem' }}>
       <CategoryChips items={items} value={category} onChange={setCategory} />
-      <Kpis items={visible} />
+      <Kpis items={active} inactiveCount={inactive.length} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 460px), 1fr))', gap: '1.25rem', marginTop: '1.25rem' }}>
-        <Opportunities items={visible} onSelect={setSelected} />
-        <OpportunityMap items={visible} onSelect={setSelected} />
-        <Categories items={items} value={category} onChange={setCategory} />
-        <Movements items={visible} onSelect={setSelected} loggedIn={loggedIn} />
+        <Opportunities items={active} onSelect={setSelected} />
+        <OpportunityMap items={active} onSelect={setSelected} />
+        <Categories items={allActive} value={category} onChange={setCategory} />
+        <Movements items={active} onSelect={setSelected} loggedIn={loggedIn} />
+        <Inactive items={inactive} onSelect={setSelected} historicalCount={historicalCount} />
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1.25rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-        <span>Actualizado: {updatedAt ? new Date(updatedAt).toLocaleString('es-AR') : '—'}. Hacé clic en cualquier producto para ver su detalle.</span>
+        <span>Última captura: {updatedAt ? new Date(updatedAt).toLocaleString('es-AR') : '—'}. Hacé clic en cualquier producto para ver su detalle.</span>
         <Link href="/dashboard" style={{ color: 'var(--accent-primary)', textDecoration: 'none', fontWeight: 600 }}>
           Ver ranking completo en tabla →
         </Link>
@@ -198,16 +210,15 @@ function CategoryChips({ items, value, onChange }: { items: Item[]; value: strin
 }
 
 // ── KPIs ────────────────────────────────────────────────────────────────────
-function Kpis({ items }: { items: Item[] }) {
+function Kpis({ items, inactiveCount }: { items: Item[]; inactiveCount: number }) {
   const count = (s: Signal) => items.filter((i) => i.signal === s).length;
   const rising = items.filter((i) => (i.delta72h ?? 0) >= 5).length;
-  const avg = items.length ? Math.round((items.reduce((a, i) => a + i.score, 0) / items.length) * 10) / 10 : 0;
   const kpis = [
-    { label: 'Productos analizados', value: items.length, color: '#a1a1aa' },
+    { label: 'Productos activos', value: items.length, color: '#a1a1aa' },
     { label: 'Oportunidades para entrar', value: count('entrar'), color: SIGNALS.entrar.color },
     { label: 'Subiendo (+5 pts en 72 h)', value: rising, color: '#60a5fa' },
     { label: 'Mercados saturados', value: count('saturado'), color: SIGNALS.saturado.color },
-    { label: 'Score promedio', value: avg.toLocaleString('es-AR'), color: '#ffe600' },
+    { label: 'Dejaron de aparecer (7 días)', value: inactiveCount, color: SIGNALS.inactivo.color },
   ];
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem', marginTop: '1rem' }}>
@@ -429,7 +440,7 @@ function OpportunityMap({ items, onSelect }: { items: Item[]; onSelect: (i: Item
 function Legend() {
   return (
     <div style={{ display: 'flex', gap: '0.9rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
-      {(Object.keys(SIGNALS) as Signal[]).map((s) => (
+      {MAP_SIGNALS.map((s) => (
         <span key={s} title={SIGNALS[s].hint} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.72rem', color: 'var(--text-secondary)', cursor: 'help' }}>
           <span style={{ width: 9, height: 9, borderRadius: '50%', background: SIGNALS[s].color }} />
           {SIGNALS[s].label}
@@ -523,6 +534,44 @@ function Movements({ items, onSelect, loggedIn }: { items: Item[]; onSelect: (i:
   );
 }
 
+// ── Panel 5: productos que dejaron de aparecer ──────────────────────────────
+function Inactive({ items, onSelect, historicalCount }: { items: Item[]; onSelect: (i: Item) => void; historicalCount: number }) {
+  const rows = [...items].sort((a, b) => b.lastSeen.localeCompare(a.lastSeen));
+  return (
+    <section style={{ ...card, gridColumn: '1 / -1' }}>
+      <PanelTitle
+        title="Dejaron de aparecer"
+        subtitle="Productos que salieron de las búsquedas en los últimos 7 días. Su score es el último calculado y ya no se actualiza: puede indicar una tendencia que se apagó."
+      />
+      {rows.length === 0 && <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>Ningún producto dejó de aparecer en los últimos 7 días.</p>}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: '0.5rem' }}>
+        {rows.map((i) => (
+          <button key={i.productId} onClick={() => onSelect(i)} style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', textAlign: 'left',
+            background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', borderRadius: 10,
+            padding: '0.55rem 0.75rem', cursor: 'pointer', color: '#fff', width: '100%', minWidth: 0,
+          }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{i.name}</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: 2 }}>
+                {i.category} · última aparición {fmtDate(i.lastSeen)}
+              </div>
+            </div>
+            <span title="Último score calculado" style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+              {i.score.toLocaleString('es-AR')}
+            </span>
+          </button>
+        ))}
+      </div>
+      {historicalCount > 0 && (
+        <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', margin: '0.75rem 0 0' }}>
+          Otros {historicalCount} productos dejaron de aparecer hace más de 7 días y no se muestran en el tablero (siguen en la vista de tabla).
+        </p>
+      )}
+    </section>
+  );
+}
+
 function LockOverlay({ text }: { text: string }) {
   return (
     <div style={{
@@ -599,7 +648,17 @@ function ProductDrawer({ item, loggedIn, watching, onToggleWatch, onClose }: {
           {stat('Mediciones en la serie', item.series.length)}
         </div>
 
-        {item.probability != null && item.score >= 70 && (
+        {!item.active && (
+          <div style={{
+            marginTop: '0.75rem', padding: '0.6rem 0.75rem', borderRadius: 10, fontSize: '0.75rem', lineHeight: 1.45,
+            background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.4)', color: '#cbd5e1',
+          }}>
+            Dejó de aparecer en las búsquedas el {fmtDate(item.lastSeen)}. Los datos son del último cálculo
+            ({fmtDate(item.computedAt)}) y ya no se actualizan.
+          </div>
+        )}
+
+        {item.active && item.probability != null && item.score >= 70 && (
           <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', margin: '0.6rem 0 0' }}>
             El modelo de ML estima si el score va a subir al menos 5 puntos más. En un producto que ya está arriba
             una probabilidad baja es esperable: indica que la tendencia ya está madura, no que sea mala.

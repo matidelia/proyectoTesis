@@ -1,4 +1,19 @@
-export type Signal = 'entrar' | 'vigilar' | 'saturado' | 'sin-senal';
+export type Signal = 'entrar' | 'vigilar' | 'saturado' | 'debil' | 'inactivo';
+
+export type Freshness = 'activo' | 'reciente' | 'historico';
+
+// Se mide por la última aparición en las capturas, no por el último score: el
+// score se sigue calculando hasta 7 días después de que el producto deja de
+// aparecer. Y se compara contra la última captura (no contra el reloj) para
+// que una corrida fallida no vuelva "inactivo" a todo el catálogo.
+export const FRESHNESS_HOURS = { active: 48, recent: 7 * 24 };
+
+export function freshness(lastSeenAt: number, latestCaptureAt: number): Freshness {
+  const hours = (latestCaptureAt - lastSeenAt) / 3600_000;
+  if (hours <= FRESHNESS_HOURS.active) return 'activo';
+  if (hours <= FRESHNESS_HOURS.recent) return 'reciente';
+  return 'historico';
+}
 
 export const SIGNAL_RULES = {
   enterScore: 70,
@@ -40,7 +55,7 @@ export function classifySignal({
   const modelSaysUp = probability != null && probability >= SIGNAL_RULES.minProbability;
   const rising = delta72h != null && delta72h >= SIGNAL_RULES.minRise;
   if (modelSaysUp && rising) return 'vigilar';
-  return 'sin-senal';
+  return 'debil';
 }
 
 // Diferencia entre el último score y el último punto con al menos `hours` de

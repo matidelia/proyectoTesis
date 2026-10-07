@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { classifySignal, deltaOverHours } from '@/lib/insights';
+import { classifySignal, deltaOverHours, freshness } from '@/lib/insights';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,7 +46,7 @@ export async function GET() {
         where: { trendScores: { some: {} } },
         select: {
           id: true, name: true, imageUrl: true, price: true, currency: true,
-          permalink: true, category: { select: { name: true } },
+          permalink: true, lastSeen: true, category: { select: { name: true } },
         },
       }),
       // Vendedores de la última captura (lo que hay hoy) y de la primera
@@ -73,9 +73,14 @@ export async function GET() {
     }
     const probByProduct = new Map(predictions.map((p) => [p.productId, p.probability]));
 
-    const items = products
-      .filter((p) => seriesByProduct.has(p.id))
-      .map((p) => {
+    const scored = products.filter((p) => seriesByProduct.has(p.id));
+    const latestCaptureAt = Math.max(...scored.map((p) => p.lastSeen.getTime()));
+    const withFreshness = scored.map((p) => ({ p, fresh: freshness(p.lastSeen.getTime(), latestCaptureAt) }));
+    const historicalCount = withFreshness.filter((x) => x.fresh === 'historico').length;
+
+    const items = withFreshness
+      .filter((x) => x.fresh !== 'historico')
+      .map(({ p, fresh }) => {
         const series = seriesByProduct.get(p.id)!;
         const last = series[series.length - 1];
         const comp = last.components ?? {};
@@ -109,17 +114,21 @@ export async function GET() {
             saturacion: comp.saturacion ?? null,
           },
           series: points.map((x) => x.score),
-          signal: classifySignal({
-            score: last.score,
-            probability,
-            sellers,
-            delta72h,
-          }),
+          active: fresh === 'activo',
+          lastSeen: p.lastSeen.toISOString(),
+          signal: fresh === 'activo'
+            ? classifySignal({ score: last.score, probability, sellers, delta72h })
+            : ('inactivo' as const),
         };
       })
       .sort((a, b) => b.score - a.score);
 
-    return NextResponse.json({ timestamp: new Date().toISOString(), items });
+    return NextResponse.json({
+      timestamp: new Date().toISOString(),
+      latestCaptureAt: new Date(latestCaptureAt).toISOString(),
+      historicalCount,
+      items,
+    });
   } catch (error) {
     return NextResponse.json(
       { error: 'Error fetching insights', details: error instanceof Error ? error.message : String(error) },

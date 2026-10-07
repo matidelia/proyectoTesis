@@ -1,5 +1,24 @@
 import { describe, it, expect } from 'vitest';
-import { classifySignal, deltaOverHours, sellerTrend } from '@/lib/insights';
+import { classifySignal, deltaOverHours, freshness, sellerTrend } from '@/lib/insights';
+
+describe('freshness', () => {
+  const h = 3600_000;
+  const run = 1_000 * h;
+
+  it('activo si apareció en las últimas 48 h respecto de la última captura', () => {
+    expect(freshness(run, run)).toBe('activo');
+    expect(freshness(run - 48 * h, run)).toBe('activo');
+  });
+
+  it('reciente si dejó de aparecer dentro de la ventana de 7 días', () => {
+    expect(freshness(run - 49 * h, run)).toBe('reciente');
+    expect(freshness(run - 168 * h, run)).toBe('reciente');
+  });
+
+  it('histórico pasados los 7 días', () => {
+    expect(freshness(run - 169 * h, run)).toBe('historico');
+  });
+});
 
 describe('sellerTrend', () => {
   it('detecta vendedores saliendo aunque el promedio de la ventana sea alto', () => {
@@ -47,12 +66,12 @@ describe('classifySignal', () => {
 
   it('vigila scores bajos solo si el modelo y el movimiento reciente coinciden', () => {
     expect(classifySignal({ ...base, score: 30, probability: 0.6, delta72h: 8 })).toBe('vigilar');
-    expect(classifySignal({ ...base, score: 30, probability: 0.6, delta72h: -20 })).toBe('sin-senal');
-    expect(classifySignal({ ...base, score: 30, probability: 0.2, delta72h: 8 })).toBe('sin-senal');
+    expect(classifySignal({ ...base, score: 30, probability: 0.6, delta72h: -20 })).toBe('debil');
+    expect(classifySignal({ ...base, score: 30, probability: 0.2, delta72h: 8 })).toBe('debil');
   });
 
-  it('sin señal para score bajo sin datos adicionales', () => {
-    expect(classifySignal({ ...base, score: 30 })).toBe('sin-senal');
+  it('señal débil para score bajo sin datos adicionales', () => {
+    expect(classifySignal({ ...base, score: 30 })).toBe('debil');
   });
 });
 
