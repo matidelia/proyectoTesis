@@ -65,6 +65,14 @@ export default async function DashboardPage() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <Link href="/insights" style={{
+            padding: '0.4rem 0.9rem', background: 'rgba(255,230,0,0.1)', color: 'var(--accent-primary)',
+            borderRadius: '9999px', fontSize: '0.8rem', border: '1px solid rgba(255,230,0,0.35)',
+            textDecoration: 'none', fontWeight: 700,
+          }}>
+            ▦ Tablero de oportunidades
+          </Link>
+
           <div style={{
             padding: '0.4rem 0.9rem',
             background: 'rgba(0,166,80,0.1)',
