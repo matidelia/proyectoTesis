@@ -261,10 +261,17 @@
 % fisica que muestra cualquier lector de PDF.
 \setcounter{page}{2}
 
-% Indice inmediatamente despues de la portada.
-% Agradecimientos, Resumen y Abstract quedan pendientes para la entrega
-% final (no corresponden a este avance del 75%, ver README del template:
-% no se hacen hasta la entrega final). Ver COMENTARIOS_REVISION.md.
+% Resumen y Abstract, inmediatamente despues de la portada.
+% El README del template indica no incluirlos hasta la entrega final,
+% pero la devolucion formal de la catedra (E50) los marca como
+% faltantes y exige resolverlos para el E75 -- se prioriza esa
+% devolucion por sobre la instruccion generica del README.
+\clearpage
+	\input{chapters/summary}
+\clearpage
+	\input{chapters/abstract}
+
+% Indice despues del Resumen y el Abstract.
 \clearpage
 	\tableofcontents
 

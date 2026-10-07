@@ -1,4 +1,5 @@
 \chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
 
 %% Si se quiere enviar este resumen en una p\'agina a alguien, descomentar esto.
 
@@ -24,5 +25,12 @@
 %Apellido, Nombres
 %\end{center}
 
-%\noindent
-Completar.
+\noindent
+Los vendedores de Mercado Libre suelen detectar un producto en tendencia recién cuando ya es evidente en rankings o redes sociales: para entonces, la oferta ya creció y el margen de oportunidad ya cayó. Una encuesta a 120 usuarios confirma la magnitud del problema (el 88,9\,\% reconoce detectar tendencias tarde o solo a veces a tiempo) y tres entrevistas en profundidad lo profundizan cualitativamente, incluyendo un caso real de pérdida de rentabilidad estimada en una relación de 3 a 1 por no haber contado con la señal dos semanas antes.
+
+Este trabajo presenta un sistema que detecta tempranamente productos emergentes en Mercado Libre Argentina mediante la construcción de un histórico propio, obtenido exclusivamente a través de la API oficial de la plataforma. Sobre ese histórico se calcula un score de tendencia compuesto por cinco componentes ponderados (frecuencia de aparición, permanencia, posición en el catálogo, estabilidad de precio entre vendedores y saturación por cantidad de vendedores activos), y se entrena un modelo de aprendizaje automático supervisado (Random Forest) que estima la probabilidad de que esa tendencia se sostenga, alcanzando un \emph{recall} de 0,807 y un AUC-ROC de 0,903 sobre el histórico disponible.
+
+El sistema opera de forma autónoma en producción, con captura de datos automatizada varias veces por día, cuentas de usuario con niveles gratuito y pago, y alertas reales por email para productos seguidos. Al momento de este informe acumula más de 270 productos monitoreados y más de 70 días de histórico continuo. El trabajo incluye además un modelo de negocio con viabilidad económico-financiera cuantificada y una identidad de marca propia (Tendar), independiente de la plataforma sobre la que opera. Los resultados confirman que es posible anticipar el crecimiento de un producto antes de que la tendencia sea evidente por los canales habituales, combinando métricas descriptivas auditables con un modelo predictivo entrenado sobre datos reales.
+
+\vspace{0.5cm}
+\noindent\textbf{Palabras clave:} detección de tendencias, comercio electrónico, aprendizaje automático supervisado, series temporales, Mercado Libre.
