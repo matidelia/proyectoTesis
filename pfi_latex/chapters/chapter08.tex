@@ -367,7 +367,9 @@ La Tabla~\ref{tab:ml-trazabilidad} recorre el camino completo de una predicción
 	\end{tabularx}
 \end{table}
 
-%VERIFICACION_PRODUCCION%
+\subsection*{Verificación en producción}
+
+La cadena se verificó sobre la primera corrida automática que usó el modelo vigente, la del 09/10/2026 a las 20:07. El workflow generó 49 predicciones con la versión \texttt{rf\_2026-10-09\_22ca0dd3}, una por cada uno de los 49 productos activos en ese momento y ninguna sobre productos inactivos. Se compararon esas 49 filas de \texttt{MLPrediction} con lo que devolvían en producción \path{/api/insights} y \path{/api/trend-scores}: los 49 valores coincidieron exactamente en ambas APIs, y ninguna de las dos devolvió predicciones de la versión anterior del modelo, aunque siguen almacenadas en la base. Según los cortes de la Sección~\ref{sec:ml-calibracion}, 9 productos quedaron en nivel alto, 21 en medio y 19 en bajo. El tablero de oportunidades muestra la versión del modelo en su pie (Figura~\ref{fig:demo-insights}).
 
 \section{Alcance de las conclusiones: de checkpoint a modelo validado}\label{sec:ml-alcance}
 

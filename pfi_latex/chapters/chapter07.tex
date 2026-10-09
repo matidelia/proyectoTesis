@@ -77,6 +77,19 @@ Por último, la bandeja de alertas (\texttt{/alerts}, RF09) muestra las notifica
 	\label{fig:demo-alerts}
 \end{figure}
 
+\section{Tablero de oportunidades}\label{sec:demo-tablero}
+
+El ranking en forma de tabla concentra mucha información en filas y columnas, pero no responde de forma directa la pregunta que se hace un vendedor: qué producto conviene salir a vender ahora. Para eso se agregó una segunda vista, el tablero de oportunidades (\texttt{/insights}), sin modificar el panel de clientes existente. Reorganiza los mismos datos en paneles: indicadores generales, las mejores oportunidades del momento, un mapa que cruza el score con la cantidad de vendedores que compiten, un resumen por categoría, los movimientos de las últimas 72 horas (con sesión iniciada) y los productos que dejaron de aparecer en la última semana. Cada producto se clasifica con una señal (\emph{Entrar ya}, \emph{Vigilar}, \emph{Saturado} o \emph{Señal débil}) a partir de reglas explícitas sobre su score, la cantidad de vendedores de la última captura y el índice ML. Esas reglas están cubiertas por las pruebas automatizadas (Sección~\ref{sec:cobertura-tests}).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./images/demo/demo_insights.png}
+	\caption{Tablero de oportunidades sin sesión iniciada, con 49 productos activos y la versión del modelo de ML en el pie. Captura del 09/10/2026, tras la corrida de las 20:07. Fuente: captura propia del sistema en producción.}
+	\label{fig:demo-insights}
+\end{figure}
+
+El tablero muestra solo productos activos, es decir, con apariciones en las últimas 48 horas. Los que dejaron de aparecer en la última semana se listan aparte, con la fecha de su última aparición, y los más antiguos quedan disponibles en la vista de tabla. Así se evita presentar como actual un score que ya no se actualiza (Sección~\ref{sec:variable-objetivo}).
+
 \section{Evidencia cuantitativa del sistema en producción}\label{sec:evidencia-cuantitativa}
 
 Más allá de la afirmación de que el sistema está desplegado y capturando datos, esta sección documenta con números concretos, medidos directamente sobre la base de datos y los endpoints en producción, cómo se comporta el prototipo actual. Los volúmenes de datos corresponden al corte del informe, la corrida del 09/10/2026 a las 07:19 (Sección~\ref{sec:versiones-datos}), y los tiempos de respuesta indican la fecha de su propia medición en cada fila.
