@@ -144,7 +144,7 @@ export default function TrendsDashboard() {
 
       {/* Footer con timestamp */}
       <p style={{ marginTop: '1rem', fontSize: '0.75rem', color: 'var(--text-secondary)', textAlign: 'right' }}>
-        Actualizado: {new Date(data.timestamp).toLocaleString('es-AR')}
+        Actualizado: {new Date(data.timestamp).toLocaleString('es-AR', { hourCycle: 'h23' })}
       </p>
     </div>
   );

@@ -3,9 +3,10 @@
  * calculada (mismo esquema que scripts/export_ml_training_data.js, una sola
  * fila por producto). Es la entrada de ml/predict.py.
  *
- * Solo se exportan productos con score en la ultima corrida y cuyo score
- * anterior es de menos de MAX_GAP_H horas antes: son las mismas condiciones
- * con las que se armaron los ejemplos de entrenamiento.
+ * Solo se exportan productos activos (aparecieron en las ultimas
+ * ACTIVE_HOURS horas), con score en la ultima corrida y cuyo score anterior
+ * es de menos de MAX_GAP_H horas antes: son las mismas condiciones con las
+ * que se armaron los ejemplos de entrenamiento.
  *
  * Uso: node scripts/export_latest_features.js > ml/latest_features.json
  */
@@ -16,6 +17,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const MAX_GAP_H = 24;
+const ACTIVE_HOURS = 48;
 
 function delta(curr, prev, key) {
   if (!prev || curr[key] == null || prev[key] == null) return 0;
@@ -39,6 +41,8 @@ async function main() {
     const [curr, prev] = p.trendScores;
     if (!curr) continue;
     if (latestRun - curr.computedAt.getTime() > MAX_GAP_H * 3600_000) continue;
+    // Mismo criterio de "activo" que en el entrenamiento y en el tablero.
+    if (curr.computedAt - p.lastSeen > ACTIVE_HOURS * 3600_000) continue;
     const usablePrev = prev && curr.computedAt - prev.computedAt <= MAX_GAP_H * 3600_000 ? prev : null;
 
     const c = curr.components || {};

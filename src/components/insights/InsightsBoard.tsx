@@ -174,7 +174,7 @@ export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1.25rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
         <span>
-          Última captura: {updatedAt ? new Date(updatedAt).toLocaleString('es-AR') : '—'}.
+          Última captura: {updatedAt ? new Date(updatedAt).toLocaleString('es-AR', { hourCycle: 'h23' }) : '—'}.
           {modelVersion && <> Índice ML: modelo <code style={{ fontSize: '0.75rem' }}>{modelVersion}</code>.</>}
           {' '}Hacé clic en cualquier producto para ver su detalle.
         </span>

@@ -12,7 +12,7 @@
  *     para que el split temporal pueda purgar filas cuya etiqueta cae del otro
  *     lado del corte.
  *
- * Uso: node scripts/export_ml_training_data.js > ml/data/dataset.json
+ * Uso: node scripts/export_ml_training_data.js --hasta=2026-10-09T10:20:00Z > ml/data/dataset.json
  */
 require('dotenv').config({ path: '.env.local', quiet: true });
 require('dotenv').config({ path: '.env', quiet: true });
@@ -35,11 +35,34 @@ function delta(curr, prev, key) {
   return curr[key] - prev[key];
 }
 
+// --hasta=<ISO>: solo scores calculados hasta ese instante (corte del informe).
+function cutoffArg() {
+  const a = process.argv.find((x) => x.startsWith('--hasta='));
+  return a ? new Date(a.slice('--hasta='.length)) : null;
+}
+
+// Horas entre el score y la ultima aparicion real del producto hasta ese
+// momento: el score se sigue calculando hasta 7 dias despues de que el
+// producto deja de aparecer, y esas filas no representan un producto activo.
+function hoursSinceSeen(snapshotTimes, at) {
+  let last = null;
+  for (const t of snapshotTimes) {
+    if (t <= at) last = t;
+    else break;
+  }
+  return last == null ? null : (at - last) / 3600_000;
+}
+
 async function main() {
+  const hasta = cutoffArg();
   const products = await prisma.product.findMany({
     include: {
       category: true,
-      trendScores: { orderBy: { computedAt: 'asc' } },
+      trendScores: {
+        where: hasta ? { computedAt: { lte: hasta } } : undefined,
+        orderBy: { computedAt: 'asc' },
+      },
+      trendSnapshots: { select: { capturedAt: true }, orderBy: { capturedAt: 'asc' } },
     },
   });
 
@@ -48,6 +71,7 @@ async function main() {
   for (const p of products) {
     const scores = p.trendScores;
     if (scores.length < 2) continue;
+    const seen = p.trendSnapshots.map((s) => s.capturedAt.getTime());
 
     for (let i = 0; i < scores.length - 1; i++) {
       const curr = scores[i];
@@ -58,6 +82,7 @@ async function main() {
       const pv = prev ? (prev.components || {}) : null;
 
       rows.push({
+        horas_desde_aparicion: hoursSinceSeen(seen, curr.computedAt.getTime()),
         productId: p.id,
         catalogProductId: p.catalogProductId,
         categoria: p.category?.name || 'Sin categoria',

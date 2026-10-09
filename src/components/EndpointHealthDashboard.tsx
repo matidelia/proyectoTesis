@@ -196,7 +196,7 @@ export default function EndpointHealthDashboard() {
                       {[...ep.history].reverse().slice(0, 20).map((h, i) => (
                         <div
                           key={i}
-                          title={`${new Date(h.timestamp).toLocaleString('es-AR')} — HTTP ${h.httpStatus}`}
+                          title={`${new Date(h.timestamp).toLocaleString('es-AR', { hourCycle: 'h23' })} — HTTP ${h.httpStatus}`}
                           style={{
                             width: 8, height: 20, borderRadius: 2,
                             background: h.isAvailable ? '#00a650' : '#ef4444',

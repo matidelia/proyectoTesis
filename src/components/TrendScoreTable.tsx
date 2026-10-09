@@ -416,7 +416,7 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
       )}
 
       <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '0.75rem', marginBottom: 0 }}>
-        Actualizado: {new Date(data.timestamp).toLocaleString('es-AR')}.
+        Actualizado: {new Date(data.timestamp).toLocaleString('es-AR', { hourCycle: 'h23' })}.
       </p>
     </div>
   );

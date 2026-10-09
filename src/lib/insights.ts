@@ -26,7 +26,7 @@ export const SIGNAL_RULES = {
 // probabilidad). "alto" = umbral que en validación alcanza recall >= 0,70;
 // "medio" = umbral con recall ~0,95. Deben coincidir con levels de
 // ml/model_card.json (lo verifica tests/insights.test.ts).
-export const ML_LEVELS = { alto: 0.3737, medio: 0.2 };
+export const ML_LEVELS = { alto: 0.4119, medio: 0.2 };
 
 export type MlLevel = 'alto' | 'medio' | 'bajo';
 

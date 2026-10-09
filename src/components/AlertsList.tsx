@@ -107,7 +107,7 @@ export default function AlertsList() {
               </p>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '0.25rem 0 0' }}>
                 Score subió de {a.previousScore} a {a.score} (+{a.scoreDelta} pts) —{' '}
-                {new Date(a.createdAt).toLocaleString('es-AR')}
+                {new Date(a.createdAt).toLocaleString('es-AR', { hourCycle: 'h23' })}
               </p>
             </div>
             <span style={{ color: '#00a650', fontWeight: 800, fontSize: '1.1rem', whiteSpace: 'nowrap' }}>
