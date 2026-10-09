@@ -58,6 +58,9 @@ FIG_DIR = ROOT.parent / "pfi_latex" / "images" / "ml"
 SEED = 42
 LABEL_THRESHOLD = 5
 MAX_LABEL_GAP_H = 24
+# Cambio de metodo de la estabilidad (promedio entre vendedores) que no se
+# refleja en los pesos persistidos; el cambio de pesos se detecta por formula.
+METHOD_CHANGES = ["2026-09-23T17:51:08Z"]
 EMBARGO_DAYS = 7
 TRAIN_FRAC = 0.8
 ROLLING_FRACS = [0.6, 0.7, 0.8]
@@ -85,6 +88,14 @@ def load_dataset():
     n_complete = len(df)
     gap_h = (df["nextComputedAt"] - df["computedAt"]).dt.total_seconds() / 3600
     df = df[gap_h <= MAX_LABEL_GAP_H]
+    n_gap_ok = len(df)
+    # Pares que cruzan un cambio de metodologia del score: la diferencia mide
+    # el cambio de formula, no el mercado (Seccion "Definicion formal del score").
+    crosses = df["formula"] != df["formula_siguiente"]
+    for change in METHOD_CHANGES:
+        t = pd.Timestamp(change)
+        crosses |= (df["computedAt"] < t) & (df["nextComputedAt"] >= t)
+    df = df[~crosses]
     df["label"] = ((df["score_siguiente"] - df["score"]) >= LABEL_THRESHOLD).astype(int)
     df = df.sort_values("computedAt").reset_index(drop=True)
     info = {
@@ -92,7 +103,8 @@ def load_dataset():
         "rows_raw": n_raw,
         "rows_with_features": n_complete,
         "rows_used": len(df),
-        "rows_dropped_gap": n_complete - len(df),
+        "rows_dropped_gap": n_complete - n_gap_ok,
+        "rows_dropped_method_change": n_gap_ok - len(df),
         "products": int(df["productId"].nunique()),
         "from": df["computedAt"].min().isoformat(),
         "to": df["computedAt"].max().isoformat(),
@@ -352,7 +364,7 @@ def main():
     card = {
         "model_version": version, "dataset": data_info, "levels": levels,
         "config": {"seed": SEED, "label_threshold": LABEL_THRESHOLD, "max_label_gap_h": MAX_LABEL_GAP_H,
-                   "embargo_days": EMBARGO_DAYS, "train_frac": TRAIN_FRAC, "features": FEATURES,
+                   "method_changes": METHOD_CHANGES, "embargo_days": EMBARGO_DAYS, "train_frac": TRAIN_FRAC, "features": FEATURES,
                    "random_forest": RF_PARAMS, "logistic_regression": LOGREG_PARAMS,
                    "balanceo": "class_weight='balanced' (sin sobremuestreo)",
                    "calibracion": "isotonica, CalibratedClassifierCV con 3 particiones temporales"},
@@ -469,7 +481,7 @@ def report(c):
     L = [f"# Modelo `{c['model_version']}`\n"]
     d, s = c["dataset"], c["split"]
     L.append(f"- Dataset sha256 `{d['sha256'][:16]}`: {d['rows_raw']} filas exportadas, {d['rows_used']} usadas "
-             f"({d['rows_dropped_gap']} descartadas por hueco > {c['config']['max_label_gap_h']} h), "
+             f"({d['rows_dropped_gap']} descartadas por hueco > {c['config']['max_label_gap_h']} h, {d['rows_dropped_method_change']} por cruzar un cambio de formula), "
              f"{d['products']} productos, {d['from'][:10]} a {d['to'][:10]}, {d['positive_rate']*100:.2f}% positivos.")
     L.append(f"- Corte {s['cutoff'][:16]}; validacion desde {s['validation_from'][:16]} (embargo {c['config']['embargo_days']} dias).")
     L.append(f"- Train: {s['train_rows']} filas, {s['train_from'][:10]} a {s['train_to'][:10]}, ultima etiqueta {s['train_last_label_at'][:16]}, "

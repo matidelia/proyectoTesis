@@ -22,6 +22,14 @@ const prisma = new PrismaClient();
 
 const LABEL_THRESHOLD = 5;
 
+// Version de la formula del score: los pesos vigentes se persisten en cada
+// calculo (components.weights). Un par cuyos dos scores usan formulas
+// distintas no mide un cambio del mercado sino un cambio de metodologia.
+function formulaKey(components) {
+  const w = components?.weights;
+  return w ? Object.keys(w).sort().map((k) => `${k}=${w[k]}`).join(',') : 'sin_pesos';
+}
+
 function delta(curr, prev, key) {
   if (!prev || curr[key] == null || prev[key] == null) return 0;
   return curr[key] - prev[key];
@@ -68,6 +76,8 @@ async function main() {
         delta_permanencia: delta(c, pv, 'permanencia'),
         delta_ranking: delta(c, pv, 'ranking'),
         delta_estabilidad: delta(c, pv, 'estabilidad'),
+        formula: formulaKey(c),
+        formula_siguiente: formulaKey(next.components),
         label: (next.score - curr.score) >= LABEL_THRESHOLD ? 1 : 0,
       });
     }
