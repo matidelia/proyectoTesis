@@ -429,18 +429,22 @@ def sustained_rise(df):
     return out
 
 
+def _c(x):
+    return f"{x:.2f}".replace(".", ",")
+
+
 # ── Figuras ──────────────────────────────────────────────────────────────────
 def figures(y, p_rf, p_cal, thr, base, val):
     plt.rcParams.update({"font.size": 9})
 
     fig, ax = plt.subplots(figsize=(5, 3.6))
     prec, rec, _ = precision_recall_curve(y, p_rf)
-    ax.plot(rec, prec, label=f"Random Forest (PR-AUC {average_precision_score(y, p_rf):.2f})", color="#1f6f43")
+    ax.plot(rec, prec, label=f"Random Forest (PR-AUC {_c(average_precision_score(y, p_rf))})", color="#1f6f43")
     s = val["score"].to_numpy()
     for name, sc, col in [("Score descriptivo invertido", 100 - s, "#b45309"), ("Score descriptivo", s, "#6b7280")]:
         pr, rc, _ = precision_recall_curve(y, sc)
-        ax.plot(rc, pr, label=f"{name} (PR-AUC {average_precision_score(y, sc):.2f})", color=col, lw=1)
-    ax.axhline(y.mean(), ls="--", color="#9ca3af", lw=1, label=f"Azar (prevalencia {y.mean():.2f})")
+        ax.plot(rc, pr, label=f"{name} (PR-AUC {_c(average_precision_score(y, sc))})", color=col, lw=1)
+    ax.axhline(y.mean(), ls="--", color="#9ca3af", lw=1, label=f"Azar (prevalencia {_c(y.mean())})")
     ax.set_xlabel("Recall (tendencias reales detectadas)")
     ax.set_ylabel("Precisión")
     ax.legend(fontsize=7, loc="upper right")
@@ -470,7 +474,7 @@ def figures(y, p_rf, p_cal, thr, base, val):
                 color="white" if v > cm.max() / 2 else "black")
     ax.set_xticks([0, 1], ["Predice 0", "Predice 1"])
     ax.set_yticks([0, 1], ["Real 0", "Real 1"])
-    ax.set_title(f"Umbral {thr:.2f}", fontsize=9)
+    ax.set_title(f"Umbral {_c(thr)}", fontsize=9)
     fig.tight_layout()
     fig.savefig(FIG_DIR / "confusion_matrix.png", dpi=200)
     plt.close(fig)
