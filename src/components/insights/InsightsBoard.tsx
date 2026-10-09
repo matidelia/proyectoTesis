@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { sellerTrend, type Signal } from '@/lib/insights';
+import { mlLevel, sellerTrend, type Signal } from '@/lib/insights';
 
 interface Item {
   productId: string;
@@ -30,7 +30,7 @@ type ComponentKey = 'frecuencia' | 'permanencia' | 'ranking' | 'estabilidad' | '
 
 const SIGNALS: Record<Signal, { label: string; color: string; hint: string }> = {
   entrar: { label: 'Entrar ya', color: '#00a650', hint: 'Score ≥ 70 y menos de 4 vendedores compitiendo' },
-  vigilar: { label: 'Vigilar', color: '#ffe600', hint: 'Score entre 50 y 70, o score bajo que sube y el modelo de ML anticipa que va a seguir subiendo' },
+  vigilar: { label: 'Vigilar', color: '#ffe600', hint: 'Score entre 50 y 70, o score bajo que viene subiendo y tiene índice ML alto' },
   saturado: { label: 'Saturado', color: '#f97316', hint: '4 o más vendedores compitiendo por el mismo producto' },
   debil: { label: 'Señal débil', color: '#71717a', hint: 'Score bajo y sin respaldo del modelo' },
   inactivo: { label: 'Sin señal reciente', color: '#64748b', hint: 'Dejó de aparecer en las búsquedas de la minería: su score ya no se actualiza' },
@@ -96,6 +96,7 @@ function sellersChangeText(item: Item): string | undefined {
 export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
   const [items, setItems] = useState<Item[] | null>(null);
   const [historicalCount, setHistoricalCount] = useState(0);
+  const [modelVersion, setModelVersion] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [category, setCategory] = useState<string | null>(null);
@@ -109,6 +110,7 @@ export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
         if (d.error) throw new Error(d.details || d.error);
         setItems(d.items);
         setHistoricalCount(d.historicalCount ?? 0);
+        setModelVersion(d.modelVersion ?? null);
         setUpdatedAt(d.latestCaptureAt ?? d.timestamp);
       })
       .catch((e) => setError(e.message));
@@ -171,7 +173,11 @@ export default function InsightsBoard({ loggedIn }: { loggedIn: boolean }) {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1.25rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-        <span>Última captura: {updatedAt ? new Date(updatedAt).toLocaleString('es-AR') : '—'}. Hacé clic en cualquier producto para ver su detalle.</span>
+        <span>
+          Última captura: {updatedAt ? new Date(updatedAt).toLocaleString('es-AR') : '—'}.
+          {modelVersion && <> Índice ML: modelo <code style={{ fontSize: '0.75rem' }}>{modelVersion}</code>.</>}
+          {' '}Hacé clic en cualquier producto para ver su detalle.
+        </span>
         <Link href="/dashboard" style={{ color: 'var(--accent-primary)', textDecoration: 'none', fontWeight: 600 }}>
           Ver ranking completo en tabla →
         </Link>
@@ -320,7 +326,7 @@ function Opportunities({ items, onSelect }: { items: Item[]; onSelect: (i: Item)
                 <span>{i.category}</span>
                 <span>· <SellersInline item={i} /></span>
                 <span style={{ color: deltaColor(i.delta72h) }}>· {fmtDelta(i.delta72h)} en 72 h</span>
-                {i.signal === 'vigilar' && i.probability != null && <span>· ML {Math.round(i.probability * 100)}%</span>}
+                {i.signal === 'vigilar' && mlLevel(i.probability) === 'alto' && <span>· índice ML alto</span>}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -633,7 +639,11 @@ function ProductDrawer({ item, loggedIn, watching, onToggleWatch, onClose }: {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', marginTop: '1rem' }}>
           {stat('Score de tendencia', <span style={{ color }}>{item.score.toLocaleString('es-AR')}</span>)}
           {stat('Cambio en 72 h', <span style={{ color: deltaColor(item.delta72h) }}>{fmtDelta(item.delta72h)}</span>)}
-          {stat('Prob. de subir 5+ pts más (ML)', item.probability != null ? `${Math.round(item.probability * 100)}%` : '—')}
+          {stat(
+            'Índice ML de subida (0-100)',
+            item.probability != null ? `${Math.round(item.probability * 100)} · ${mlLevel(item.probability)}` : '—',
+            'prioridad relativa, no es una probabilidad',
+          )}
           {stat(
             'Vendedores en la última captura',
             <span>
@@ -660,8 +670,9 @@ function ProductDrawer({ item, loggedIn, watching, onToggleWatch, onClose }: {
 
         {item.active && item.probability != null && item.score >= 70 && (
           <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', margin: '0.6rem 0 0' }}>
-            El modelo de ML estima si el score va a subir al menos 5 puntos más. En un producto que ya está arriba
-            una probabilidad baja es esperable: indica que la tendencia ya está madura, no que sea mala.
+            El índice ML prioriza productos cuyo score puede subir al menos 5 puntos más en la próxima captura.
+            En un producto que ya está arriba un índice bajo es esperable: indica que la tendencia ya está
+            madura, no que sea mala.
           </p>
         )}
 

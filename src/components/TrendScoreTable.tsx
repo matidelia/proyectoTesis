@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import ThemedSelect from './ThemedSelect';
+import { mlLevel, type MlLevel } from '@/lib/insights';
 
 interface ScoreItem {
   productId: string;
@@ -35,6 +36,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   MLA1403: '#10b981',   // Alimentos - verde
   MLA436069: '#6ee7b7', // Limpieza - verde claro
 };
+
+const ML_LEVEL_COLOR: Record<MlLevel, string> = { alto: '#00a650', medio: '#ffe600', bajo: '#9ca3af' };
 
 function scoreColor(score: number): string {
   if (score >= 70) return '#00a650';
@@ -305,9 +308,9 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
               <th style={{ padding: '0.5rem', textAlign: 'right' }}>Score</th>
               <th
                 style={{ padding: '0.5rem', textAlign: 'right' }}
-                title="Probabilidad estimada por el modelo de ML supervisado (checkpoint) de que el score siga subiendo en la próxima ventana"
+                title="Índice de prioridad (0-100) del modelo de ML supervisado: ordena qué productos tienen más chance de subir 5+ puntos en la próxima captura. No es una probabilidad calibrada."
               >
-                🎯 Prob. ML
+                🎯 Índice ML
               </th>
               <th style={{ padding: '0.5rem', textAlign: 'center' }} title="Seguir un producto (requiere cuenta) para recibir una alerta cuando empiece a crecer">
                 🔔
@@ -380,11 +383,11 @@ export default function TrendScoreTable({ loggedIn = false }: { loggedIn?: boole
                     {item.growthProbability == null ? (
                       <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>—</span>
                     ) : (
-                      <span style={{
-                        fontWeight: 700,
-                        color: scoreColor(item.growthProbability * 100),
-                      }}>
-                        {Math.round(item.growthProbability * 100)}%
+                      <span
+                        title={`Nivel ${mlLevel(item.growthProbability)}`}
+                        style={{ fontWeight: 700, color: ML_LEVEL_COLOR[mlLevel(item.growthProbability)!] }}
+                      >
+                        {Math.round(item.growthProbability * 100)}
                       </span>
                     )}
                   </td>

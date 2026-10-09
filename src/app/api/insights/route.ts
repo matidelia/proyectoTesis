@@ -35,11 +35,13 @@ export async function GET() {
         ) t WHERE rn <= ${SERIES_POINTS}
         ORDER BY "computedAt" ASC
       `,
-      prisma.$queryRaw<{ productId: string; probability: number }[]>`
-        SELECT "productId", probability FROM (
-          SELECT "productId", probability,
+      // Solo la versión vigente del modelo (la de la predicción más reciente).
+      prisma.$queryRaw<{ productId: string; probability: number; modelVersion: string }[]>`
+        SELECT "productId", probability, "modelVersion" FROM (
+          SELECT "productId", probability, "modelVersion",
                  ROW_NUMBER() OVER (PARTITION BY "productId" ORDER BY "computedAt" DESC) AS rn
           FROM "MLPrediction"
+          WHERE "modelVersion" = (SELECT "modelVersion" FROM "MLPrediction" ORDER BY "computedAt" DESC LIMIT 1)
         ) t WHERE rn = 1
       `,
       prisma.product.findMany({
@@ -127,6 +129,7 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       latestCaptureAt: new Date(latestCaptureAt).toISOString(),
       historicalCount,
+      modelVersion: predictions[0]?.modelVersion ?? null,
       items,
     });
   } catch (error) {

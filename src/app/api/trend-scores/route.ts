@@ -25,14 +25,16 @@ export async function GET() {
     // da margen de sobra sin volver a cargar el historial de precios completo.
     const priceCutoff = new Date(Date.now() - 21 * 24 * 60 * 60 * 1000);
 
-    // Última predicción del modelo de ML supervisado por producto (Sección
-    // 1.5.4/1.10.2): probabilidad de que el score siga creciendo. Se genera
-    // aparte (ml/predict.py + scripts/import_ml_predictions.js), no en cada
-    // request — acá solo se lee la más reciente por producto.
+    // Última predicción del modelo de ML supervisado por producto: índice de
+    // prioridad 0-1 (no es una probabilidad calibrada, ver ml/model_card.json).
+    // Se genera aparte (ml/predict.py + scripts/import_ml_predictions.js).
+    // Solo cuenta la versión vigente del modelo, para no mezclar valores de
+    // un modelo anterior en productos que ya no se predicen.
     const latestPredictionIds = await prisma.$queryRaw<{ id: string }[]>`
       SELECT id FROM (
         SELECT id, ROW_NUMBER() OVER (PARTITION BY "productId" ORDER BY "computedAt" DESC) AS rn
         FROM "MLPrediction"
+        WHERE "modelVersion" = (SELECT "modelVersion" FROM "MLPrediction" ORDER BY "computedAt" DESC LIMIT 1)
       ) t WHERE rn = 1
     `;
     const predictions = await prisma.mLPrediction.findMany({

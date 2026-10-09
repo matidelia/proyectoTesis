@@ -1,21 +1,31 @@
 /**
- * EXPORTACION DE DATASET PARA EL MODELO SUPERVISADO (etapa 75%, Seccion 1.4.4)
+ * EXPORTACION DE DATASET PARA EL MODELO SUPERVISADO (Seccion "Modelo de ML")
  * ==============================================================================
  * Solo lectura: no modifica la base. Recorre los TrendScore de cada producto en
  * orden cronologico y arma, por cada par consecutivo (t, t+1), un ejemplo:
- *   - features de la ventana t: los 4 componentes ya calculados por
- *     compute_trend_scores.js (frecuencia, permanencia, ranking, estabilidad),
- *     su variacion contra la ventana t-1 (si existe), y la categoria del producto.
- *   - label: 1 si el score sube >=5 puntos de t a t+1 (mismo umbral que la
- *     alerta HU02 ya implementada), 0 en caso contrario.
+ *   - features de la ventana t: los componentes ya calculados por
+ *     compute_trend_scores.js y su variacion contra la ventana t-1. Todas se
+ *     conocen en el instante t (no usan informacion posterior).
+ *   - label: 1 si el score sube >= 5 puntos de t a t+1 (mismo umbral que la
+ *     alerta HU02), 0 en caso contrario.
+ *   - computedAt / nextComputedAt: instante de las features y de la etiqueta,
+ *     para que el split temporal pueda purgar filas cuya etiqueta cae del otro
+ *     lado del corte.
  *
- * Uso: node scripts/export_ml_training_data.js > ml/dataset.json
+ * Uso: node scripts/export_ml_training_data.js > ml/data/dataset.json
  */
 require('dotenv').config({ path: '.env.local', quiet: true });
 require('dotenv').config({ path: '.env', quiet: true });
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+
+const LABEL_THRESHOLD = 5;
+
+function delta(curr, prev, key) {
+  if (!prev || curr[key] == null || prev[key] == null) return 0;
+  return curr[key] - prev[key];
+}
 
 async function main() {
   const products = await prisma.product.findMany({
@@ -29,7 +39,7 @@ async function main() {
 
   for (const p of products) {
     const scores = p.trendScores;
-    if (scores.length < 2) continue; // necesita al menos un par consecutivo
+    if (scores.length < 2) continue;
 
     for (let i = 0; i < scores.length - 1; i++) {
       const curr = scores[i];
@@ -39,24 +49,26 @@ async function main() {
       const c = curr.components || {};
       const pv = prev ? (prev.components || {}) : null;
 
-      const label = (next.score - curr.score) >= 5 ? 1 : 0;
-
       rows.push({
         productId: p.id,
+        catalogProductId: p.catalogProductId,
         categoria: p.category?.name || 'Sin categoria',
         computedAt: curr.computedAt,
+        nextComputedAt: next.computedAt,
         score: curr.score,
+        score_siguiente: next.score,
+        delta_score_prev: prev ? curr.score - prev.score : 0,
         frecuencia: c.frecuencia ?? null,
         permanencia: c.permanencia ?? null,
         ranking: c.ranking ?? null,
         estabilidad: c.estabilidad ?? null,
-        delta_frecuencia: pv ? (c.frecuencia - pv.frecuencia) : 0,
-        delta_permanencia: pv ? (c.permanencia - pv.permanencia) : 0,
-        delta_ranking: pv ? (c.ranking - pv.ranking) : 0,
-        delta_estabilidad: pv ? (c.estabilidad - pv.estabilidad) : 0,
-        variacion_precio_pct: c.estabilidad != null ? (1 - c.estabilidad) : null,
-        score_siguiente: next.score,
-        label,
+        saturacion: c.saturacion ?? null,
+        vendedores_promedio: c.avgSellerCount ?? null,
+        delta_frecuencia: delta(c, pv, 'frecuencia'),
+        delta_permanencia: delta(c, pv, 'permanencia'),
+        delta_ranking: delta(c, pv, 'ranking'),
+        delta_estabilidad: delta(c, pv, 'estabilidad'),
+        label: (next.score - curr.score) >= LABEL_THRESHOLD ? 1 : 0,
       });
     }
   }

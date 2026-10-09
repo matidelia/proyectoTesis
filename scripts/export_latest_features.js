@@ -1,8 +1,11 @@
 /**
- * Exporta, para cada producto, las features de SU ULTIMA ventana calculada
- * (mismo esquema de features que scripts/export_ml_training_data.js, pero
- * una sola fila por producto en vez de todos los pares historicos). Es lo
- * que ml/predict.py usa como entrada para predecir sobre el estado actual.
+ * Exporta, para cada producto activo, las features de SU ULTIMA ventana
+ * calculada (mismo esquema que scripts/export_ml_training_data.js, una sola
+ * fila por producto). Es la entrada de ml/predict.py.
+ *
+ * Solo se exportan productos con score en la ultima corrida y cuyo score
+ * anterior es de menos de MAX_GAP_H horas antes: son las mismas condiciones
+ * con las que se armaron los ejemplos de entrenamiento.
  *
  * Uso: node scripts/export_latest_features.js > ml/latest_features.json
  */
@@ -12,25 +15,34 @@ require('dotenv').config({ path: '.env', quiet: true });
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+const MAX_GAP_H = 24;
+
+function delta(curr, prev, key) {
+  if (!prev || curr[key] == null || prev[key] == null) return 0;
+  return curr[key] - prev[key];
+}
+
 async function main() {
   const products = await prisma.product.findMany({
     include: {
       category: true,
-      trendScores: { orderBy: { computedAt: 'asc' } },
+      trendScores: { orderBy: { computedAt: 'desc' }, take: 2 },
     },
   });
 
+  const latestRun = Math.max(
+    ...products.filter((p) => p.trendScores.length).map((p) => p.trendScores[0].computedAt.getTime())
+  );
+
   const rows = [];
-
   for (const p of products) {
-    const scores = p.trendScores;
-    if (scores.length < 1) continue;
-
-    const curr = scores[scores.length - 1];
-    const prev = scores.length >= 2 ? scores[scores.length - 2] : null;
+    const [curr, prev] = p.trendScores;
+    if (!curr) continue;
+    if (latestRun - curr.computedAt.getTime() > MAX_GAP_H * 3600_000) continue;
+    const usablePrev = prev && curr.computedAt - prev.computedAt <= MAX_GAP_H * 3600_000 ? prev : null;
 
     const c = curr.components || {};
-    const pv = prev ? (prev.components || {}) : null;
+    const pv = usablePrev ? (usablePrev.components || {}) : null;
 
     rows.push({
       productId: p.id,
@@ -41,11 +53,10 @@ async function main() {
       permanencia: c.permanencia ?? null,
       ranking: c.ranking ?? null,
       estabilidad: c.estabilidad ?? null,
-      delta_frecuencia: pv ? (c.frecuencia - pv.frecuencia) : 0,
-      delta_permanencia: pv ? (c.permanencia - pv.permanencia) : 0,
-      delta_ranking: pv ? (c.ranking - pv.ranking) : 0,
-      delta_estabilidad: pv ? (c.estabilidad - pv.estabilidad) : 0,
-      variacion_precio_pct: c.estabilidad != null ? (1 - c.estabilidad) : null,
+      delta_frecuencia: delta(c, pv, 'frecuencia'),
+      delta_permanencia: delta(c, pv, 'permanencia'),
+      delta_ranking: delta(c, pv, 'ranking'),
+      delta_estabilidad: delta(c, pv, 'estabilidad'),
     });
   }
 

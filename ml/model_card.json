@@ -1,0 +1,694 @@
+{
+  "model_version": "rf_2026-10-09_a39b3ef3",
+  "dataset": {
+    "sha256": "a39b3ef37d20d521f502916bd9c0f2fa34889c360743d34d598dcac0dcad8582",
+    "rows_raw": 13655,
+    "rows_with_features": 13655,
+    "rows_used": 13526,
+    "rows_dropped_gap": 129,
+    "products": 263,
+    "from": "2026-07-18T18:03:28.523000+00:00",
+    "to": "2026-10-09T00:37:23.728000+00:00",
+    "positive_rate": 0.06358125092414608
+  },
+  "levels": {
+    "alto": 0.3884,
+    "medio": 0.2
+  },
+  "config": {
+    "seed": 42,
+    "label_threshold": 5,
+    "max_label_gap_h": 24,
+    "embargo_days": 7,
+    "train_frac": 0.8,
+    "features": [
+      "frecuencia",
+      "permanencia",
+      "ranking",
+      "estabilidad",
+      "delta_frecuencia",
+      "delta_permanencia",
+      "delta_ranking",
+      "delta_estabilidad"
+    ],
+    "random_forest": {
+      "n_estimators": 300,
+      "max_depth": 8,
+      "min_samples_leaf": 5,
+      "class_weight": "balanced",
+      "random_state": 42,
+      "n_jobs": -1
+    },
+    "logistic_regression": {
+      "max_iter": 2000,
+      "class_weight": "balanced"
+    },
+    "balanceo": "class_weight='balanced' (sin sobremuestreo)",
+    "calibracion": "isotonica, CalibratedClassifierCV con 3 particiones temporales"
+  },
+  "environment": {
+    "python": "3.10.4",
+    "sklearn": "1.7.2",
+    "pandas": "2.3.3",
+    "numpy": "2.1.3"
+  },
+  "split": {
+    "cutoff": "2026-09-19T15:00:28.249999872+00:00",
+    "validation_from": "2026-09-26T15:00:28.249999872+00:00",
+    "train_rows": 10772,
+    "train_products": 221,
+    "train_from": "2026-07-18T18:03:28.523000+00:00",
+    "train_to": "2026-09-19T08:22:28.257000+00:00",
+    "train_last_label_at": "2026-09-19T15:00:28.110000+00:00",
+    "train_positive_rate": 0.06823245451169699,
+    "val_rows": 1736,
+    "val_products": 83,
+    "val_from": "2026-09-26T15:41:16.469000+00:00",
+    "val_to": "2026-10-09T00:37:23.728000+00:00",
+    "val_positive_rate": 0.04377880184331797,
+    "rows_purged_or_embargoed": 1018,
+    "val_products_seen_in_train": 732
+  },
+  "models": {
+    "Random Forest": {
+      "roc_auc": 0.7984345275840203,
+      "pr_auc": 0.1991054768571992,
+      "prevalence": 0.04377880184331797,
+      "at_0.5": {
+        "threshold": 0.5,
+        "tn": 1328,
+        "fp": 332,
+        "fn": 36,
+        "tp": 40,
+        "precision": 0.10752688172043011,
+        "recall": 0.5263157894736842,
+        "fpr": 0.2,
+        "f1": 0.17857142857142858,
+        "alert_rate": 0.21428571428571427
+      },
+      "at_recall_target": {
+        "threshold": 0.3884,
+        "tn": 1244,
+        "fp": 416,
+        "fn": 22,
+        "tp": 54,
+        "precision": 0.1148936170212766,
+        "recall": 0.7105263157894737,
+        "fpr": 0.25060240963855424,
+        "f1": 0.1978021978021978,
+        "alert_rate": 0.2707373271889401
+      },
+      "brier": 0.1793594927770632,
+      "mean_output": 0.3308591087171218
+    },
+    "Regresion Logistica": {
+      "roc_auc": 0.7704898541534559,
+      "pr_auc": 0.18495023789218312,
+      "prevalence": 0.04377880184331797,
+      "at_0.5": {
+        "threshold": 0.5,
+        "tn": 1036,
+        "fp": 624,
+        "fn": 26,
+        "tp": 50,
+        "precision": 0.07418397626112759,
+        "recall": 0.6578947368421053,
+        "fpr": 0.3759036144578313,
+        "f1": 0.13333333333333333,
+        "alert_rate": 0.3882488479262673
+      },
+      "brier": 0.23603825842397913,
+      "mean_output": 0.45417966313417374
+    }
+  },
+  "baselines": {
+    "Regla: frecuencia en aumento (delta_frecuencia > 0)": {
+      "roc_auc": 0.5563411540900444,
+      "pr_auc": 0.049574602963754516,
+      "prevalence": 0.04377880184331797,
+      "at_rule": {
+        "threshold": 0.5,
+        "tn": 886,
+        "fp": 774,
+        "fn": 32,
+        "tp": 44,
+        "precision": 0.05378973105134474,
+        "recall": 0.5789473684210527,
+        "fpr": 0.46626506024096387,
+        "f1": 0.09843400447427293,
+        "alert_rate": 0.47119815668202764
+      }
+    },
+    "Regla: persistencia (ya subio >= 5 en la corrida anterior)": {
+      "roc_auc": 0.5210526315789473,
+      "pr_auc": 0.04691028646886032,
+      "prevalence": 0.04377880184331797,
+      "at_rule": {
+        "threshold": 0.5,
+        "tn": 1577,
+        "fp": 83,
+        "fn": 69,
+        "tp": 7,
+        "precision": 0.07777777777777778,
+        "recall": 0.09210526315789473,
+        "fpr": 0.05,
+        "f1": 0.08433734939759036,
+        "alert_rate": 0.05184331797235023
+      }
+    },
+    "Score descriptivo (mas alto = mas chance)": {
+      "roc_auc": 0.2839885859226379,
+      "pr_auc": 0.02850693414850622,
+      "prevalence": 0.04377880184331797
+    },
+    "Score descriptivo invertido (mas bajo = mas chance)": {
+      "roc_auc": 0.7160114140773621,
+      "pr_auc": 0.14898829655962711,
+      "prevalence": 0.04377880184331797
+    }
+  },
+  "threshold_table": [
+    {
+      "threshold": 0.1,
+      "tn": 301,
+      "fp": 1359,
+      "fn": 0,
+      "tp": 76,
+      "precision": 0.0529616724738676,
+      "recall": 1.0,
+      "fpr": 0.8186746987951807,
+      "f1": 0.10059563203176704,
+      "alert_rate": 0.8266129032258065
+    },
+    {
+      "threshold": 0.2,
+      "tn": 749,
+      "fp": 911,
+      "fn": 4,
+      "tp": 72,
+      "precision": 0.07324516785350967,
+      "recall": 0.9473684210526315,
+      "fpr": 0.5487951807228916,
+      "f1": 0.1359773371104816,
+      "alert_rate": 0.5662442396313364
+    },
+    {
+      "threshold": 0.3,
+      "tn": 1055,
+      "fp": 605,
+      "fn": 9,
+      "tp": 67,
+      "precision": 0.09970238095238096,
+      "recall": 0.881578947368421,
+      "fpr": 0.3644578313253012,
+      "f1": 0.17914438502673796,
+      "alert_rate": 0.3870967741935484
+    },
+    {
+      "threshold": 0.4,
+      "tn": 1250,
+      "fp": 410,
+      "fn": 29,
+      "tp": 47,
+      "precision": 0.10284463894967177,
+      "recall": 0.618421052631579,
+      "fpr": 0.2469879518072289,
+      "f1": 0.17636022514071295,
+      "alert_rate": 0.2632488479262673
+    },
+    {
+      "threshold": 0.5,
+      "tn": 1328,
+      "fp": 332,
+      "fn": 36,
+      "tp": 40,
+      "precision": 0.10752688172043011,
+      "recall": 0.5263157894736842,
+      "fpr": 0.2,
+      "f1": 0.17857142857142858,
+      "alert_rate": 0.21428571428571427
+    },
+    {
+      "threshold": 0.6,
+      "tn": 1342,
+      "fp": 318,
+      "fn": 38,
+      "tp": 38,
+      "precision": 0.10674157303370786,
+      "recall": 0.5,
+      "fpr": 0.19156626506024096,
+      "f1": 0.17592592592592593,
+      "alert_rate": 0.20506912442396313
+    },
+    {
+      "threshold": 0.7,
+      "tn": 1350,
+      "fp": 310,
+      "fn": 41,
+      "tp": 35,
+      "precision": 0.10144927536231885,
+      "recall": 0.4605263157894737,
+      "fpr": 0.18674698795180722,
+      "f1": 0.166270783847981,
+      "alert_rate": 0.19873271889400923
+    },
+    {
+      "threshold": 0.8,
+      "tn": 1413,
+      "fp": 247,
+      "fn": 49,
+      "tp": 27,
+      "precision": 0.09854014598540146,
+      "recall": 0.35526315789473684,
+      "fpr": 0.14879518072289158,
+      "f1": 0.15428571428571428,
+      "alert_rate": 0.1578341013824885
+    },
+    {
+      "threshold": 0.9,
+      "tn": 1646,
+      "fp": 14,
+      "fn": 65,
+      "tp": 11,
+      "precision": 0.44,
+      "recall": 0.14473684210526316,
+      "fpr": 0.008433734939759036,
+      "f1": 0.21782178217821782,
+      "alert_rate": 0.014400921658986175
+    }
+  ],
+  "leakage_checks": {
+    "temporal_purga_embargo": {
+      "roc_auc": 0.7984345275840203,
+      "pr_auc": 0.1991054768571992,
+      "prevalence": 0.04377880184331797
+    },
+    "temporal_purga_sin_embargo": {
+      "roc_auc": 0.8387090275087176,
+      "pr_auc": 0.2125007794257239,
+      "prevalence": 0.046193643754619367
+    },
+    "aleatorio_con_fuga": {
+      "roc_auc": 0.9289017515429437,
+      "pr_auc": 0.4981174720619333,
+      "prevalence": 0.0679970436067997
+    },
+    "etiquetas_permutadas_10_corridas": {
+      "roc_auc": 0.5053757133798351,
+      "roc_auc_std": 0.09204469209565132,
+      "pr_auc": 0.0666879702825494,
+      "pr_auc_std": 0.03914706407480272
+    }
+  },
+  "rolling_origin": [
+    {
+      "train_frac": 0.6,
+      "cutoff": "2026-09-04T08:21:31.504999936+00:00",
+      "val_rows": 4074,
+      "roc_auc": 0.8433564415317879,
+      "pr_auc": 0.27066225377971653,
+      "prevalence": 0.043200785468826705,
+      "recall_at_0.5": 0.5738636363636364,
+      "precision_at_0.5": 0.18100358422939067
+    },
+    {
+      "train_frac": 0.7,
+      "cutoff": "2026-09-11T15:43:35.760000+00:00",
+      "val_rows": 2848,
+      "roc_auc": 0.8448622119588964,
+      "pr_auc": 0.25206946526623086,
+      "prevalence": 0.04459269662921348,
+      "recall_at_0.5": 0.5433070866141733,
+      "precision_at_0.5": 0.1564625850340136
+    },
+    {
+      "train_frac": 0.8,
+      "cutoff": "2026-09-19T15:00:28.249999872+00:00",
+      "val_rows": 1736,
+      "roc_auc": 0.7984345275840203,
+      "pr_auc": 0.1991054768571992,
+      "prevalence": 0.04377880184331797,
+      "recall_at_0.5": 0.5263157894736842,
+      "precision_at_0.5": 0.10752688172043011
+    }
+  ],
+  "unseen_products": [
+    {
+      "repeticion": 1,
+      "val_rows": 327,
+      "val_products": 16,
+      "roc_auc": 0.830712788259958,
+      "pr_auc": 0.1471462966089642,
+      "prevalence": 0.027522935779816515,
+      "recall_at_0.5": 0.5555555555555556
+    },
+    {
+      "repeticion": 2,
+      "val_rows": 333,
+      "val_products": 15,
+      "roc_auc": 0.7309673085535154,
+      "pr_auc": 0.17046510795001169,
+      "prevalence": 0.042042042042042045,
+      "recall_at_0.5": 0.42857142857142855
+    },
+    {
+      "repeticion": 3,
+      "val_rows": 328,
+      "val_products": 17,
+      "roc_auc": 0.8991480298189564,
+      "pr_auc": 0.49114815959729013,
+      "prevalence": 0.04573170731707317,
+      "recall_at_0.5": 0.6666666666666666
+    },
+    {
+      "repeticion": 4,
+      "val_rows": 274,
+      "val_products": 13,
+      "roc_auc": 0.8683438155136268,
+      "pr_auc": 0.3002429197455698,
+      "prevalence": 0.032846715328467155,
+      "recall_at_0.5": 0.4444444444444444
+    },
+    {
+      "repeticion": 5,
+      "val_rows": 272,
+      "val_products": 15,
+      "roc_auc": 0.9045628700801115,
+      "pr_auc": 0.5201170669541695,
+      "prevalence": 0.04044117647058824,
+      "recall_at_0.5": 0.7272727272727273
+    }
+  ],
+  "by_category": [
+    {
+      "categoria": "Alimentos y Bebidas",
+      "filas": 221,
+      "productos": 12,
+      "positivos": 8,
+      "roc_auc": 0.6540492957746479,
+      "pr_auc": 0.06141885758601531,
+      "prevalence": 0.03619909502262444,
+      "recall": 0.375,
+      "precision": 0.07317073170731707,
+      "fpr": 0.1784037558685446
+    },
+    {
+      "categoria": "Celulares",
+      "filas": 279,
+      "productos": 17,
+      "positivos": 22,
+      "roc_auc": 0.8353378139370357,
+      "pr_auc": 0.43187492666080507,
+      "prevalence": 0.07885304659498207,
+      "recall": 0.6818181818181818,
+      "precision": 0.19736842105263158,
+      "fpr": 0.23735408560311283
+    },
+    {
+      "categoria": "Computación",
+      "filas": 558,
+      "productos": 19,
+      "positivos": 13,
+      "roc_auc": 0.7871559633027523,
+      "pr_auc": 0.07025154772703932,
+      "prevalence": 0.023297491039426525,
+      "recall": 0.3076923076923077,
+      "precision": 0.04938271604938271,
+      "fpr": 0.14128440366972478
+    },
+    {
+      "categoria": "Electrónica",
+      "filas": 124,
+      "productos": 6,
+      "positivos": 7,
+      "roc_auc": 0.8376068376068375,
+      "pr_auc": 0.5224236547765959,
+      "prevalence": 0.056451612903225805,
+      "recall": 0.5714285714285714,
+      "precision": 0.16,
+      "fpr": 0.1794871794871795
+    },
+    {
+      "categoria": "Limpieza del Hogar",
+      "filas": 463,
+      "productos": 25,
+      "positivos": 26,
+      "roc_auc": 0.7732793522267206,
+      "pr_auc": 0.20369601771707777,
+      "prevalence": 0.056155507559395246,
+      "recall": 0.5384615384615384,
+      "precision": 0.10071942446043165,
+      "fpr": 0.28604118993135014
+    },
+    {
+      "categoria": "Ropa y Accesorios",
+      "filas": 91,
+      "productos": 4,
+      "positivos": 0,
+      "roc_auc": null,
+      "pr_auc": null,
+      "prevalence": 0.0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.10989010989010989
+    }
+  ],
+  "coverage": [
+    {
+      "categoria": "Alimentos y Bebidas",
+      "filas": 1804,
+      "productos": 32,
+      "prevalencia": 0.05432372505543237
+    },
+    {
+      "categoria": "Celulares",
+      "filas": 1974,
+      "productos": 47,
+      "prevalencia": 0.0547112462006079
+    },
+    {
+      "categoria": "Computación",
+      "filas": 2217,
+      "productos": 35,
+      "prevalencia": 0.06134415877311682
+    },
+    {
+      "categoria": "Electrónica",
+      "filas": 1998,
+      "productos": 49,
+      "prevalencia": 0.08158158158158157
+    },
+    {
+      "categoria": "Limpieza del Hogar",
+      "filas": 5023,
+      "productos": 93,
+      "prevalencia": 0.06370694803902051
+    },
+    {
+      "categoria": "Ropa y Accesorios",
+      "filas": 510,
+      "productos": 7,
+      "prevalencia": 0.06862745098039216
+    }
+  ],
+  "target": {
+    "window_fill": {
+      "filas_primeros_7_dias": 5602,
+      "prevalencia_primeros_7_dias": 0.10799714387718672,
+      "prevalencia_despues": 0.032180716809692075,
+      "positivos_en_primeros_7_dias": 0.7034883720930233,
+      "por_umbral": [
+        {
+          "umbral": 3,
+          "share_primeros_7_dias": 0.6717597471022129
+        },
+        {
+          "umbral": 5,
+          "share_primeros_7_dias": 0.7034883720930233
+        },
+        {
+          "umbral": 7,
+          "share_primeros_7_dias": 0.6728723404255319
+        },
+        {
+          "umbral": 10,
+          "share_primeros_7_dias": 0.6666666666666666
+        }
+      ],
+      "validacion_sin_productos_nuevos": {
+        "val_rows": 1010,
+        "roc_auc": 0.7952880767197765,
+        "pr_auc": 0.09810655299987008,
+        "prevalence": 0.040594059405940595
+      }
+    },
+    "delta_quantiles": {
+      "0.05": -5.200000000000003,
+      "0.25": -0.9000000000000057,
+      "0.5": 0.0,
+      "0.75": 1.1999999999999993,
+      "0.9": 4.25,
+      "0.95": 5.200000000000003,
+      "0.99": 13.475000000000001
+    },
+    "delta_iqr": 2.100000000000005,
+    "threshold_percentile": 0.9364187490758539,
+    "sensitivity": [
+      {
+        "umbral": 3,
+        "prevalencia": 0.140322342155848,
+        "roc_auc": 0.7750383152911963,
+        "pr_auc": 0.3614614116375907
+      },
+      {
+        "umbral": 5,
+        "prevalencia": 0.06358125092414608,
+        "roc_auc": 0.7984345275840203,
+        "pr_auc": 0.1991054768571992
+      },
+      {
+        "umbral": 7,
+        "prevalencia": 0.02779831435753364,
+        "roc_auc": 0.9694936766239065,
+        "pr_auc": 0.4506014222274082
+      },
+      {
+        "umbral": 10,
+        "prevalencia": 0.025506432056779535,
+        "roc_auc": 0.9756215898064045,
+        "pr_auc": 0.4633390408287319
+      }
+    ],
+    "weekly_prevalence": [
+      {
+        "semana": "2026-07-19",
+        "filas": 115,
+        "prevalencia": 0.0
+      },
+      {
+        "semana": "2026-07-26",
+        "filas": 963,
+        "prevalencia": 0.11838006230529595
+      },
+      {
+        "semana": "2026-08-02",
+        "filas": 1172,
+        "prevalencia": 0.09044368600682594
+      },
+      {
+        "semana": "2026-08-09",
+        "filas": 1358,
+        "prevalencia": 0.12886597938144329
+      },
+      {
+        "semana": "2026-08-16",
+        "filas": 1319,
+        "prevalencia": 0.022744503411675512
+      },
+      {
+        "semana": "2026-08-23",
+        "filas": 1264,
+        "prevalencia": 0.041930379746835444
+      },
+      {
+        "semana": "2026-08-30",
+        "filas": 1200,
+        "prevalencia": 0.020833333333333332
+      },
+      {
+        "semana": "2026-09-06",
+        "filas": 1243,
+        "prevalencia": 0.07964601769911504
+      },
+      {
+        "semana": "2026-09-13",
+        "filas": 1348,
+        "prevalencia": 0.06157270029673591
+      },
+      {
+        "semana": "2026-09-20",
+        "filas": 1030,
+        "prevalencia": 0.04951456310679612
+      },
+      {
+        "semana": "2026-09-27",
+        "filas": 1014,
+        "prevalencia": 0.05226824457593689
+      },
+      {
+        "semana": "2026-10-04",
+        "filas": 999,
+        "prevalencia": 0.025025025025025027
+      },
+      {
+        "semana": "2026-10-11",
+        "filas": 501,
+        "prevalencia": 0.09181636726546906
+      }
+    ],
+    "sustained": {
+      "saltos": 835,
+      "sostenidos_1_dia": 791,
+      "proporcion": 0.9473053892215569
+    }
+  },
+  "calibration": {
+    "raw": {
+      "brier": 0.1793594927770632,
+      "mean_output": 0.3308591087171218,
+      "prevalence": 0.04377880184331797,
+      "ece": 0.2876221847833126
+    },
+    "isotonic": {
+      "brier": 0.061299727162649406,
+      "mean_output": 0.1041344581676378,
+      "ece": 0.08059207788848939,
+      "roc_auc": 0.7821536144578314,
+      "pr_auc": 0.1600015491352337,
+      "prevalence": 0.04377880184331797
+    },
+    "brier_climatologico": 0.04246019948130718
+  },
+  "permutation_importance": [
+    {
+      "feature": "estabilidad",
+      "pr_auc_drop": 0.1301314588791817,
+      "std": 0.008913104276329398
+    },
+    {
+      "feature": "permanencia",
+      "pr_auc_drop": 0.11221201354351003,
+      "std": 0.008744634398685888
+    },
+    {
+      "feature": "frecuencia",
+      "pr_auc_drop": 0.11208871942315704,
+      "std": 0.007509259530450389
+    },
+    {
+      "feature": "delta_frecuencia",
+      "pr_auc_drop": 0.0814060530210315,
+      "std": 0.01114699618605473
+    },
+    {
+      "feature": "delta_permanencia",
+      "pr_auc_drop": 0.028594774152871816,
+      "std": 0.01281471320794547
+    },
+    {
+      "feature": "ranking",
+      "pr_auc_drop": 0.02125370449079765,
+      "std": 0.012798203634887961
+    },
+    {
+      "feature": "delta_ranking",
+      "pr_auc_drop": 0.01025078250854396,
+      "std": 0.008256032622284354
+    },
+    {
+      "feature": "delta_estabilidad",
+      "pr_auc_drop": 0.0022684615817905847,
+      "std": 0.006846346444968686
+    }
+  ]
+}

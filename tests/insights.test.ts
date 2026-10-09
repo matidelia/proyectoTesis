@@ -1,5 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import { classifySignal, deltaOverHours, freshness, sellerTrend } from '@/lib/insights';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { classifySignal, deltaOverHours, freshness, ML_LEVELS, mlLevel, sellerTrend } from '@/lib/insights';
+
+describe('mlLevel', () => {
+  it('usa los mismos cortes que el modelo entrenado (ml/model_card.json)', () => {
+    const card = JSON.parse(readFileSync(path.join(__dirname, '..', 'ml', 'model_card.json'), 'utf-8'));
+    expect(ML_LEVELS).toEqual(card.levels);
+  });
+
+  it('clasifica el índice en alto, medio y bajo', () => {
+    expect(mlLevel(ML_LEVELS.alto)).toBe('alto');
+    expect(mlLevel(ML_LEVELS.alto - 0.01)).toBe('medio');
+    expect(mlLevel(ML_LEVELS.medio)).toBe('medio');
+    expect(mlLevel(0.05)).toBe('bajo');
+    expect(mlLevel(null)).toBeNull();
+  });
+});
 
 describe('freshness', () => {
   const h = 3600_000;

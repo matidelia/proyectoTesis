@@ -18,10 +18,24 @@ export function freshness(lastSeenAt: number, latestCaptureAt: number): Freshnes
 export const SIGNAL_RULES = {
   enterScore: 70,
   watchScore: 50,
-  minProbability: 0.5,
   minRise: 5,
   saturatedSellers: 4,
 };
+
+// Cortes del índice del modelo de ML (salida 0-1 sin calibrar: no es una
+// probabilidad). "alto" = umbral que en validación alcanza recall >= 0,70;
+// "medio" = umbral con recall ~0,95. Deben coincidir con levels de
+// ml/model_card.json (lo verifica tests/insights.test.ts).
+export const ML_LEVELS = { alto: 0.3884, medio: 0.2 };
+
+export type MlLevel = 'alto' | 'medio' | 'bajo';
+
+export function mlLevel(index: number | null): MlLevel | null {
+  if (index == null) return null;
+  if (index >= ML_LEVELS.alto) return 'alto';
+  if (index >= ML_LEVELS.medio) return 'medio';
+  return 'bajo';
+}
 
 export type SellerTrend = 'entrando' | 'saliendo' | 'estable';
 
@@ -34,10 +48,11 @@ export function sellerTrend(current: number | null, start: number | null): Selle
   return 'estable';
 }
 
-// La probabilidad del modelo de ML estima si el score va a subir >= 5 puntos
-// más: un producto que ya está arriba casi no tiene margen para subir, así
-// que no se usa como veto de los scores altos, solo para destacar productos
-// todavía bajos que el modelo y el movimiento reciente coinciden en ver subir.
+// El índice del modelo de ML prioriza productos cuyo score puede subir >= 5
+// puntos en la próxima corrida: un producto que ya está arriba casi no tiene
+// margen para subir, así que no se usa como veto de los scores altos, solo
+// para destacar productos todavía bajos en los que el modelo y el movimiento
+// reciente coinciden.
 export function classifySignal({
   score,
   probability,
@@ -52,7 +67,7 @@ export function classifySignal({
   if (sellers != null && sellers >= SIGNAL_RULES.saturatedSellers) return 'saturado';
   if (score >= SIGNAL_RULES.enterScore) return 'entrar';
   if (score >= SIGNAL_RULES.watchScore) return 'vigilar';
-  const modelSaysUp = probability != null && probability >= SIGNAL_RULES.minProbability;
+  const modelSaysUp = mlLevel(probability) === 'alto';
   const rising = delta72h != null && delta72h >= SIGNAL_RULES.minRise;
   if (modelSaysUp && rising) return 'vigilar';
   return 'debil';
