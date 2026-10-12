@@ -11,6 +11,7 @@ interface Item {
   price: number | null;
   currency: string;
   permalink: string | null;
+  condition: string | null;
   category: string;
   score: number;
   computedAt: string;
@@ -80,6 +81,19 @@ function SellersInline({ item }: { item: Item }) {
       {style?.arrow && <span style={{ color: style.color, marginLeft: 3 }}>{style.arrow}</span>}
     </span>
   );
+}
+
+const CONDITION_LABEL: Record<string, string> = { new: 'nuevo', used: 'usado', refurbished: 'reacondicionado' };
+
+// El precio es el del vendedor más barato dentro de la ficha de catálogo del
+// producto; las publicaciones fuera de la ficha (por ejemplo, reacondicionados
+// sueltos) no entran en la comparación.
+function priceNote(item: Item): string {
+  const parts = [];
+  if (item.condition) parts.push(CONDITION_LABEL[item.condition] ?? item.condition);
+  if (item.sellers != null && item.sellers > 1) parts.push(`entre ${item.sellers} vendedores de la ficha`);
+  else if (item.sellers === 1) parts.push('único vendedor de la ficha');
+  return parts.length ? parts.join(' · ') : 'publicación más barata de la última captura';
 }
 
 function sellersChangeText(item: Item): string | undefined {
@@ -654,7 +668,7 @@ function ProductDrawer({ item, loggedIn, watching, onToggleWatch, onClose }: {
             </span>,
             sellersNote,
           )}
-          {stat('Precio actual', fmtPrice(item.price))}
+          {stat('Precio más bajo', fmtPrice(item.price), priceNote(item))}
           {stat('Mediciones en la serie', item.series.length)}
         </div>
 

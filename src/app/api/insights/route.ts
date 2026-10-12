@@ -48,7 +48,7 @@ export async function GET() {
         where: { trendScores: { some: {} } },
         select: {
           id: true, name: true, imageUrl: true, price: true, currency: true,
-          permalink: true, lastSeen: true, category: { select: { name: true } },
+          permalink: true, lastSeen: true, condition: true, category: { select: { name: true } },
         },
       }),
       // Vendedores de la última captura (lo que hay hoy) y de la primera
@@ -100,6 +100,7 @@ export async function GET() {
           price: p.price,
           currency: p.currency || 'ARS',
           permalink: p.permalink,
+          condition: p.condition,
           category: p.category?.name ?? 'Sin categoría',
           score: last.score,
           computedAt: new Date(last.computedAt).toISOString(),
