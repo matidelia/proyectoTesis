@@ -32,7 +32,6 @@ export default async function InsightsPage() {
         gap: '1rem', flexWrap: 'wrap', position: 'sticky', top: 0, zIndex: 100,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <Link href="/" style={{ color: 'var(--accent-primary)', textDecoration: 'none', fontSize: '1.5rem' }}>←</Link>
           <div>
             <h1 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#fff', margin: 0 }}>Tablero de oportunidades</h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>
