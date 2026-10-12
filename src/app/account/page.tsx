@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth';
 import ChangePasswordForm from '@/components/ChangePasswordForm';
+import PushToggle from '@/components/PushToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,6 +30,9 @@ export default async function AccountPage() {
       </div>
 
       <div className="container" style={{ marginTop: '2rem', maxWidth: 420 }}>
+        <div style={{ marginBottom: '1.25rem' }}>
+          <PushToggle />
+        </div>
         <ChangePasswordForm />
       </div>
     </div>

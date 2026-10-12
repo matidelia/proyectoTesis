@@ -16,6 +16,8 @@
 #   RESEND_API_KEY   → envio real de alertas por email (RF09); si falta,
 #                      las alertas se siguen generando en /alerts, solo que
 #                      sin el email (ver scripts/generate_alerts.js)
+#   VAPID_PRIVATE_KEY → clave privada de Web Push; si falta, no se envian
+#                      notificaciones push (la alerta igual queda en /alerts)
 #
 # IMPORTANTE: usar la URL del pooler (IPv4). Los runners de GitHub no tienen
 # IPv6, igual que Render — la conexión directa db.*.supabase.co NO funciona.
@@ -44,6 +46,10 @@ jobs:
       ML_APP_ID: ${{ secrets.ML_APP_ID }}
       ML_CLIENT_SECRET: ${{ secrets.ML_CLIENT_SECRET }}
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      # Notificaciones push (Web Push): la clave publica no es secreta y es la
+      # misma de src/lib/push.ts; la privada vive solo en el secret.
+      VAPID_PUBLIC_KEY: BFcx7cnMBB0pEWW1RiF-osCd5ZvvYVur95-bCNy1yvBcqZBjxlopowMR-nxnHSiQu1F5OLN6YT_X1zL9O-jEAuk
+      VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
 
     steps:
       - name: Checkout

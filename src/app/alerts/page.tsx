@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth';
 import AlertsList from '@/components/AlertsList';
+import PushToggle from '@/components/PushToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,6 +36,9 @@ export default async function AlertsPage() {
       </div>
 
       <div className="container" style={{ marginTop: '2rem' }}>
+        <div style={{ marginBottom: '1.25rem' }}>
+          <PushToggle />
+        </div>
         <AlertsList />
       </div>
     </div>

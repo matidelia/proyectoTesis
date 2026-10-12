@@ -27,6 +27,7 @@ export default defineConfig({
         'src/lib/validation.ts',
         'src/lib/auth.ts',
         'src/lib/insights.ts',
+        'src/lib/push.ts',
         'scripts/compute_trend_scores.js',
       ],
       thresholds: {

@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { mlLevel, sellerTrend, type Signal } from '@/lib/insights';
+import PushToggle from '@/components/PushToggle';
 
 interface Item {
   productId: string;
@@ -747,6 +748,11 @@ function ProductDrawer({ item, loggedIn, watching, onToggleWatch, onClose }: {
             {watching ? '🔔 Siguiendo' : '🔕 Seguir y recibir alertas'}
           </button>
         </div>
+        {loggedIn && watching && (
+          <div style={{ marginTop: '0.9rem' }}>
+            <PushToggle compact />
+          </div>
+        )}
       </aside>
     </div>
   );

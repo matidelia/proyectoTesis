@@ -68,6 +68,20 @@ model Product {
 // cuando ese producto empiece a crecer. Sin esto, la alerta no tendria a
 // quien avisarle -- es lo que permite pasar de "hay que ir a mirar el
 // dashboard" a "me avisan" (hallazgo de la Entrevista 1 y 2, Seccion 6.7).
+// Suscripción de un navegador a notificaciones push (Web Push). Un usuario
+// puede tener varias (una por navegador o dispositivo). El endpoint lo
+// genera el servicio de push del navegador y es único.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
 model Watch {
   id        String   @id @default(cuid())
   userId    String

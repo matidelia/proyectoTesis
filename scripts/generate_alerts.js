@@ -14,6 +14,7 @@ require('dotenv').config({ path: '.env.local', quiet: true });
 require('dotenv').config({ path: '.env', quiet: true });
 
 const { PrismaClient } = require('@prisma/client');
+const { buildAlertPayload, sendPushToUser } = require('./push');
 const prisma = new PrismaClient();
 
 const GROWTH_THRESHOLD = 5; // mismo umbral que HU02 en /api/trend-scores
@@ -63,6 +64,7 @@ async function main() {
   }
 
   let created = 0;
+  let pushSent = 0;
 
   for (const { productId } of watchedProductIds) {
     const lastTwo = await prisma.trendScore.findMany({
@@ -93,6 +95,15 @@ async function main() {
         });
         created++;
 
+        const push = await sendPushToUser(prisma, w.userId, buildAlertPayload({
+          productName: product?.name || 'Un producto que seguís',
+          score: curr.score,
+          previousScore: prev.score,
+          scoreDelta,
+          trendScoreId: curr.id,
+        }));
+        if (!push.skipped) pushSent += push.sent;
+
         const user = await prisma.user.findUnique({ where: { id: w.userId }, select: { email: true } });
         if (user) {
           await sendAlertEmail(user.email, {
@@ -109,7 +120,7 @@ async function main() {
     }
   }
 
-  console.log(`✅ ${created} alertas nuevas generadas.`);
+  console.log(`✅ ${created} alertas nuevas generadas, ${pushSent} notificaciones push enviadas.`);
   await prisma.$disconnect();
 }
 
