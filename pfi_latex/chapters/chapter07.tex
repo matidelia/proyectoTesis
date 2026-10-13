@@ -55,7 +55,7 @@ Con sesión iniciada, la exportación se habilita y el botón de seguimiento por
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\textwidth]{./images/demo/demo_dashboard_logueado.png}
-	\caption{Mismo ranking con sesión iniciada: exportación habilitada (RF06/RF08) y badge de alertas sin leer en el header. Fuente: captura propia del sistema en producción.}
+	\caption{Mismo ranking con sesión iniciada: exportación habilitada (RF06/RF08) y badge de alertas sin leer en el header. El score de 93,9 del primer producto es el registro de prueba descripto más abajo. Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-logueado}
 \end{figure}
 
@@ -68,7 +68,7 @@ Más abajo en la misma vista, con sesión iniciada se desbloquea el gráfico de 
 	\label{fig:demo-evolucion-logueado}
 \end{figure}
 
-Por último, la bandeja de alertas (\texttt{/alerts}, RF09) muestra las notificaciones reales generadas cuando un producto seguido cruza el umbral de crecimiento. La alerta de la Figura~\ref{fig:demo-alerts} corresponde a un caso real: el producto de la Figura~\ref{fig:demo-logueado} (score 93,9) fue seguido con esta cuenta y, al recalcularse su score, generó la alerta que se ve a continuación:
+Por último, la bandeja de alertas (\texttt{/alerts}, RF09) muestra las alertas generadas cuando un producto seguido cruza el umbral de crecimiento. La alerta de la Figura~\ref{fig:demo-alerts} corresponde a una \textbf{prueba del circuito}, no a un movimiento del mercado: el 23/09/2026 se insertó manualmente un score de 93,9 para el producto de la Figura~\ref{fig:demo-logueado}, seguido con esta cuenta, cuyo valor calculado en ese momento era 78,9, y se verificó que el sistema generara la alerta y la mostrara en la bandeja. El registro de prueba quedó identificado en la base porque su valor no coincide con el que resulta de aplicar la fórmula a sus propios componentes (Sección~\ref{sec:integridad-datos}).
 
 \begin{figure}[H]
 	\centering

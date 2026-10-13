@@ -56,6 +56,12 @@ Las cifras del sistema crecen con cada corrida, y versiones anteriores de este d
 	\end{tabularx}
 \end{table}
 
+\subsection*{Integridad de los datos}\label{sec:integridad-datos}
+
+Antes de cerrar el informe, el 13/10/2026, se auditó la base de producción completa. Ningún precio es nulo, negativo o de otra moneda que pesos; no hay saltos de precio de más del triple entre registros consecutivos, y el precio que se muestra (el más barato) nunca supera al promedio entre vendedores del historial. Todos los scores están entre 0 y 100, todos los componentes entre 0 y 1, los pesos suman 1 y las cantidades de vendedores y las posiciones están dentro de sus rangos. Se recalcularon los 14.560 scores que guardaban sus pesos a esa fecha a partir de sus propios componentes: coinciden todos menos uno, un registro de prueba insertado manualmente el 23/09/2026 a las 17:13 para verificar el circuito de alertas (Sección~\ref{sec:demo-cuentas}). Ese registro cae dentro del embargo de la separación principal, de modo que no afecta la validación reportada en este capítulo; sí aporta un ejemplo positivo de los 8923 con que se entrenó el modelo de producción y uno de los positivos de validación de los dos primeros cortes del origen móvil, un efecto despreciable que se declara por transparencia.
+
+La auditoría también aclara el conteo de productos. De los 310 registros de producto, 47 son de pruebas iniciales y no tienen ninguna aparición ni score, y 39 nombres aparecen repetidos porque, antes del 23/09, un cambio del vendedor más barato podía dar de alta otra fila para el mismo producto (Sección~\ref{sec:concepto-central}). Las filas repetidas nunca estuvieron activas al mismo tiempo, por lo que el tablero no muestra duplicados. La población efectiva de análisis son los 263 productos con score.
+
 Las diferencias con versiones anteriores del documento se explican por la fecha de medición, no por errores de conteo: por ejemplo, 274 productos con apariciones al 23/09 y 310 productos registrados al 09/10. Los tiempos de respuesta de la API (Tabla~\ref{tab:evidencia}) conservan la fecha de su propia medición, indicada en cada fila, porque se midieron sobre versiones específicas del código.
 
 \section{Variable objetivo y etiquetado}\label{sec:variable-objetivo}
@@ -317,7 +323,7 @@ El análisis por categoría muestra sesgos que limitan el alcance de los resulta
 	\item \textbf{Desempeño desigual}: en Celulares y Electrónica la PR-AUC multiplica varias veces la prevalencia, pero en Alimentos y Bebidas el modelo apenas supera al azar (ROC-AUC 0,616). En esa categoría el índice ML no debería usarse todavía como criterio de priorización. Además, las categorías con pocos positivos (7 a 9) tienen métricas muy inestables.
 	\item \textbf{Sesgo de selección}: el sistema observa solo los productos que aparecen en las búsquedas de la minería (8 por categoría y palabra clave), no el catálogo completo. Los resultados describen a esa población y no son extrapolables a cualquier producto de Mercado Libre.
 	\item \textbf{Sesgo hacia productos nuevos}: el 73\,\% de los positivos corresponde a productos en sus primeros 7 días (Sección~\ref{sec:variable-objetivo}).
-	\item \textbf{Cambios de identidad y de metodología}: hasta el 23/09, un cambio del vendedor más barato podía cortar el histórico de un producto, y los datos de cantidad de vendedores existen solo desde esa fecha. Ambos efectos afectan más a las primeras semanas del dataset.
+	\item \textbf{Cambios de identidad y de metodología}: hasta el 23/09, un cambio del vendedor más barato podía cortar el histórico de un producto y darlo de alta con otro identificador, y los datos de cantidad de vendedores existen solo desde esa fecha. Ambos efectos afectan más a las primeras semanas del dataset. Por la misma razón, en la evaluación con productos no vistos un mismo producto comercial podría figurar con un identificador en entrenamiento y con otro en validación, lo que puede volver algo optimista ese resultado.
 \end{itemize}
 
 \section{Calibración y denominación de la salida}\label{sec:ml-calibracion}
