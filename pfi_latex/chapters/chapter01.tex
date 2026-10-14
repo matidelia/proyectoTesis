@@ -1,50 +1,14 @@
-\chapter{Marco Teórico}\label{chapter01}
+\chapter{Antecedentes}\label{chapter01}
 
-\section{Introducción}\label{sec:introduccion}
+Esta sección reúne los antecedentes del trabajo: el marco teórico en el que se apoya el sistema, el marco normativo que lo alcanza y el estado del arte de las herramientas y los trabajos académicos relacionados.
 
-El crecimiento del comercio electrónico durante los últimos años produjo una transformación significativa en la manera en que consumidores, vendedores y empresas interactúan dentro de plataformas digitales. Los marketplaces modernos concentran millones de productos, búsquedas y transacciones diarias, generando grandes volúmenes de información capaces de reflejar tendencias de consumo, variaciones de demanda y cambios en el comportamiento del mercado.
+\section{Marco Teórico}\label{sec:marco-teorico}
 
-La información generada por la actividad de los usuarios dentro de entornos digitales no solo permite describir comportamientos ya ocurridos, sino que también puede funcionar como una señal temprana para anticipar cambios de demanda. En trabajos como el de \textcite{KulkarniKannanMoe2012}, los datos de búsqueda en línea son utilizados para anticipar ventas de productos nuevos, lo que refuerza la utilidad de observar señales digitales antes de que una tendencia se encuentre completamente consolidada.
-
-Dentro de este contexto, Mercado Libre representa uno de los ecosistemas comerciales más importantes de América Latina. Su infraestructura reúne vendedores, compradores y productos pertenecientes a múltiples categorías, convirtiéndose en una fuente extremadamente valiosa de información relacionada con consumo digital y comportamiento comercial.
-
-A pesar del gran volumen de información disponible, uno de los principales problemas detectados es la dificultad para identificar productos emergentes de manera temprana. La mayoría de las herramientas actuales únicamente muestran tendencias instantáneas o rankings superficiales, sin construir datasets históricos persistentes capaces de alimentar modelos predictivos o sistemas avanzados de inteligencia comercial.
-
-Como consecuencia, muchos vendedores y emprendedores ingresan tarde a tendencias ya consolidadas, perdiendo oportunidades comerciales debido al aumento de competencia y reducción de márgenes de rentabilidad.
-
-Frente a esta problemática, el presente proyecto propone el desarrollo de una plataforma inteligente capaz de detectar tempranamente productos emergentes mediante la utilización exclusiva de la API oficial de Mercado Libre, mecanismos automatizados de minería de datos y análisis temporal basado en datos históricos construido internamente.
-
-La solución propuesta busca transformar señales dispersas provenientes del marketplace como tendencias, búsquedas, publicaciones, precios y categorías en información estructurada y utilizable para la toma de decisiones comerciales.
-
-En el proyecto, el término ``tendencia'' no se utiliza como sinónimo de ranking instantáneo, sino como una variación observable y sostenida en el tiempo. Cuando se menciona ``búsquedas'', se hace referencia a resultados públicos obtenidos desde endpoints oficiales de búsqueda y no a datos privados de comportamiento de usuarios. Por lo tanto, la detección se apoyará en variables accesibles y registrables como frecuencia de aparición, variación de cantidad de publicaciones, permanencia en listados, evolución de precios, categoría asociada y cambios relativos frente a períodos anteriores.
-
-El enfoque planteado se sostiene sobre tres ejes principales: la recolección automatizada de información accesible desde fuentes oficiales, la construcción progresiva de un histórico propio y el análisis temporal de variables que puedan funcionar como indicios de crecimiento. Esta decisión permite diferenciar el proyecto de una herramienta meramente descriptiva, ya que el valor principal no se encuentra solo en mostrar datos actuales, sino en observar su evolución y detectar comportamientos emergentes.
-
-\subsection{Objetivo General}\label{sec:objetivo-general}
-
-Desarrollar una plataforma inteligente capaz de detectar tempranamente productos emergentes en Mercado Libre mediante la recolección automatizada de datos provenientes de su API oficial, la construcción de un dataset histórico propio y el análisis temporal utilizando métricas descriptivas y modelos supervisados de aprendizaje automático. El alcance específico del sistema, incluyendo sus capacidades actuales y las líneas de trabajo futuro, se detalla explícitamente en la Sección~\ref{sec:alcance}.
-
-\subsection{Objetivos Específicos}\label{sec:objetivos-especificos}
-
-\begin{enumerate}
-	\item Capturar de forma automatizada y periódica datos de productos publicados en Mercado Libre a través de su API oficial, con una frecuencia mínima de 3 corridas diarias y sin exceder los límites de rate-limit de la plataforma (RF01, RNF01).
-	\item Construir un dataset histórico propio y calcular, a partir de él, un score de tendencia por producto en base a variables temporales, sobre una ventana de análisis de 7 días y con un umbral de crecimiento de 5 puntos para marcar un producto como en tendencia (RF02).
-	\item Diseñar un dashboard que permita filtrar y ordenar los productos monitoreados, visualizar la evolución temporal de precios y categorías, y responder las consultas en menos de 3 segundos (RF03, RF05, RNF02).
-	\item Exponer los resultados mediante una API REST propia, con al menos 5 endpoints documentados, y permitir su exportación para uso externo (RF04, RF06).
-	\item Entrenar y evaluar, como complemento del score descriptivo, un modelo de aprendizaje automático supervisado con un objetivo mínimo de \emph{recall} de 0,70 para la clase positiva, priorizando no perder tendencias reales por sobre evitar falsas alertas, con una evaluación libre de fuga temporal que reporte también su precisión, su tasa de falsos positivos y su comparación contra alternativas más simples (Capítulo~\ref{chapter-ml}).
-\end{enumerate}
-
-\subsection{Estructura del documento}
-
-El resto del informe se organiza de la siguiente manera. El Capítulo~\ref{chapter02} (Estado del Arte) releva las aplicaciones existentes orientadas a vendedores de Mercado Libre y los antecedentes académicos sobre detección temprana de tendencias, identificando la brecha que este proyecto busca cubrir. El Capítulo~\ref{chapter06} (User Research) presenta la encuesta y las entrevistas en profundidad que validan la problemática y las decisiones de diseño del sistema. El Capítulo~\ref{chapter05} (Competencias y Estrategia de Mercado) desarrolla el análisis competitivo, el modelo de negocio, la viabilidad económico-financiera y el branding. El Capítulo~\ref{chapter03} (Requerimientos) detalla las historias de usuario, los requerimientos funcionales y no funcionales, la metodología de desarrollo y la viabilidad legal y técnica. El Capítulo~\ref{chapter04} (Mockups) presenta los wireframes de las pantallas principales. El Capítulo~\ref{chapter07} (Demo) documenta el sistema en funcionamiento en producción, con evidencia cuantitativa. El Capítulo~\ref{chapter-ml} presenta el diseño experimental y la validación del modelo de aprendizaje automático, incluidos los controles de fuga, la comparación contra reglas simples, el análisis por categoría y la trazabilidad de la predicción. El Capítulo~\ref{conclussions} (Conclusión) resume los aportes del proyecto en relación con sus objetivos y detalla las líneas de trabajo futuro.
-
-El informe incluye seis anexos. El Anexo A reproduce la Propuesta de Tema aprobada, como respaldo documental. El Anexo B presenta el cronograma de actividades del proyecto. El Anexo C muestra los resultados completos de la encuesta de User Research. Los Anexos D, E y F contienen, cada uno, la transcripción completa de una de las tres entrevistas en profundidad realizadas.
-
-\section{Concepto central}\label{sec:concepto-central}
+\subsection{Concepto central}\label{sec:concepto-central}
 
 A los fines del proyecto, un producto emergente será aquel que, durante una ventana temporal definida, presente crecimiento sostenido en frecuencia de aparición, permanencia y/o publicaciones asociadas, con variaciones de precio o categoría que permitan diferenciarlo de aumentos aislados. Esta definición convierte la idea general de tendencia en un conjunto de indicadores medibles a partir del histórico propio.
 
-\subsection*{¿A qué ``producto'' se refiere el sistema?}
+\subsubsection*{¿A qué ``producto'' se refiere el sistema?}
 
 Una misma referencia comercial (por ejemplo, un modelo puntual de auricular o de organizador de placard) suele estar publicada en Mercado Libre por decenas de vendedores distintos, cada uno con su propio precio, stock y reputación. Conviene aclarar explícitamente a cuál de esas instancias se refiere el sistema cuando calcula un score de tendencia, dado que la ambigüedad afectaría directamente la interpretación de los resultados.
 
@@ -54,7 +18,7 @@ Con esa aclaración hecha, el sistema resuelve la identidad de un producto contr
 
 Con la identidad del producto ya resuelta contra el catálogo, quedaba una limitación relacionada: el score seguía calculándose sobre la señal de una sola publicación (la más barata) en cada momento, y no sobre una agregación simultánea de las apariciones de todos los vendedores que compiten por ese mismo producto. Esto también se resolvió: el componente de estabilidad de precio pasó a calcularse sobre el promedio entre vendedores activos, y la cantidad de vendedores se incorporó como un quinto componente ponderado de la fórmula (saturación), según se detalla en la Sección~\ref{sec:score-formal}.
 
-\section{Decisiones técnicas}
+\subsection{Decisiones técnicas}
 
 Las decisiones técnicas adoptadas dentro del proyecto responden principalmente a la necesidad de garantizar escalabilidad, automatización, persistencia histórica y capacidad analítica. El detalle del stack tecnológico elegido, su evolución durante la implementación y la arquitectura general del sistema se desarrollan en la Sección~\ref{sec:metodologia} (Arquitectura y tecnologías utilizadas).
 
@@ -66,23 +30,11 @@ Por otro lado, la incorporación de técnicas de minería de datos permite extra
 
 La implementación de dashboards analíticos y mecanismos de monitoreo contribuye a mejorar la visualización de métricas, el seguimiento de tendencias y la disponibilidad operativa de los servicios utilizados.
 
-\section{Alcance}\label{sec:alcance}
-
-El problema abordado (la asimetría de acceso a señales de demanda temprana entre vendedores) es común a cualquier plataforma de comercio electrónico o marketplace multicanal, y la arquitectura propuesta (captura periódica vía API, histórico propio y score ponderado) no depende de una API en particular. Dicho esto, la implementación y validación de este proyecto se acotan deliberadamente a un único caso concreto, Mercado Libre Argentina, por motivos de factibilidad dentro del plazo de la cursada: utiliza únicamente información obtenida mediante sus endpoints oficiales autorizados, y no se verificó el funcionamiento sobre otra plataforma. La plataforma contempla procesos de captura automatizada, construcción de históricos temporales, monitoreo de endpoints y visualización analítica.
-
-El alcance no incluye scraping, acceso a datos privados de usuarios ni predicción directa de ventas internas de Mercado Libre. La plataforma trabajará únicamente con datos disponibles mediante API oficial y con el histórico construido por el propio sistema.
-
-\subsection*{Capacidades del sistema}
-
-El objetivo general del proyecto (Sección~\ref{sec:objetivo-general}) incluye tanto métricas descriptivas como modelos supervisados de aprendizaje automático. El sistema implementa ambos componentes: captura automatizada de datos, orquestada íntegramente en la nube sin depender de una PC encendida (RF01); score de tendencia basado en cinco métricas descriptivas ponderadas (frecuencia, permanencia, ranking, estabilidad de precio y saturación por cantidad de vendedores, RF02); dashboard con ranking y filtros por categoría/precio/fecha (RF03); API REST (RF04); gráficos de evolución temporal (RF05); exportación CSV (RF06); un modelo de Machine Learning supervisado (Python, Pandas + Scikit-Learn), entrenado y evaluado sobre el histórico acumulado, que asigna a cada producto un índice de prioridad según su chance de subir en la próxima corrida y se expone en el dashboard (RF07, Capítulo~\ref{chapter-ml}); cuentas de usuario con niveles gratuito/pago (RF08); y alertas para productos seguidos, visibles en la aplicación y enviadas como notificación push al navegador o al celular del cliente (RF09, Sección~\ref{sec:demo-cuentas}). El sistema se encuentra desplegado en producción y captura datos de forma autónoma.
-
-El modelo de Machine Learning (RF07) está en estado de validación inicial: ordena productos con información genuina, pero su precisión todavía no alcanza para afirmar que detecta tendencias de manera confiable, y el histórico no cubre ciclos completos de aparición, crecimiento y declive por categoría. Los criterios para considerarlo validado se fijan en la Sección~\ref{sec:ml-alcance}, y esta y otras líneas de trabajo futuro se detallan en la Sección~\ref{sec:trabajo-futuro}.
-
-\section{Tecnologías utilizadas}\label{sec:tecnologias-utilizadas}
+\subsection{Tecnologías utilizadas}\label{sec:tecnologias-utilizadas}
 
 A continuación se describen los conceptos y tecnologías que sustentan el desarrollo del proyecto: las APIs REST como mecanismo de acceso a datos, las técnicas de minería de datos y series temporales aplicadas a la construcción del histórico propio, y los fundamentos del aprendizaje automático supervisado previsto para las etapas siguientes.
 
-\subsection{APIs REST}
+\subsubsection{APIs REST}
 
 Las APIs REST constituyen uno de los mecanismos de comunicación más utilizados dentro de arquitecturas distribuidas modernas. Su utilización permite el intercambio estructurado de información entre sistemas mediante protocolos estándar como HTTP.
 
@@ -90,7 +42,7 @@ En el contexto del comercio electrónico, las APIs facilitan el acceso automatiz
 
 La API oficial de Mercado Libre\footnote{Documentación de APIs de Mercado Libre, disponible en \url{https://developers.mercadolibre.com.ar/} (consultado 2026-08-03).} representa la principal fuente de información utilizada dentro del proyecto, ya que permite acceder de manera estructurada a distintos recursos del marketplace mediante autenticación y solicitudes controladas.
 
-\subsection{Minería de Datos}
+\subsubsection{Minería de Datos}
 
 La minería de datos comprende el conjunto de técnicas orientadas a descubrir patrones, relaciones y comportamientos relevantes dentro de grandes volúmenes de información.
 
@@ -100,7 +52,7 @@ Su aplicación resulta especialmente importante en escenarios donde existe una g
 
 Dentro del proyecto, la minería de datos constituye uno de los pilares principales para la construcción de históricos y el análisis de productos emergentes.
 
-\subsection{Series Temporales}
+\subsubsection{Series Temporales}
 
 Las series temporales representan secuencias de datos organizadas cronológicamente. Su análisis permite estudiar la evolución de determinadas variables a lo largo del tiempo e identificar patrones de crecimiento, estacionalidad y cambios de comportamiento.
 
@@ -110,7 +62,7 @@ Variables como frecuencia de aparición, crecimiento progresivo, cambios de rank
 
 Los trabajos sobre predicción de demanda y series temporales, como el de \textcite{LimArikLoeffPfister2021}, muestran la importancia de considerar la evolución histórica de múltiples variables para analizar escenarios de comportamiento futuro.
 
-\subsection{Machine Learning Supervisado}
+\subsubsection{Machine Learning Supervisado}
 
 El aprendizaje automático supervisado permite desarrollar modelos capaces de identificar patrones y realizar clasificaciones a partir de datos previamente etiquetados.
 
@@ -118,9 +70,9 @@ En proyectos orientados al análisis de tendencias, estos modelos pueden utiliza
 
 La utilización de variables temporales y métricas descriptivas permite construir modelos con capacidad de aprendizaje progresivo, aportando mayor precisión en la identificación de oportunidades comerciales.
 
-En una primera etapa, el proyecto priorizó métricas descriptivas y reglas de análisis temporal, dejando sentado el diseño metodológico del modelo supervisado para aplicarlo cuando el histórico alcanzara un volumen mínimo razonable. Esta decisión es consistente con trabajos como el de \textcite{ElalemMaierSeifert2023}, donde se analiza la predicción de productos nuevos con ciclos de vida cortos y disponibilidad limitada de datos históricos. El modelo ya se entrenó y se evaluó: el diseño experimental completo, los controles contra la fuga de información y los resultados se presentan en el Capítulo~\ref{chapter-ml}.
+En una primera etapa, el proyecto priorizó métricas descriptivas y reglas de análisis temporal, dejando sentado el diseño metodológico del modelo supervisado para aplicarlo cuando el histórico alcanzara un volumen mínimo razonable. Esta decisión es consistente con trabajos como el de \textcite{ElalemMaierSeifert2023}, donde se analiza la predicción de productos nuevos con ciclos de vida cortos y disponibilidad limitada de datos históricos. El modelo ya se entrenó y se evaluó: el diseño experimental completo, los controles contra la fuga de información y los resultados se presentan en la Sección~\ref{chapter-ml}.
 
-\subsubsection*{Diseño metodológico del modelo supervisado}
+\paragraph*{Diseño metodológico del modelo supervisado}
 
 El diseño se definió antes de tener volumen suficiente para entrenar, de modo que la construcción del histórico fuera compatible desde el principio con esta etapa. En síntesis:
 
@@ -132,7 +84,7 @@ El diseño se definió antes de tener volumen suficiente para entrenar, de modo 
 	\item \textbf{Métricas de evaluación}: como la clase positiva es minoritaria, se priorizan la PR-AUC frente a la prevalencia, la matriz de confusión, la tasa de falsos positivos y el \emph{recall} de la clase positiva por sobre la exactitud: perder una tendencia real es más costoso para el vendedor que una señal de más (Sección~\ref{sec:ml-resultados}).
 \end{itemize}
 
-\section{Modelos y Arquitecturas Aplicables}
+\subsection{Modelos y Arquitecturas Aplicables}
 
 El desarrollo de plataformas inteligentes orientadas al análisis de tendencias requiere la utilización de arquitecturas capaces de procesar información de manera distribuida, escalable y organizada. Los modelos basados en arquitecturas cliente-servidor y servicios desacoplados permiten separar responsabilidades entre captura de datos, procesamiento, persistencia y visualización de información.
 
@@ -146,7 +98,7 @@ Por otra parte, la utilización de arquitecturas basadas en procesamiento de dat
 
 En proyectos orientados a inteligencia comercial, estas arquitecturas permiten incorporar posteriormente modelos de aprendizaje automático, motores analíticos y dashboards interactivos sin necesidad de rediseñar completamente la estructura principal del sistema. Por eso, la arquitectura no solo cumple una función técnica, sino que también condiciona la capacidad futura de expansión y evolución de la plataforma.
 
-\section{Métricas y Análisis Temporal}
+\subsection{Métricas y Análisis Temporal}
 
 El análisis temporal constituye uno de los componentes centrales en sistemas orientados a la detección de tendencias y comportamiento emergente. A diferencia de los análisis estáticos, las métricas temporales permiten observar cómo evolucionan determinados fenómenos a lo largo del tiempo, facilitando la identificación de patrones de crecimiento, estacionalidad y cambios abruptos en la demanda.
 
@@ -162,7 +114,7 @@ El uso de métricas históricas contribuye a reducir la dependencia de rankings 
 
 La detección temprana no se define por la aparición aislada de un producto en un ranking, sino por la repetición de señales durante un período determinado. Por ese motivo, el proyecto prioriza métricas que permitan observar continuidad, intensidad y variación temporal.
 
-\subsection{Métricas preliminares}
+\subsubsection{Métricas preliminares}
 
 \begin{table}[ht]
 	\centering
@@ -182,7 +134,7 @@ La detección temprana no se define por la aparición aislada de un producto en 
 	\end{tabularx}
 \end{table}
 
-\subsection{Definición formal del score de tendencia (RF02)}\label{sec:score-formal}
+\subsubsection{Definición formal del score de tendencia (RF02)}\label{sec:score-formal}
 
 El indicador compuesto de la Tabla~\ref{tab:metricas} es, en la implementación actual, el score de tendencia: un valor entre 0 y 100 calculado para cada producto sobre una ventana de análisis de 7 días, que combina cinco componentes normalizados entre 0 y 1:
 
@@ -198,14 +150,14 @@ donde:
 	\item \textbf{Permanencia ($p$, peso 21\,\%)}: proporción de días distintos, dentro de la ventana, en los que el producto tuvo al menos una aparición ($p = \text{días con presencia} / 7$, acotado a 1). Diferencia una presencia sostenida de una aparición aislada.
 	\item \textbf{Ranking ($r$, peso 17\,\%)}: posición promedio del producto dentro del catálogo de su categoría (1 a 8, ya que la minería captura 8 productos por categoría), invertida y normalizada: $r = \max(0,\, (9 - \text{posición promedio}) / 8)$. Una posición promedio 1 (la mejor) da $r=1$; una posición 8 da $r=0$.
 	\item \textbf{Estabilidad de precio ($e$, peso 17\,\%)}: $e = \max(0,\, 1 - \min(1, |\Delta\%\text{precio}|))$, comparando el primer y el último precio registrado dentro de la ventana. Un precio estable da $e$ cercano a 1; una variación brusca (oferta relámpago, error de carga) lo acerca a 0. Si el producto solo tiene un registro de precio en la ventana, se usa un valor neutro $e = 0{,}5$ por falta de información suficiente. Desde el 23/09/2026, el precio que alimenta este componente es el \textbf{promedio entre todos los vendedores activos} detectados en cada aparición (hasta 5, vía \texttt{/products/\{id\}/items}), no el del vendedor más barato del momento; así la estabilidad no se ve afectada por un simple cambio de quién ofrece el precio más bajo de una corrida de minería a otra.
-	\item \textbf{Saturación ($s$, peso 15\,\%)}: mide si el producto todavía tiene pocos vendedores compitiendo por él o si el mercado ya se consolidó. $s = \max(0,\, \min(1,\, 1 - (\overline{v} - 1)/4))$, donde $\overline{v}$ es la cantidad promedio de vendedores activos detectados en la ventana (\texttt{avgSellerCount}, de 1 a 5 según el límite de \texttt{/products/\{id\}/items}). Un producto con 1 solo vendedor activo da $s=1$ (todavía sin competencia real: la oportunidad temprana que describieron los vendedores entrevistados, Anexos D a F); con 5 vendedores da $s=0$ (mercado ya saturado). Para productos capturados antes del 24/09/2026, que todavía no tienen \texttt{avgSellerCount} registrado, se usa un valor neutro $s=0{,}5$, mismo criterio que ya se aplicaba a $e$ con un solo registro de precio.
+	\item \textbf{Saturación ($s$, peso 15\,\%)}: mide si el producto todavía tiene pocos vendedores compitiendo por él o si el mercado ya se consolidó. $s = \max(0,\, \min(1,\, 1 - (\overline{v} - 1)/4))$, donde $\overline{v}$ es la cantidad promedio de vendedores activos detectados en la ventana (\texttt{avgSellerCount}, de 1 a 5 según el límite de \texttt{/products/\{id\}/items}). Un producto con 1 solo vendedor activo da $s=1$ (todavía sin competencia real: la oportunidad temprana que describieron los vendedores entrevistados, Anexos~\ref{anexo:entrevista1} a~\ref{anexo:entrevista3}); con 5 vendedores da $s=0$ (mercado ya saturado). Para productos capturados antes del 24/09/2026, que todavía no tienen \texttt{avgSellerCount} registrado, se usa un valor neutro $s=0{,}5$, mismo criterio que ya se aplicaba a $e$ con un solo registro de precio.
 \end{itemize}
 
 Este quinto componente, incorporado el 24/09/2026, resuelve una limitación reconocida de la fórmula: la cantidad de vendedores pasó de ser un dato persistido solo a título informativo a ser un componente ponderado de la fórmula. Los cuatro pesos anteriores se reescalaron proporcionalmente (multiplicados por 0,85) para liberar el 15\,\% que ahora ocupa $s$, sin alterar su orden relativo de importancia.
 
 Un producto se marca como ``en crecimiento'' (HU02, alerta) cuando su score sube 5 puntos o más respecto del cálculo anterior sobre el mismo producto.
 
-\subsubsection*{Ejemplo trabajado con datos reales del sistema}
+\paragraph*{Ejemplo trabajado con datos reales del sistema}
 
 A modo de ejemplo, el sistema calculó lo siguiente para un aro de luz LED profesional (categoría Celulares) el día 10 de agosto de 2026, con 21 apariciones registradas en la ventana de 7 días, bajo la metodología de precio de un solo vendedor, vigente hasta el 22/09/2026 (ver aclaración más abajo):
 
@@ -222,13 +174,13 @@ A modo de ejemplo, el sistema calculó lo siguiente para un aro de luz LED profe
 
 Como contraste, otro producto de la misma categoría con una sola aparición en toda la ventana obtuvo $f=0{,}024$, $p=0{,}143$, $r=0{,}125$ y $e=0{,}5$ (neutro, por tener un solo registro de precio), resultando en un score de apenas $16{,}9$. Esto refleja correctamente que se trata de una aparición aislada y no de una tendencia sostenida.
 
-\subsubsection*{Agregación entre vendedores (actualizado 23/09/2026)}
+\paragraph*{Agregación entre vendedores (actualizado 23/09/2026)}
 
 El ejemplo anterior calculaba $e$ sobre el precio del vendedor más barato en cada corrida de minería, algo coherente con que, en ese momento, la identidad del producto todavía no estaba anclada al catálogo de Mercado Libre (Sección~\ref{sec:concepto-central}). Una vez resuelta esa identidad, se corrigió también la estabilidad de precio para que se calcule sobre el promedio entre todos los vendedores activos, no sobre uno solo. Un caso real, verificado contra producción el mismo día del cambio: el producto de catálogo \texttt{MLA20659045} (Samsung Galaxy A04e, categoría Celulares) tenía 2 vendedores activos, con precios de \$180.000 y \$230.000: precio más barato \$180.000 (lo que se le sigue mostrando al comprador), precio promedio \$205.000 (lo que a partir de ahora alimenta $e$). Su score recalculado con este componente ya agregado dio $78{,}5$, con \texttt{avgSellerCount = 2} persistido junto al resto del desglose.
 
-Como los aproximadamente 5800 registros de \texttt{PriceHistory} anteriores a este cambio fueron capturados con la metodología de un solo vendedor, los dos ejemplos trabajados arriba ($72{,}1$ y $16{,}9$) siguen siendo datos reales y válidos para la fecha en que se calcularon, pero no son directamente comparables con scores calculados después del 23/09/2026. El modelo de ML vigente (Capítulo~\ref{chapter-ml}) se entrenó el 09/10/2026 excluyendo los pares de scores que cruzan este cambio y la incorporación de la saturación descripta a continuación, porque su diferencia mide el cambio de fórmula y no el mercado (Sección~\ref{sec:variable-objetivo}).
+Como los aproximadamente 5800 registros de \texttt{PriceHistory} anteriores a este cambio fueron capturados con la metodología de un solo vendedor, los dos ejemplos trabajados arriba ($72{,}1$ y $16{,}9$) siguen siendo datos reales y válidos para la fecha en que se calcularon, pero no son directamente comparables con scores calculados después del 23/09/2026. El modelo de ML vigente (Sección~\ref{chapter-ml}) se entrenó el 09/10/2026 excluyendo los pares de scores que cruzan este cambio y la incorporación de la saturación descripta a continuación, porque su diferencia mide el cambio de fórmula y no el mercado (Sección~\ref{sec:variable-objetivo}).
 
-\subsubsection*{Incorporación de la saturación como componente ponderado (actualizado 24/09/2026)}
+\paragraph*{Incorporación de la saturación como componente ponderado (actualizado 24/09/2026)}
 
 Hasta este cambio, \texttt{avgSellerCount} se calculaba y persistía junto al resto del desglose, pero solo a título informativo: no pesaba en la fórmula. Se incorporó como quinto componente ($s$, peso 15\,\%, ver definición formal más arriba) para que la cantidad de vendedores compitiendo por un mismo producto de catálogo influya directamente en el score, no solo se muestre como dato de contexto.
 
@@ -245,4 +197,18 @@ Mismo producto de catálogo del ejemplo anterior (\texttt{MLA20659045}, Samsung 
 
 Como con el cambio anterior, los scores calculados con la fórmula de cuatro componentes (incluido el $78{,}5$ del ejemplo previo) siguen siendo datos reales y válidos para la fecha en que se calcularon (cada registro de \texttt{TrendScore} persiste los pesos vigentes al momento de su cálculo, campo \texttt{weights} dentro de \texttt{components}), pero no son directamente comparables con scores calculados después del 24/09/2026.
 
-El sistema persiste el desglose completo de los componentes junto con cada score calculado (no solo el número final), precisamente para que el resultado pueda auditarse y no funcione como una caja negra. Esto responde de manera directa al hallazgo de la Entrevista 2 (Capítulo~\ref{chapter06}), donde el entrevistado señaló que un score sin desglose no le genera confianza.
+El sistema persiste el desglose completo de los componentes junto con cada score calculado (no solo el número final), precisamente para que el resultado pueda auditarse y no funcione como una caja negra. Esto responde de manera directa al hallazgo de la Entrevista 2 (Sección~\ref{chapter06}), donde el entrevistado señaló que un score sin desglose no le genera confianza.
+
+
+\section{Marco Normativo}\label{sec:marco-normativo}
+
+El sistema opera con datos públicos de un marketplace y, desde la incorporación de cuentas y alertas, con un conjunto acotado de datos de sus propios usuarios. El marco normativo aplicable en Argentina es el siguiente:
+
+\begin{itemize}
+	\item \textbf{Ley 25.326 de Protección de los Datos Personales y su Decreto Reglamentario 1558/2001.} Regula el tratamiento de datos personales y establece, entre otros, los principios de finalidad, consentimiento, calidad (los datos deben ser adecuados y no excesivos para la finalidad), seguridad y confidencialidad, y los derechos de acceso, rectificación y supresión de los titulares. Es la norma que alcanza a los datos de las cuentas de usuario, a las suscripciones a notificaciones y a los datos recolectados en la encuesta y las entrevistas.
+	\item \textbf{Ley 11.723 de Propiedad Intelectual, con la modificación de la Ley 25.036.} Incorpora los programas de computación como obras protegidas. Alcanza al código desarrollado para el sistema y al uso de bibliotecas de terceros, que se emplean bajo las licencias de código abierto con que se distribuyen.
+	\item \textbf{Condiciones de uso de la plataforma de desarrolladores de Mercado Libre.} Rigen el acceso a la API oficial: autenticación mediante una aplicación registrada, respeto de los límites de solicitudes y uso de los datos dentro de lo que la plataforma habilita. Por esa razón el proyecto obtiene información exclusivamente a través de la API oficial y excluye el \emph{scraping} de su alcance (Sección~\ref{sec:alcance}).
+	\item \textbf{Ley 24.240 de Defensa del Consumidor.} No alcanza al prototipo, que no cobra a sus usuarios, pero sí alcanzaría a una eventual comercialización del nivel pago del modelo de negocio (Sección~\ref{sec:modelo-negocio}), en particular en cuanto a la información clara sobre el servicio, su precio y sus condiciones de baja.
+\end{itemize}
+
+La forma concreta en que el sistema cumple con estas normas (minimización de datos, consentimiento explícito para las notificaciones, anonimización de las entrevistas y uso exclusivo de la API oficial) se detalla en la Sección~\ref{sec:viabilidad-legal}.

@@ -1,0 +1,52 @@
+\chapter{Introducción}\label{sec:introduccion}
+
+
+El crecimiento del comercio electrónico durante los últimos años produjo una transformación significativa en la manera en que consumidores, vendedores y empresas interactúan dentro de plataformas digitales. Los marketplaces modernos concentran millones de productos, búsquedas y transacciones diarias, generando grandes volúmenes de información capaces de reflejar tendencias de consumo, variaciones de demanda y cambios en el comportamiento del mercado.
+
+La información generada por la actividad de los usuarios dentro de entornos digitales no solo permite describir comportamientos ya ocurridos, sino que también puede funcionar como una señal temprana para anticipar cambios de demanda. En trabajos como el de \textcite{KulkarniKannanMoe2012}, los datos de búsqueda en línea son utilizados para anticipar ventas de productos nuevos, lo que refuerza la utilidad de observar señales digitales antes de que una tendencia se encuentre completamente consolidada.
+
+Dentro de este contexto, Mercado Libre representa uno de los ecosistemas comerciales más importantes de América Latina. Su infraestructura reúne vendedores, compradores y productos pertenecientes a múltiples categorías, convirtiéndose en una fuente extremadamente valiosa de información relacionada con consumo digital y comportamiento comercial.
+
+A pesar del gran volumen de información disponible, uno de los principales problemas detectados es la dificultad para identificar productos emergentes de manera temprana. La mayoría de las herramientas actuales únicamente muestran tendencias instantáneas o rankings superficiales, sin construir datasets históricos persistentes capaces de alimentar modelos predictivos o sistemas avanzados de inteligencia comercial.
+
+Como consecuencia, muchos vendedores y emprendedores ingresan tarde a tendencias ya consolidadas, perdiendo oportunidades comerciales debido al aumento de competencia y reducción de márgenes de rentabilidad.
+
+Frente a esta problemática, el presente proyecto propone el desarrollo de una plataforma inteligente capaz de detectar tempranamente productos emergentes mediante la utilización exclusiva de la API oficial de Mercado Libre, mecanismos automatizados de minería de datos y análisis temporal basado en datos históricos construido internamente.
+
+La solución propuesta busca transformar señales dispersas provenientes del marketplace como tendencias, búsquedas, publicaciones, precios y categorías en información estructurada y utilizable para la toma de decisiones comerciales.
+
+En el proyecto, el término ``tendencia'' no se utiliza como sinónimo de ranking instantáneo, sino como una variación observable y sostenida en el tiempo. Cuando se menciona ``búsquedas'', se hace referencia a resultados públicos obtenidos desde endpoints oficiales de búsqueda y no a datos privados de comportamiento de usuarios. Por lo tanto, la detección se apoyará en variables accesibles y registrables como frecuencia de aparición, variación de cantidad de publicaciones, permanencia en listados, evolución de precios, categoría asociada y cambios relativos frente a períodos anteriores.
+
+El enfoque planteado se sostiene sobre tres ejes principales: la recolección automatizada de información accesible desde fuentes oficiales, la construcción progresiva de un histórico propio y el análisis temporal de variables que puedan funcionar como indicios de crecimiento. Esta decisión permite diferenciar el proyecto de una herramienta meramente descriptiva, ya que el valor principal no se encuentra solo en mostrar datos actuales, sino en observar su evolución y detectar comportamientos emergentes.
+
+\section{Objetivo General}\label{sec:objetivo-general}
+
+Desarrollar una plataforma inteligente capaz de detectar tempranamente productos emergentes en Mercado Libre mediante la recolección automatizada de datos provenientes de su API oficial, la construcción de un dataset histórico propio y el análisis temporal utilizando métricas descriptivas y modelos supervisados de aprendizaje automático. El alcance específico del sistema, incluyendo sus capacidades actuales y las líneas de trabajo futuro, se detalla explícitamente en la Sección~\ref{sec:alcance}.
+
+\section{Objetivos Específicos}\label{sec:objetivos-especificos}
+
+\begin{enumerate}
+	\item Capturar de forma automatizada y periódica datos de productos publicados en Mercado Libre a través de su API oficial, con una frecuencia mínima de 3 corridas diarias y sin exceder los límites de rate-limit de la plataforma (RF01, RNF01).
+	\item Construir un dataset histórico propio y calcular, a partir de él, un score de tendencia por producto en base a variables temporales, sobre una ventana de análisis de 7 días y con un umbral de crecimiento de 5 puntos para marcar un producto como en tendencia (RF02).
+	\item Diseñar un dashboard que permita filtrar y ordenar los productos monitoreados, visualizar la evolución temporal de precios y categorías, y responder las consultas en menos de 3 segundos (RF03, RF05, RNF02).
+	\item Exponer los resultados mediante una API REST propia, con al menos 5 endpoints documentados, y permitir su exportación para uso externo (RF04, RF06).
+	\item Entrenar y evaluar, como complemento del score descriptivo, un modelo de aprendizaje automático supervisado con un objetivo mínimo de \emph{recall} de 0,70 para la clase positiva, priorizando no perder tendencias reales por sobre evitar falsas alertas, con una evaluación libre de fuga temporal que reporte también su precisión, su tasa de falsos positivos y su comparación contra alternativas más simples (Sección~\ref{chapter-ml}).
+\end{enumerate}
+
+\section{Alcance}\label{sec:alcance}
+
+El problema abordado (la asimetría de acceso a señales de demanda temprana entre vendedores) es común a cualquier plataforma de comercio electrónico o marketplace multicanal, y la arquitectura propuesta (captura periódica vía API, histórico propio y score ponderado) no depende de una API en particular. Dicho esto, la implementación y validación de este proyecto se acotan deliberadamente a un único caso concreto, Mercado Libre Argentina, por motivos de factibilidad dentro del plazo del proyecto: utiliza únicamente información obtenida mediante sus endpoints oficiales autorizados, y no se verificó el funcionamiento sobre otra plataforma. La plataforma contempla procesos de captura automatizada, construcción de históricos temporales, monitoreo de endpoints y visualización analítica.
+
+El alcance no incluye scraping, acceso a datos privados de usuarios ni predicción directa de ventas internas de Mercado Libre. La plataforma trabajará únicamente con datos disponibles mediante API oficial y con el histórico construido por el propio sistema.
+
+\subsection*{Capacidades del sistema}
+
+El objetivo general del proyecto (Sección~\ref{sec:objetivo-general}) incluye tanto métricas descriptivas como modelos supervisados de aprendizaje automático. El sistema implementa ambos componentes: captura automatizada de datos, orquestada íntegramente en la nube sin depender de una PC encendida (RF01); score de tendencia basado en cinco métricas descriptivas ponderadas (frecuencia, permanencia, ranking, estabilidad de precio y saturación por cantidad de vendedores, RF02); dashboard con ranking y filtros por categoría/precio/fecha (RF03); API REST (RF04); gráficos de evolución temporal (RF05); exportación CSV (RF06); un modelo de Machine Learning supervisado (Python, Pandas + Scikit-Learn), entrenado y evaluado sobre el histórico acumulado, que asigna a cada producto un índice de prioridad según su chance de subir en la próxima corrida y se expone en el dashboard (RF07, Sección~\ref{chapter-ml}); cuentas de usuario con niveles gratuito/pago (RF08); y alertas para productos seguidos, visibles en la aplicación y enviadas como notificación push al navegador o al celular del cliente (RF09, Sección~\ref{sec:demo-cuentas}). El sistema está desplegado en producción y captura datos de forma autónoma.
+
+El modelo de Machine Learning (RF07) está en estado de validación inicial: ordena productos con información genuina, pero su precisión todavía no alcanza para afirmar que detecta tendencias de manera confiable, y el histórico no cubre ciclos completos de aparición, crecimiento y declive por categoría. Los criterios para considerarlo validado se fijan en la Sección~\ref{sec:ml-alcance}, y esta y otras líneas de trabajo futuro se detallan en la Sección~\ref{sec:trabajo-futuro}.
+
+\section{Estructura del documento}\label{sec:estructura}
+
+El resto del informe se organiza de la siguiente manera. La Sección~\ref{chapter01} (Antecedentes) reúne el marco teórico en el que se apoya el sistema, el marco normativo aplicable y el estado del arte, que releva las herramientas existentes para vendedores de Mercado Libre y los trabajos académicos sobre detección temprana de tendencias, e identifica la brecha que el proyecto busca cubrir. La Sección~\ref{chapter06} (User Research) presenta la encuesta, las entrevistas en profundidad y las User Personas que validan la problemática y orientan el diseño. La Sección~\ref{chapter05} (Competencias y Estrategia de Mercado) desarrolla el análisis competitivo, el modelo de negocio, la viabilidad económico-financiera, el alcance potencial y la marca. La Sección~\ref{chapter03} (Requerimientos) detalla las historias de usuario, los requerimientos funcionales y no funcionales con su trazabilidad, la metodología de desarrollo (metodología, arquitectura y tecnologías utilizadas, y validación del sistema) y la viabilidad legal y técnica. La Sección~\ref{chapter04} (Mockups) presenta los wireframes de las pantallas principales. La Sección~\ref{chapter07} (Demo) documenta el sistema en funcionamiento en producción, con evidencia cuantitativa. La Sección~\ref{chapter-ml} presenta el diseño experimental y la validación del modelo de aprendizaje automático. Por último, la Sección~\ref{conclussions} (Conclusión) resume los aportes del proyecto en relación con sus objetivos, reconoce los límites de lo demostrado y detalla las líneas de trabajo futuro.
+
+El informe incluye cinco anexos. El Anexo~\ref{anexo:cronograma} presenta el cronograma de actividades del proyecto. El Anexo~\ref{anexo:encuesta} muestra los resultados completos de la encuesta de User Research. Los Anexos~\ref{anexo:entrevista1}, \ref{anexo:entrevista2} y~\ref{anexo:entrevista3} contienen, cada uno, la transcripción completa de una de las tres entrevistas en profundidad.

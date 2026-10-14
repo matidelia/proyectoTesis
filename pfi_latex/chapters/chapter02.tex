@@ -1,6 +1,6 @@
-\chapter{Estado del Arte}\label{chapter02}
+\section{Estado del Arte}\label{chapter02}
 
-\section{Relevamiento de principales aplicaciones en Argentina}
+\subsection{Relevamiento de principales aplicaciones en Argentina}
 
 A continuación se presenta un relevamiento de las principales aplicaciones y sitios web orientados a vendedores de Mercado Libre en Argentina, clasificados según su tipo y funcionalidad.
 
@@ -27,7 +27,7 @@ La brecha identificada se encuentra en que las soluciones relevadas se orientan 
 
 Esta brecha justifica el desarrollo de una plataforma propia capaz de detectar tempranamente productos emergentes mediante la recolección automatizada de datos vía API oficial de Mercado Libre, la construcción de un dataset histórico estructurado y el análisis temporal con modelos supervisados de aprendizaje automático.
 
-\subsection{Tabla comparativa de alternativas}
+\subsubsection{Tabla comparativa de alternativas}
 
 Se compara la propuesta con herramientas y plataformas existentes que abordan problemas similares de detección de tendencias o seguimiento de precios.
 
@@ -48,7 +48,7 @@ Se compara la propuesta con herramientas y plataformas existentes que abordan pr
 	\end{tabularx}
 \end{table}
 
-\section{Antecedentes académicos y trabajos relacionados}
+\subsection{Antecedentes académicos y trabajos relacionados}
 
 Como parte del relevamiento bibliográfico, se analizaron distintos trabajos académicos relacionados con análisis predictivo, tendencias digitales y detección temprana de comportamiento de consumo en entornos de comercio electrónico. La incorporación de estos antecedentes resulta importante porque permiten fundamentar teóricamente la lógica utilizada dentro del proyecto y validar que el uso de señales tempranas, históricos temporales y modelos analíticos representa una línea de investigación actualmente utilizada dentro del área de inteligencia comercial y análisis de datos.
 
@@ -62,7 +62,7 @@ Uno de los aspectos más interesantes del paper es que no se limita únicamente 
 
 Este trabajo resulta especialmente útil para el proyecto porque respalda la idea de comenzar inicialmente con métricas descriptivas y análisis temporal antes de avanzar hacia modelos supervisados más complejos. Además, aporta fundamentos concretos sobre cómo trabajar con productos emergentes o tendencias nuevas que todavía no poseen grandes volúmenes de información histórica acumulada, situación que representa uno de los principales desafíos dentro de plataformas de detección temprana de tendencias.
 
-\subsection*{Schaer, Kourentzes y Fildes (2019)}
+\subsubsection*{Schaer, Kourentzes y Fildes (2019)}
 
 El trabajo de \textcite{SchaerKourentzesFildes2019}, vinculado con demand forecasting e información generada por usuarios en línea, analiza cómo incorporar señales digitales externas dentro de modelos de predicción de demanda, y respalda la idea de que los datos generados en entornos digitales pueden aportar valor predictivo cuando se los organiza y analiza temporalmente.
 
@@ -70,7 +70,7 @@ La relación con el proyecto se encuentra en qué Mercado Libre funciona como un
 
 El aporte metodológico de este antecedente es que permite trasladar el foco desde la venta ya ocurrida hacia señales previas de interés comercial. Para este proyecto, esa lógica se adapta al uso de variables observables en Mercado Libre, reemplazando el análisis de datos generales de búsqueda por registros temporales derivados de consultas oficiales, publicaciones, precios y categorías del marketplace.
 
-\subsection*{Lim, Arık, Loeff y Pfister (2021)}
+\subsubsection*{Lim, Arık, Loeff y Pfister (2021)}
 
 \textcite{LimArikLoeffPfister2021} presentan los Temporal Fusion Transformers como una arquitectura orientada a predicción de series temporales multi-horizonte e interpretable. Aunque el proyecto no contempla implementar esta arquitectura en su primera versión, el antecedente resulta útil porque muestra la importancia de combinar múltiples variables temporales para mejorar el análisis predictivo.
 
@@ -78,7 +78,7 @@ Este trabajo se toma como respaldo para futuras extensiones del sistema, especia
 
 Este antecedente no implica que el proyecto deba implementar Temporal Fusion Transformers en su primera versión, ya que requiere mayor volumen histórico y mayor complejidad técnica. Sin embargo, sí refuerza la decisión de diseñar desde el inicio una base temporal ordenada, con variables consistentes y preparadas para futuras extensiones predictivas.
 
-\subsection*{Salamai, Ageeli y El-kenawy (2022)}
+\subsubsection*{Salamai, Ageeli y El-kenawy (2022)}
 
 El trabajo de \textcite{SalamaiAgeeliElkenawy2022} aborda el uso de modelos basados en LSTM para analizar comportamientos temporales en comercio electrónico. Este tipo de arquitectura captura dependencias de largo plazo, lo que ayuda a comprender cómo pueden modelarse patrones de comportamiento cuando existe suficiente información histórica.
 
@@ -86,8 +86,8 @@ En relación con el presente proyecto, este antecedente permite justificar la co
 
 El vínculo con la propuesta se encuentra en que los modelos de aprendizaje profundo solo son aplicables cuando existe una secuencia histórica suficiente. Por eso, este antecedente no se utiliza como solución inmediata, sino como justificación académica de la necesidad de capturar datos de forma periódica y persistente antes de avanzar hacia modelos más complejos.
 
-\subsection*{Conclusión del Estado del Arte}
+\subsubsection*{Conclusión del Estado del Arte}
 
-En conjunto, el relevamiento de herramientas comerciales y los antecedentes académicos permiten reforzar conceptualmente el proyecto, ya que validan la importancia de utilizar señales digitales tempranas, históricos temporales y modelos analíticos como herramientas para anticipar comportamientos futuros dentro de ecosistemas de comercio electrónico. La brecha identificada al comienzo del capítulo (ninguna de las herramientas relevadas construye un histórico propio orientado a detección temprana) justifica la pertinencia del proyecto, y la literatura académica respalda que esa construcción es un requisito previo, no accesorio, para cualquier modelo predictivo confiable: eso justifica, además, el enfoque metodológico adoptado.
+En conjunto, el relevamiento de herramientas comerciales y los antecedentes académicos permiten reforzar conceptualmente el proyecto, ya que validan la importancia de utilizar señales digitales tempranas, históricos temporales y modelos analíticos como herramientas para anticipar comportamientos futuros dentro de ecosistemas de comercio electrónico. La brecha identificada al comienzo de la sección (ninguna de las herramientas relevadas construye un histórico propio orientado a detección temprana) justifica la pertinencia del proyecto, y la literatura académica respalda que esa construcción es un requisito previo, no accesorio, para cualquier modelo predictivo confiable: eso justifica, además, el enfoque metodológico adoptado.
 
-Más allá del aporte técnico, el tema tiene relevancia social y económica concreta: en un ecosistema donde miles de pequeños vendedores dependen de Mercado Libre como canal principal de ingresos (Capítulo~\ref{chapter06}), democratizar el acceso a señales de demanda tempranas (hoy disponibles, de forma sofisticada, solo para quienes pueden pagar herramientas de analítica avanzada o tienen acceso a datos internos de la plataforma) contribuye a nivelar la cancha entre vendedores grandes y pequeños emprendedores. Esa es la brecha social, además de la técnica, que el proyecto busca reducir.
+Más allá del aporte técnico, el tema tiene relevancia social y económica concreta: en un ecosistema donde miles de pequeños vendedores dependen de Mercado Libre como canal principal de ingresos (Sección~\ref{chapter06}), democratizar el acceso a señales de demanda tempranas (hoy disponibles, de forma sofisticada, solo para quienes pueden pagar herramientas de analítica avanzada o tienen acceso a datos internos de la plataforma) contribuye a nivelar la cancha entre vendedores grandes y pequeños emprendedores. Esa es la brecha social, además de la técnica, que el proyecto busca reducir.

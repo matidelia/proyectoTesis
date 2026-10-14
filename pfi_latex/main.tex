@@ -52,7 +52,7 @@
 % \parbox[b] es para poner texto sobre el bottom
 \newpagestyle{ruled}{
 	\sethead{\includegraphics[width=3.7cm]{./images/UADE_LARGE}}
-			{\parbox[b]{0.52\textwidth}{\raggedright\small\MakeUppercase{Sistema de Detección de Productos Tendencia en Mercado Libre}}} % El parámetro 0.52 (+ \small) se ajustaron para que el título entre en 2 líneas, no 3 (devolución E50).
+			{\parbox[b]{0.52\textwidth}{\raggedright\small\MakeUppercase{Tendar: detección temprana de productos en tendencia}}} % El parámetro 0.52 (+ \small) se ajustaron para que el título entre en 2 líneas, no 3 (devolución E50).
 			{
 				\raisebox{1.5ex}{%
 					\parbox[b]{0.26\textwidth}{\raggedleft
@@ -275,13 +275,12 @@
 \clearpage
 	\tableofcontents
 
-% La Propuesta de Tema aprobada se movio al Anexo A (documental/
-% administrativa, ver chapters/appendix/proposal.tex): el cuerpo
-% principal arranca directamente con el desarrollo del proyecto.
+% El cuerpo principal arranca con la Introduccion (devolucion formal E50).
 \clearpage
 
-	\input{chapters/chapter01} % Marco Teórico
-	\input{chapters/chapter02} % Estado del Arte
+	\input{chapters/intro} % Introducción: objetivos, alcance y estructura del documento
+	\input{chapters/chapter01} % Antecedentes: Marco Teórico y Marco Normativo
+	\input{chapters/chapter02} % Antecedentes: Estado del Arte (sección dentro de Antecedentes)
 	\input{chapters/chapter06} % User Research (va antes de Requerimientos/Mockups: devolucion E50)
 	\input{chapters/chapter05} % Competencias y Estrategia de Mercado (FODA/Porter despues de User Research: devolucion E50)
 	\input{chapters/chapter03} % Requerimientos

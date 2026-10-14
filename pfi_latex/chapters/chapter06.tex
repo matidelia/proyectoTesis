@@ -18,7 +18,7 @@ Se obtuvieron 120 respuestas válidas. Para el análisis, las respuestas se segm
 
 Como limitación metodológica, la muestra no es representativa de todo el universo de usuarios de Mercado Libre Argentina, ya que se concentra principalmente en CABA y Buenos Aires. Por ese motivo, los resultados se interpretan como exploratorios y útiles para orientar el diseño inicial de la plataforma.
 
-A esa limitación geográfica se suman otras dos, igual de relevantes. Primero, de las 120 respuestas obtenidas, solo 45 (37,5\,\%) corresponden a vendedores, que son el usuario principal definido para la plataforma (User Persona 1, Martín, Tabla~\ref{tab:persona-martin}); el resto de la muestra (compradores y participantes sin rol activo) aporta señales complementarias de demanda, pero no valida directamente la problemática desde la perspectiva de quien usaría el sistema día a día. Segundo, el total de 120 respuestas queda por debajo de las 160 recomendadas como piso para esta cohorte. Ninguna de las dos limitaciones invalida los hallazgos: las tres entrevistas en profundidad (Anexos D a F) corroboran cualitativamente los mismos patrones observados en la encuesta, pero ambas se dejan explícitas para no sobredimensionar el alcance estadístico de un relevamiento que es, por diseño, exploratorio.
+A esa limitación geográfica se suman otras dos, igual de relevantes. Primero, de las 120 respuestas obtenidas, solo 45 (37,5\,\%) corresponden a vendedores, que son el usuario principal definido para la plataforma (User Persona 1, Martín, Figura~\ref{fig:persona-martin}); el resto de la muestra (compradores y participantes sin rol activo) aporta señales complementarias de demanda, pero no valida directamente la problemática desde la perspectiva de quien usaría el sistema día a día. Segundo, el total de 120 respuestas queda por debajo de las 160 recomendadas como piso para esta cohorte. Ninguna de las dos limitaciones invalida los hallazgos: las tres entrevistas en profundidad (Anexos~\ref{anexo:entrevista1} a~\ref{anexo:entrevista3}) corroboran cualitativamente los mismos patrones observados en la encuesta, pero ambas se dejan explícitas para no sobredimensionar el alcance estadístico de un relevamiento que es, por diseño, exploratorio.
 
 \section{Composición de la muestra}
 
@@ -101,20 +101,19 @@ El bloque comprador permite analizar señales de comportamiento del lado de la d
 
 \section{Principales datos obtenidos}
 
-\begin{itemize}
-	\item Existe una dificultad alta para anticipar productos tendencia: el 69,7\% de los vendedores que respondieron esa pregunta seleccionó valores 4 o 5.
-	\item La detección tardía aparece como un problema relevante: el 40\% respondió que las tendencias muchas veces se detectan demasiado tarde y el 48,9\% respondió que eso ocurre a veces (88,9\% combinado).
-	\item La aceptación de una herramienta automatizada es alta: el 68,9\% de los vendedores indicó que la usaría y un 26,7\% adicional respondió ``tal vez'' (solo el 4,4\% la descartó).
-	\item Los vendedores valoran especialmente la predicción de crecimiento y el análisis de competencia, lo que refuerza la necesidad de una plataforma que no se limite a mostrar rankings actuales.
-	\item Desde el lado comprador, las recomendaciones (26,2\%) y las redes sociales (21,3\%) aparecen como los factores principales de decisión, seguidas por la novedad (19,7\%) y el precio (16,4\%); esto refuerza el valor de las señales sociales como variables complementarias para interpretar oportunidades comerciales.
-	\item La muestra se concentra en CABA y Buenos Aires, por lo que los resultados deben entenderse como exploratorios y no generalizables a todo el país.
-\end{itemize}
+Las cifras de la encuesta ya se presentaron en las Tablas~\ref{tab:resultados-vendedor}, \ref{tab:resultados-comprador} y~\ref{tab:resultados-generales}, y los gráficos completos de cada pregunta se incluyen en el Anexo~\ref{anexo:encuesta}. Esta sección no vuelve a enumerarlas, sino que interpreta qué implican para el diseño del sistema.
 
-Los resultados obtenidos respaldan la problemática inicial del proyecto. Los vendedores manifiestan dificultad para anticipar tendencias, perciben que muchas oportunidades se detectan tarde y muestran alta disposición a utilizar una herramienta automatizada. Al mismo tiempo, los compradores confirman la influencia de variables como recomendaciones, redes sociales y precio. En conjunto, estos hallazgos justifican el desarrollo de una plataforma orientada a detectar productos emergentes mediante históricos, métricas temporales y visualización analítica.
+La lectura conjunta del bloque vendedor confirma la problemática que dio origen al proyecto, y lo hace en tres niveles encadenados. Primero, el problema existe: anticipar qué producto va a crecer resulta difícil para la mayoría de los vendedores consultados. Segundo, el problema tiene una dimensión temporal: lo que se percibe no es la falta de información, sino que la señal llega tarde, cuando la oportunidad ya está aprovechada por otros. Tercero, la solución automatizada no genera resistencia: el rechazo explícito a usar una herramienta de este tipo es marginal. La combinación de estas tres respuestas es la que justifica el sistema; cualquiera de ellas por separado no alcanzaría.
+
+La pregunta sobre la información más útil agrega una precisión sobre qué construir. Los vendedores no piden un ranking de lo que ya se vende, que la propia plataforma ofrece, sino una estimación de lo que va a crecer y una lectura de la competencia. Esa preferencia se traduce directamente en dos decisiones del sistema: un score que pondera la permanencia y la evolución en el tiempo en lugar de la posición puntual, y la incorporación de la cantidad de vendedores como componente de saturación (Sección~\ref{sec:score-formal}).
+
+El bloque comprador cumple otra función. No describe al usuario del sistema, sino a la demanda que el vendedor intenta anticipar. Que las recomendaciones y las redes sociales pesen más que el precio en la compra de productos novedosos indica que la demanda se forma fuera del marketplace y llega a él con cierto retraso; es precisamente ese retraso el que el sistema busca aprovechar observando la evolución de los productos dentro de Mercado Libre. Al mismo tiempo, la percepción de resultados repetidos sugiere que los listados destacados de la plataforma no son una señal suficiente por sí solos, lo que refuerza la decisión de construir un histórico propio.
+
+Estos resultados tienen dos límites que condicionan su alcance. La muestra se concentra en CABA y Buenos Aires y se obtuvo por conveniencia, por lo que los hallazgos son exploratorios y no generalizables al conjunto del país. Además, la encuesta mide percepciones y no comportamientos: que un vendedor declare que usaría una herramienta no garantiza que la adopte. Las entrevistas en profundidad de la sección siguiente se diseñaron para cubrir en parte ese segundo límite, indagando en el porqué de las respuestas y en las condiciones concretas de adopción.
 
 \section{Entrevistas en profundidad}
 
-Como complemento cualitativo de la encuesta, se realizaron tres entrevistas semiestructuradas a usuarios reales de Mercado Libre: dos vendedores y una compradora, seleccionados por muestreo intencional entre personas con actividad verificable en la plataforma (no se buscan perfiles profesionales ni expertos, sino usuarios comunes, en línea con el público objetivo de la herramienta). El propósito es profundizar en el porqué de los patrones cuantitativos observados en la encuesta: la detección tardía de tendencias (88,9\% combinado), la alta disposición a usar una herramienta automatizada (68,9\%) y el peso de las señales sociales en la decisión de compra (47,5\%). Cada entrevista se registró con consentimiento informado y se analizó mediante síntesis temática. Las transcripciones completas, con nombres anonimizados por pseudónimo (Sección~\ref{sec:viabilidad-legal}), se incluyen en un anexo independiente por entrevista (Anexos D, E y F).
+Como complemento cualitativo de la encuesta, se realizaron tres entrevistas semiestructuradas a usuarios reales de Mercado Libre: dos vendedores y una compradora, seleccionados por muestreo intencional entre personas con actividad verificable en la plataforma (no se buscan perfiles profesionales ni expertos, sino usuarios comunes, en línea con el público objetivo de la herramienta). El propósito es profundizar en el porqué de los patrones cuantitativos observados en la encuesta: la detección tardía de tendencias (88,9\% combinado), la alta disposición a usar una herramienta automatizada (68,9\%) y el peso de las señales sociales en la decisión de compra (47,5\%). Cada entrevista se registró con consentimiento informado y se analizó mediante síntesis temática. Las transcripciones completas, con nombres anonimizados por pseudónimo (Sección~\ref{sec:viabilidad-legal}), se incluyen en un anexo independiente por entrevista (Anexos~\ref{anexo:entrevista1}, \ref{anexo:entrevista2} y~\ref{anexo:entrevista3}).
 
 A partir del análisis temático de las tres entrevistas se identifican seis patrones relevantes para el diseño del sistema:
 
@@ -129,64 +128,42 @@ A partir del análisis temático de las tres entrevistas se identifican seis pat
 
 \section{User persona}
 
-A partir de los hallazgos de la encuesta y de las tres entrevistas en profundidad (Anexos D a F) se construyen tres user personas. No representan a ninguna persona individual de forma literal, sino perfiles sintéticos elaborados a partir de patrones observados en las respuestas y en las entrevistas. Su objetivo es conectar los resultados del relevamiento con necesidades concretas de diseño de la plataforma.
+A partir de los hallazgos de la encuesta y de las tres entrevistas en profundidad (Anexos~\ref{anexo:entrevista1} a~\ref{anexo:entrevista3}) se construyen tres user personas. No representan a ninguna persona individual de forma literal, sino perfiles sintéticos elaborados a partir de patrones observados en las respuestas y en las entrevistas. Su objetivo es conectar los resultados del relevamiento con necesidades concretas de diseño de la plataforma.
+
+Cada user persona se presenta como una ficha que reúne su perfil, su necesidad, su frustración principal, su objetivo y su relación con la plataforma propuesta.
 
 \subsection*{User Persona 1: Martín, vendedor que necesita anticiparse}
 
-\begin{table}[H]
+La Figura~\ref{fig:persona-martin} presenta a Martín, el usuario principal de la plataforma. Sintetiza el bloque vendedor de la encuesta: la dificultad para anticipar productos con potencial de crecimiento y la sensación de llegar tarde, cuando la competencia ya saturó la oferta. Su necesidad central (detectar el crecimiento antes de que se consolide y compararlo con su categoría) es la que da origen al ranking de oportunidades y a la componente de saturación del score.
+
+\begin{figure}[htbp]
 	\centering
-	\caption{User Persona 1: Martín}
-	\label{tab:persona-martin}
-	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3cm} X@{}}
-		\toprule
-		\textbf{Campo} & \textbf{Descripción} \\
-		\midrule
-		Perfil & Martín tiene 29 años, vive en Buenos Aires y vende productos por Mercado Libre. Representa al segmento vendedor de la encuesta, que declaró dificultades altas para encontrar productos que puedan volverse tendencia. Tiene experiencia básica/intermedia en ventas online y consulta distintas fuentes antes de decidir qué productos incorporar. \\
-		Necesidad & Necesita detectar productos con potencial de crecimiento antes de que se consoliden y antes de que aumente demasiado la competencia. También necesita comparar la evolución del producto con su categoría para evitar decisiones basadas solo en una aparición aislada. \\
-		Frustración & Siente que muchas veces llega tarde a las tendencias: cuando identifica un producto atractivo, ya existen muchos vendedores ofreciendo lo mismo y los márgenes se reducen. \\
-		Objetivo & Tomar decisiones de stock con más información, priorizando productos que muestren crecimiento sostenido y señales tempranas de demanda. \\
-		Relación con la plataforma propuesta & Sería un usuario directo del dashboard. Consultaría productos emergentes, predicción de crecimiento, evolución de precios y nivel de competencia para decidir qué vender o qué analizar con mayor profundidad. La plataforma le permitiría priorizar oportunidades según señales históricas, no solamente según intuición o publicaciones virales. \\
-		\bottomrule
-	\end{tabularx}
-\end{table}
+	\includegraphics[width=\textwidth]{./images/personas/persona_martin.png}
+	\caption{User Persona 1: Martín, vendedor que necesita anticiparse. Fuente: elaboración propia a partir de la encuesta y las entrevistas.}
+	\label{fig:persona-martin}
+\end{figure}
 
 \subsection*{User Persona 2: Luciana, compradora digital con comportamiento influido por precio y redes}
 
-\begin{table}[H]
+La Figura~\ref{fig:persona-luciana} presenta a Luciana, que no es usuaria directa del sistema sino la representación de la demanda que el vendedor intenta anticipar. Sintetiza el bloque comprador de la encuesta y la entrevista a la compradora: las redes sociales y las recomendaciones generan el interés inicial, pero la compra se decide con señales verificables como reseñas, reputación y precio. Su perfil justifica que el sistema observe variables complementarias de demanda y no solo la posición en los listados destacados.
+
+\begin{figure}[htbp]
 	\centering
-	\caption{User Persona 2: Luciana}
-	\label{tab:persona-luciana}
-	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3cm} X@{}}
-		\toprule
-		\textbf{Campo} & \textbf{Descripción} \\
-		\midrule
-		Perfil & Luciana tiene 32 años, vive en CABA y compra habitualmente en Mercado Libre. Representa al segmento comprador de la encuesta, donde las recomendaciones y las redes sociales aparecen como los factores más relevantes para decidir compras de productos novedosos. Su comportamiento representa señales indirectas de demanda que los vendedores pueden observar para interpretar interés de mercado. \\
-		Necesidad & Quiere encontrar productos nuevos o convenientes sin depender únicamente de resultados destacados repetidos o recomendaciones superficiales. Necesita contar con información clara que le permita distinguir entre productos realmente convenientes y productos destacados solo por visibilidad comercial. \\
-		Frustración & Percibe que muchas veces aparecen los mismos productos destacados y que no siempre es fácil comparar alternativas, precios u opiniones del vendedor. \\
-		Objetivo & Comprar productos novedosos o recomendados con mayor confianza, comparando precio, reputación y señales de interés real. \\
-		Relación con la plataforma propuesta & Aunque no sería necesariamente la usuaria principal del sistema, su comportamiento ayuda a definir qué señales de demanda deberían observar los vendedores: precio, redes sociales, recomendaciones y aparición repetida de productos. Sus hábitos permiten definir variables complementarias para el sistema, especialmente precio, repetición de publicaciones, reputación y presencia en redes sociales. \\
-		\bottomrule
-	\end{tabularx}
-\end{table}
+	\includegraphics[width=\textwidth]{./images/personas/persona_luciana.png}
+	\caption{User Persona 2: Luciana, compradora digital influida por precio y redes. Fuente: elaboración propia a partir de la encuesta y las entrevistas.}
+	\label{fig:persona-luciana}
+\end{figure}
 
 \subsection*{User Persona 3: Lucas, vendedor que necesita confiar antes de adoptar la herramienta}
 
-\begin{table}[H]
+La Figura~\ref{fig:persona-lucas} presenta a Lucas, construido a partir de la Entrevista 2 (Anexo~\ref{anexo:entrevista2}), en la que el entrevistado vio el sistema en funcionamiento. A diferencia de Martín, que todavía no conoce una herramienta de detección temprana, Lucas la evalúa como adoptante potencial: solo confía en el score si puede ver de dónde sale, y prefiere recibir una alerta antes que revisar el panel. Su perfil respalda dos decisiones de diseño: el desglose visible de los componentes del score y las alertas de productos seguidos (RF09).
+
+\begin{figure}[htbp]
 	\centering
-	\caption{User Persona 3: Lucas}
-	\label{tab:persona-lucas}
-	\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3cm} X@{}}
-		\toprule
-		\textbf{Campo} & \textbf{Descripción} \\
-		\midrule
-		Perfil & Lucas vende tecnología en Mercado Libre y hoy decide qué stockear combinando redes sociales, el ranking de la plataforma y el precio de su importador, en sus propias palabras, ``apostar con datos sueltos''. A diferencia de Martín (User Persona 1), que todavía no conoce una herramienta de detección temprana, Lucas ya vio el sistema en funcionamiento (Entrevista 2, Anexo E) y reacciona a él como un adoptante potencial que evalúa si confiar o no en el dato. \\
-		Necesidad & Antes de actuar sobre un score, necesita entender de dónde sale: la fuente del dato, el período de crecimiento, el volumen base y si el crecimiento es consistente o un pico aislado. Sin ese desglose, el número ``no significa nada'' para él. \\
-		Frustración & Que el score funcione como una caja negra, y que los datos de apariciones se puedan confundir con ventas reales cuando en realidad son una estimación. También le frustra un ranking genérico que no esté filtrado por su categoría. \\
-		Objetivo & Usar el ranking para decidir, en minutos y no en horas, a qué productos pedirles precio al importador esta misma semana, y recibir una alerta en vez de tener que entrar a revisar el panel. \\
-		Relación con la plataforma propuesta & Es un usuario directo que ya valida el desglose del score (frecuencia, permanencia, ranking, estabilidad, saturación) como condición para confiar en el dato y adoptar la herramienta en su operación semanal; también es quien más claramente prioriza las alertas (RF09) por sobre la consulta manual del dashboard. \\
-		\bottomrule
-	\end{tabularx}
-\end{table}
+	\includegraphics[width=\textwidth]{./images/personas/persona_lucas.png}
+	\caption{User Persona 3: Lucas, vendedor que necesita confiar antes de adoptar la herramienta. Fuente: elaboración propia a partir de la Entrevista 2.}
+	\label{fig:persona-lucas}
+\end{figure}
 
 \section{Gestión de datasets}\label{sec:gestion-datasets}
 

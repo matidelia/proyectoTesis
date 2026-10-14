@@ -1,6 +1,6 @@
 \chapter{Modelo de aprendizaje automático: diseño experimental y validación}\label{chapter-ml}
 
-Este capítulo documenta el modelo supervisado que complementa al score descriptivo (RF07): qué se predice, con qué datos, cómo se separaron entrenamiento y validación, qué controles se aplicaron contra la fuga de información y qué resultados se obtuvieron. Reemplaza la evaluación del primer checkpoint del 22/09/2026, cuyas métricas resultaron optimistas por las razones que se explican en la Sección~\ref{sec:control-fuga}. Todas las cifras de este capítulo se generan con un único script versionado (\path{ml/train_model.py}) y quedan registradas en \path{ml/model_card.json}, de modo que cualquier valor citado puede rastrearse hasta su origen.
+Esta sección documenta el modelo supervisado que complementa al score descriptivo (RF07): qué se predice, con qué datos, cómo se separaron entrenamiento y validación, qué controles se aplicaron contra la fuga de información y qué resultados se obtuvieron. Reemplaza la evaluación del primer checkpoint del 22/09/2026, cuyas métricas resultaron optimistas por las razones que se explican en la Sección~\ref{sec:control-fuga}. Todas las cifras de esta sección se generan con un único script versionado (\path{ml/train_model.py}) y quedan registradas en \path{ml/model_card.json}, de modo que cualquier valor citado puede rastrearse hasta su origen.
 
 \section{Nomenclatura}\label{sec:nomenclatura}
 
@@ -37,7 +37,7 @@ La distinción es central para leer los resultados. El \textbf{score} describe e
 
 \section{Versiones de datos y corte del informe}\label{sec:versiones-datos}
 
-Las cifras del sistema crecen con cada corrida, y versiones anteriores de este documento mezclaban mediciones tomadas en fechas distintas (22/09, 23/09 y 24/09). Para eliminar esa inconsistencia, todas las cifras de volumen del informe se refieren a un único \textbf{corte de datos}: la corrida de minería del 09/10/2026 a las 07:19 (hora de Argentina, como todas las horas de este capítulo). La Tabla~\ref{tab:versiones-datos} resume las versiones de datos y de modelo que se citan en el documento.
+Las cifras del sistema crecen con cada corrida, y versiones anteriores de este documento mezclaban mediciones tomadas en fechas distintas (22/09, 23/09 y 24/09). Para eliminar esa inconsistencia, todas las cifras de volumen del informe se refieren a un único \textbf{corte de datos}: la corrida de minería del 09/10/2026 a las 07:19 (hora de Argentina, como todas las horas de esta sección). La Tabla~\ref{tab:versiones-datos} resume las versiones de datos y de modelo que se citan en el documento.
 
 \begin{table}[H]
 	\centering
@@ -50,7 +50,7 @@ Las cifras del sistema crecen con cada corrida, y versiones anteriores de este d
 		\midrule
 		Corte del informe & 09/10/2026, 07:19 & 86 días de captura (14/07 al 09/10/2026), $\sim$249 corridas (estimadas agrupando apariciones separadas por más de 40 minutos), 310 productos registrados (263 con score; 42 activos y 12 que dejaron de aparecer en los últimos 7 días), 6819 apariciones, 6909 registros de precio y 13.918 scores. Es la referencia de todas las cifras de volumen del documento. \\
 		Dataset de ML & Exportado hasta el corte & 13.655 pares de corridas consecutivas de 263 productos; 8923 utilizables tras los filtros de la Sección~\ref{sec:variable-objetivo}. Congelado en \path{ml/data/dataset.json.gz}, SHA-256 \texttt{22ca0dd38d54\ldots} \\
-		Modelo vigente & \texttt{rf\_2026-10-09\_22ca0dd3} & Random Forest entrenado con las 8923 filas utilizables, después de evaluarlo según este capítulo. Es el que genera el índice ML en la aplicación (Sección~\ref{sec:ml-trazabilidad}). \\
+		Modelo vigente & \texttt{rf\_2026-10-09\_22ca0dd3} & Random Forest entrenado con las 8923 filas utilizables, después de evaluarlo según esta sección. Es el que genera el índice ML en la aplicación (Sección~\ref{sec:ml-trazabilidad}). \\
 		Checkpoint anterior (reemplazado) & 22/09/2026 & 11.312 ejemplos de 227 productos, evaluado con un corte temporal sin purga ni embargo y sin filtrar productos inactivos. Se conserva solo como antecedente: sus métricas (AUC-ROC 0,903, \emph{recall} 0,807) ya no se usan. \\
 		\bottomrule
 	\end{tabularx}
@@ -58,7 +58,7 @@ Las cifras del sistema crecen con cada corrida, y versiones anteriores de este d
 
 \subsection*{Integridad de los datos}\label{sec:integridad-datos}
 
-Antes de cerrar el informe, el 13/10/2026, se auditó la base de producción completa. Ningún precio es nulo, negativo o de otra moneda que pesos; no hay saltos de precio de más del triple entre registros consecutivos, y el precio que se muestra (el más barato) nunca supera al promedio entre vendedores del historial. Todos los scores están entre 0 y 100, todos los componentes entre 0 y 1, los pesos suman 1 y las cantidades de vendedores y las posiciones están dentro de sus rangos. Se recalcularon los 14.560 scores que guardaban sus pesos a esa fecha a partir de sus propios componentes: coinciden todos menos uno, un registro de prueba insertado manualmente el 23/09/2026 a las 17:13 para verificar el circuito de alertas (Sección~\ref{sec:demo-cuentas}). Ese registro cae dentro del embargo de la separación principal, de modo que no afecta la validación reportada en este capítulo; sí aporta un ejemplo positivo de los 8923 con que se entrenó el modelo de producción y uno de los positivos de validación de los dos primeros cortes del origen móvil, un efecto despreciable que se declara por transparencia.
+Antes de cerrar el informe, el 13/10/2026, se auditó la base de producción completa. Ningún precio es nulo, negativo o de otra moneda que pesos; no hay saltos de precio de más del triple entre registros consecutivos, y el precio que se muestra (el más barato) nunca supera al promedio entre vendedores del historial. Todos los scores están entre 0 y 100, todos los componentes entre 0 y 1, los pesos suman 1 y las cantidades de vendedores y las posiciones están dentro de sus rangos. Se recalcularon los 14.560 scores que guardaban sus pesos a esa fecha a partir de sus propios componentes: coinciden todos menos uno, un registro de prueba insertado manualmente el 23/09/2026 a las 17:13 para verificar el circuito de alertas (Sección~\ref{sec:demo-cuentas}). Ese registro cae dentro del embargo de la separación principal, de modo que no afecta la validación reportada en esta sección; sí aporta un ejemplo positivo de los 8923 con que se entrenó el modelo de producción y uno de los positivos de validación de los dos primeros cortes del origen móvil, un efecto despreciable que se declara por transparencia.
 
 La auditoría también aclara el conteo de productos. De los 310 registros de producto, 47 son de pruebas iniciales y no tienen ninguna aparición ni score, y 39 nombres aparecen repetidos porque, antes del 23/09, un cambio del vendedor más barato podía dar de alta otra fila para el mismo producto (Sección~\ref{sec:concepto-central}). Las filas repetidas nunca estuvieron activas al mismo tiempo, por lo que el tablero no muestra duplicados. La población efectiva de análisis son los 263 productos con score.
 
@@ -347,7 +347,7 @@ Como la calibración no se verifica, la salida \textbf{no se presenta como proba
 	\item \textbf{Bajo} (menos de 20).
 \end{itemize}
 
-Los cortes se guardan con el modelo, y un test automatizado verifica que la aplicación use exactamente los mismos valores que \path{ml/model_card.json}. La columna que antes se llamaba ``Prob. ML'' en el ranking pasó a llamarse ``Índice ML''. Las capturas del Capítulo~\ref{chapter07} tomadas antes de este cambio muestran todavía el nombre anterior.
+Los cortes se guardan con el modelo, y un test automatizado verifica que la aplicación use exactamente los mismos valores que \path{ml/model_card.json}. La columna que antes se llamaba ``Prob. ML'' en el ranking pasó a llamarse ``Índice ML''. Las capturas de la Sección~\ref{chapter07} tomadas antes de este cambio muestran todavía el nombre anterior.
 
 \section{Trazabilidad de la predicción}\label{sec:ml-trazabilidad}
 
@@ -379,7 +379,7 @@ La cadena se verificó sobre la primera corrida automática que usó el modelo v
 
 \section{Alcance de las conclusiones: de checkpoint a modelo validado}\label{sec:ml-alcance}
 
-Con la evidencia de este capítulo puede afirmarse que el modelo:
+Con la evidencia de esta sección puede afirmarse que el modelo:
 
 \begin{itemize}
 	\item ordena productos según su chance de subir en la corrida siguiente con información genuina: su PR-AUC es 5,6 veces la prevalencia, supera a las reglas simples y al score descriptivo, y resiste los controles de fuga (purga, embargo y etiquetas permutadas);
