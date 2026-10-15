@@ -30,7 +30,7 @@ export default async function AlertsPage() {
             🔔 Mis alertas
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>
-            Productos que seguís y que empezaron a crecer (HU02).
+            Productos que seguís y que empezaron a crecer.
           </p>
         </div>
       </div>
