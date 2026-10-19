@@ -22,6 +22,12 @@ const prisma = new PrismaClient();
 
 const LABEL_THRESHOLD = 5;
 
+// Scores que no provienen de una corrida real de mineria y se excluyen de
+// toda exportacion (entrenamiento, validacion, origen movil y sensibilidad).
+// cmued30x...: score de prueba insertado a mano el 23/09/2026 17:13 UTC para
+// verificar el circuito de alertas (prueba manual de integracion).
+const EXCLUDED_SCORE_IDS = new Set(['cmued30x50001grhs9d5hb0eu']);
+
 // Version de la formula del score: los pesos vigentes se persisten en cada
 // calculo (components.weights). Un par cuyos dos scores usan formulas
 // distintas no mide un cambio del mercado sino un cambio de metodologia.
@@ -69,7 +75,7 @@ async function main() {
   const rows = [];
 
   for (const p of products) {
-    const scores = p.trendScores;
+    const scores = p.trendScores.filter((s) => !EXCLUDED_SCORE_IDS.has(s.id));
     if (scores.length < 2) continue;
     const seen = p.trendSnapshots.map((s) => s.capturedAt.getTime());
 

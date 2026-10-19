@@ -82,6 +82,11 @@ async function main() {
     const product = await prisma.product.findUnique({ where: { id: productId }, select: { name: true } });
 
     for (const w of watchers) {
+      // Solo se alertan subidas calculadas despues de que el cliente empezo a
+      // seguir el producto. Sin este control, seguir un producto inactivo
+      // generaba una alerta con un cambio de score de semanas atras (detectado
+      // en una prueba de uso el 15/10/2026).
+      if (curr.computedAt < w.createdAt) continue;
       try {
         await prisma.alert.create({
           data: {
