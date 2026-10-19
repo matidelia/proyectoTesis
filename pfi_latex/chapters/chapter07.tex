@@ -32,7 +32,7 @@ A continuación se presentan capturas del sistema en funcionamiento: el pipeline
 
 \section{Cuentas, predicción de ML y alertas en producción}\label{sec:demo-cuentas}
 
-El sistema incorpora tres funcionalidades adicionales, ya desplegadas en producción, que lo distinguen de un dashboard de solo consulta: el índice del modelo de ML visible por producto (RF07), un sistema de cuentas con nivel gratuito y pago (RF08) y alertas reales para productos seguidos (RF09).
+El sistema incorpora tres funcionalidades adicionales, ya desplegadas en producción, que lo distinguen de un dashboard de solo consulta: el índice del modelo de ML visible por producto (RF07), un sistema de cuentas con nivel gratuito y pago (RF08) y una funcionalidad de alertas para productos seguidos, implementada y verificada mediante prueba controlada (RF09).
 
 \begin{figure}[H]
 	\centering
@@ -73,11 +73,13 @@ Por último, la bandeja de alertas (\texttt{/alerts}, RF09) muestra las alertas 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth]{./images/demo/demo_alerts.png}
-	\caption{Bandeja de alertas de un cliente (\texttt{/alerts}): notificación real de un producto seguido que cruzó el umbral de crecimiento (HU02, HU07). Fuente: captura propia del sistema en producción.}
+	\caption{Prueba funcional del circuito de alertas para un producto seguido: alerta generada mediante un score de prueba controlado, insertado manualmente el 23/09/2026 (HU02, HU07). Fuente: captura propia del sistema en producción.}
 	\label{fig:demo-alerts}
 \end{figure}
 
-Desde el 12/10/2026, la alerta también puede llegar fuera de la aplicación, como notificación push al navegador o al celular del cliente, aunque no tenga la página abierta. El cliente la activa desde la bandeja de alertas, desde su cuenta o desde el detalle de un producto que sigue, y puede desactivarla en cualquier momento. La notificación se verificó ese día con un envío de prueba a un navegador real: la suscripción quedó guardada, el servicio de push aceptó el envío y el aviso apareció en el sistema operativo. La primera alerta automática enviada por este canal se producirá cuando un producto seguido vuelva a cruzar el umbral de crecimiento. Esta funcionalidad se incorporó después del corte del informe y por eso no altera las cifras de la Tabla~\ref{tab:evidencia}.
+Desde el 12/10/2026, la alerta también puede llegar fuera de la aplicación, como notificación push al navegador o al celular del cliente, aunque no tenga la página abierta. El cliente la activa desde la bandeja de alertas, desde su cuenta o desde el detalle de un producto que sigue, y puede desactivarla en cualquier momento. La notificación se verificó ese día con un envío de prueba a un navegador real: la suscripción quedó guardada, el servicio de push aceptó el envío y el aviso apareció en el sistema operativo. Esta funcionalidad se incorporó después del corte del informe y por eso no altera las cifras de la Tabla~\ref{tab:evidencia}.
+
+Una prueba de uso del 15/10/2026 detectó un error en la generación de alertas. Al seguir con una cuenta de prueba tres productos que habían dejado de aparecer en julio, la corrida siguiente generó tres alertas con la última subida de su score, calculada el 03/08/2026, más de dos meses antes de que se empezaran a seguir. Esas alertas no reflejaban un movimiento actual del mercado. A partir de ese resultado se corrigió \path{scripts/generate_alerts.js} para que solo alerte subidas calculadas después de que el cliente empezó a seguir el producto, y las tres alertas se eliminaron de la base. Por lo tanto, al cierre de esta versión del informe todavía no se produjo ninguna alerta disparada por un movimiento real del mercado: la funcionalidad de alertas está implementada y verificada mediante pruebas controladas, y su validación ante alertas automáticas de mercado queda pendiente (Sección~\ref{sec:trabajo-futuro}).
 
 \section{Tablero de oportunidades}\label{sec:demo-tablero}
 

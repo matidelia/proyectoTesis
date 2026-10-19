@@ -1,0 +1,49 @@
+{
+  "min_positivos": 30,
+  "historial": [
+    {
+      "grupo": "corto (< 21 registros previos)",
+      "filas": 503,
+      "productos": 40,
+      "positivos": 33,
+      "prevalencia": 0.066,
+      "roc_auc": 0.801,
+      "pr_auc": 0.379
+    },
+    {
+      "grupo": "largo (>= 21 registros previos)",
+      "filas": 735,
+      "productos": 53,
+      "positivos": 38,
+      "prevalencia": 0.052,
+      "roc_auc": 0.807,
+      "pr_auc": 0.26
+    }
+  ],
+  "vendedores": {
+    "filas_con_dato_dataset": 1480,
+    "pct_filas_con_dato_dataset": 16.6,
+    "filas_con_dato_validacion": 1238,
+    "filas_con_dato_entrenamiento": 0,
+    "grupos_validacion": [
+      {
+        "grupo": "un vendedor",
+        "filas": 754,
+        "productos": 44,
+        "positivos": 40,
+        "prevalencia": 0.053,
+        "roc_auc": 0.784,
+        "pr_auc": 0.28
+      },
+      {
+        "grupo": "multiples vendedores",
+        "filas": 484,
+        "productos": 28,
+        "positivos": 31,
+        "prevalencia": 0.064,
+        "roc_auc": 0.831,
+        "pr_auc": 0.42
+      }
+    ]
+  }
+}
