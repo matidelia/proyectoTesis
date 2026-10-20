@@ -55,7 +55,12 @@ export default function PushToggle({ compact = false }: { compact?: boolean }) {
       if (!res.ok) throw new Error('No se pudo guardar la suscripción.');
       setState('activo');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'No se pudieron activar las notificaciones.');
+      // Si el navegador no puede conectarse a su servicio de push (Brave con los
+      // servicios push de Google desactivados, modo incógnito, un antivirus o la
+      // red), subscribe() falla con AbortError y un mensaje técnico en inglés.
+      setError(e instanceof DOMException && e.name === 'AbortError'
+        ? 'Este navegador no pudo conectarse a su servicio de notificaciones. Probá con Chrome o Edge fuera del modo incógnito; en Brave, activá "Usar los servicios de Google para mensajería push" en la configuración de privacidad.'
+        : e instanceof Error ? e.message : 'No se pudieron activar las notificaciones.');
     } finally {
       setBusy(false);
     }
